@@ -62,6 +62,12 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
         const SingleActivator(LogicalKeyboardKey.keyT, meta: true, shift: true): () {
           context.read<ThemeProvider>().cycleThemeMode();
         },
+        // Cmd+Shift+C: Insert Code Block
+        const SingleActivator(LogicalKeyboardKey.keyC, meta: true, shift: true): () {
+          if (notesProvider.selectedNoteId != null) {
+            notesProvider.addCodeBlock(notesProvider.selectedNoteId!);
+          }
+        },
       },
       child: Focus(
         autofocus: true,
@@ -85,6 +91,11 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                   setState(() {
                     _showFormatMenu = !_showFormatMenu;
                   });
+                },
+                onInsertCodeBlock: () {
+                  if (notesProvider.selectedNoteId != null) {
+                    notesProvider.addCodeBlock(notesProvider.selectedNoteId!);
+                  }
                 },
                 onAttachMedia: () => _handlePickAttachment(context, notesProvider),
                 onToggleLock: () => _handleToggleLock(context, notesProvider),

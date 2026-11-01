@@ -143,6 +143,47 @@ class NoteAttachment {
   }
 }
 
+/// Represents an interactive multi-line code block inside a note.
+class NoteCodeBlock {
+  final String id;
+  final String code;
+  final String language;
+
+  const NoteCodeBlock({
+    required this.id,
+    required this.code,
+    this.language = 'dart',
+  });
+
+  NoteCodeBlock copyWith({
+    String? id,
+    String? code,
+    String? language,
+  }) {
+    return NoteCodeBlock(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      language: language ?? this.language,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'code': code,
+      'language': language,
+    };
+  }
+
+  factory NoteCodeBlock.fromJson(Map<String, dynamic> json) {
+    return NoteCodeBlock(
+      id: json['id'] as String,
+      code: (json['code'] as String?) ?? '',
+      language: (json['language'] as String?) ?? 'dart',
+    );
+  }
+}
+
 /// Core Apple Note model
 class Note {
   final String id;
@@ -157,6 +198,7 @@ class Note {
   final List<ChecklistItem> checklists;
   final List<NoteTable> tables;
   final List<NoteAttachment> attachments;
+  final List<NoteCodeBlock> codeBlocks;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -173,6 +215,7 @@ class Note {
     this.checklists = const [],
     this.tables = const [],
     this.attachments = const [],
+    this.codeBlocks = const [],
     required this.createdAt,
     required this.updatedAt,
   });
@@ -194,6 +237,7 @@ class Note {
     List<ChecklistItem>? checklists,
     List<NoteTable>? tables,
     List<NoteAttachment>? attachments,
+    List<NoteCodeBlock>? codeBlocks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -210,6 +254,7 @@ class Note {
       checklists: checklists ?? this.checklists,
       tables: tables ?? this.tables,
       attachments: attachments ?? this.attachments,
+      codeBlocks: codeBlocks ?? this.codeBlocks,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -229,6 +274,7 @@ class Note {
       'checklists': checklists.map((c) => c.toJson()).toList(),
       'tables': tables.map((t) => t.toJson()).toList(),
       'attachments': attachments.map((a) => a.toJson()).toList(),
+      'codeBlocks': codeBlocks.map((cb) => cb.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -238,6 +284,9 @@ class Note {
     final rawChecklists = (json['checklists'] as List<dynamic>?) ?? [];
     final rawTables = (json['tables'] as List<dynamic>?) ?? [];
     final rawAttachments = (json['attachments'] as List<dynamic>?) ?? [];
+    final rawCodeBlocks = (json['codeBlocks'] as List<dynamic>?) ??
+        (json['code_blocks'] as List<dynamic>?) ??
+        [];
     final rawTags = (json['tags'] as List<dynamic>?) ?? [];
 
     return Note(
@@ -253,6 +302,7 @@ class Note {
       checklists: rawChecklists.map((c) => ChecklistItem.fromJson(c as Map<String, dynamic>)).toList(),
       tables: rawTables.map((t) => NoteTable.fromJson(t as Map<String, dynamic>)).toList(),
       attachments: rawAttachments.map((a) => NoteAttachment.fromJson(a as Map<String, dynamic>)).toList(),
+      codeBlocks: rawCodeBlocks.map((cb) => NoteCodeBlock.fromJson(cb as Map<String, dynamic>)).toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );

@@ -8,6 +8,7 @@ import 'package:mac_notes_app/features/notes/models/note_model.dart';
 import 'package:mac_notes_app/features/notes/presentation/format_menu_bar.dart';
 import 'package:mac_notes_app/features/notes/presentation/widgets/attachment_widget.dart';
 import 'package:mac_notes_app/features/notes/presentation/widgets/checklist_item_widget.dart';
+import 'package:mac_notes_app/features/notes/presentation/widgets/code_block_widget.dart';
 import 'package:mac_notes_app/features/notes/presentation/widgets/note_table_widget.dart';
 import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
 import 'package:provider/provider.dart';
@@ -159,6 +160,9 @@ class _EditorViewState extends State<EditorView> {
       case NoteTextFormat.strikethrough:
         _quillController!.formatSelection(Attribute.strikeThrough);
         break;
+      case NoteTextFormat.code:
+        _quillController!.formatSelection(Attribute.inlineCode);
+        break;
     }
   }
 
@@ -272,6 +276,15 @@ class _EditorViewState extends State<EditorView> {
           borderRadius: BorderRadius.circular(4.0),
         ),
       ),
+      inlineCode: InlineCodeStyle(
+        style: TextStyle(
+          fontFamily: 'SF Mono',
+          fontSize: 13.0,
+          color: NotesTheme.textPrimary(context),
+        ),
+        backgroundColor: NotesTheme.codeBackground(context),
+        radius: const Radius.circular(3.0),
+      ),
     );
 
     return Container(
@@ -342,6 +355,25 @@ class _EditorViewState extends State<EditorView> {
                                 notesProvider.insertTableRow(note.id, table.id, atIndex),
                             onInsertColumn: (atIndex) =>
                                 notesProvider.insertTableColumn(note.id, table.id, atIndex),
+                          );
+                        }),
+                      ],
+
+                      // Embedded Code Blocks Section
+                      if (note.codeBlocks.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ...note.codeBlocks.map((block) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: CodeBlockWidget(
+                              codeBlock: block,
+                              onCodeChanged: (newCode) =>
+                                  notesProvider.updateCodeBlockText(note.id, block.id, newCode),
+                              onLanguageChanged: (newLang) =>
+                                  notesProvider.updateCodeBlockLanguage(note.id, block.id, newLang),
+                              onDelete: () =>
+                                  notesProvider.removeCodeBlock(note.id, block.id),
+                            ),
                           );
                         }),
                       ],

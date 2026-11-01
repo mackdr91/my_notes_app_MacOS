@@ -13,6 +13,7 @@ enum NoteTextFormat {
   italic,
   underline,
   strikethrough,
+  code,
 }
 
 /// Floating formatting toolbar matching Apple Notes 'Aa' button with typography and inline styling.
@@ -73,6 +74,12 @@ class FormatMenuBar extends StatelessWidget {
                   tooltip: 'Strikethrough',
                   style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 13.5),
                   onTap: () => onSelectFormat(NoteTextFormat.strikethrough),
+                ),
+                _InlineButton(
+                  label: '</>',
+                  tooltip: 'Inline Code',
+                  style: const TextStyle(fontFamily: 'SF Mono', fontSize: 11.5, fontWeight: FontWeight.bold),
+                  onTap: () => onSelectFormat(NoteTextFormat.code),
                 ),
               ],
             ),

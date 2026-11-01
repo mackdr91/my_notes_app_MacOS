@@ -37,6 +37,14 @@ class NoteAttachmentSerializer(serializers.Serializer):
     fileSize = serializers.IntegerField(min_value=0)
 
 
+class NoteCodeBlockSerializer(serializers.Serializer):
+    """Serializer for embedded code blocks inside notes."""
+
+    id = serializers.CharField(max_length=128)
+    code = serializers.CharField(allow_blank=True, default='')
+    language = serializers.CharField(max_length=64, default='dart')
+
+
 class NoteSerializer(serializers.Serializer):
     """Serializer for Apple Note documents with explicit validations."""
 
@@ -52,6 +60,7 @@ class NoteSerializer(serializers.Serializer):
     checklists = ChecklistItemSerializer(many=True, required=False, default=list)
     tables = NoteTableSerializer(many=True, required=False, default=list)
     attachments = NoteAttachmentSerializer(many=True, required=False, default=list)
+    codeBlocks = NoteCodeBlockSerializer(many=True, required=False, default=list)
     createdAt = serializers.DateTimeField()
     updatedAt = serializers.DateTimeField()
 

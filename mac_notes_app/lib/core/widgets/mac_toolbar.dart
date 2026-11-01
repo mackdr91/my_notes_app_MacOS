@@ -12,6 +12,7 @@ class MacToolbar extends StatefulWidget {
   final VoidCallback onToggleChecklist;
   final VoidCallback onInsertTable;
   final VoidCallback onToggleFormatMenu;
+  final VoidCallback onInsertCodeBlock;
   final VoidCallback onAttachMedia;
   final VoidCallback onToggleLock;
 
@@ -20,6 +21,7 @@ class MacToolbar extends StatefulWidget {
     required this.onToggleChecklist,
     required this.onInsertTable,
     required this.onToggleFormatMenu,
+    required this.onInsertCodeBlock,
     required this.onAttachMedia,
     required this.onToggleLock,
   });
@@ -155,7 +157,17 @@ class _MacToolbarState extends State<MacToolbar> {
 
           const SizedBox(width: 4),
 
-          // 8. Attachment button
+          // 8. Code Block button (</>)
+          _ToolbarIconButton(
+            icon: CupertinoIcons.chevron_left_slash_chevron_right,
+            tooltip: 'Insert code block (Cmd+Shift+C)',
+            enabled: notesProvider.selectedNoteId != null,
+            onPressed: widget.onInsertCodeBlock,
+          ),
+
+          const SizedBox(width: 4),
+
+          // 9. Attachment button
           _ToolbarIconButton(
             icon: CupertinoIcons.paperclip,
             tooltip: 'Attach file or photo',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill/quill_delta.dart';
 
 /// Converts markdown syntax to formatted rich text in real-time while typing or from multi-line text.
 class MarkdownConverter {
@@ -175,10 +176,8 @@ class MarkdownConverter {
       return Document()..insert(0, '\n');
     }
 
-    final doc = Document();
+    final delta = Delta();
     final lines = markdown.split('\n');
-
-    int currentOffset = 0;
     bool isFirstLine = true;
 
     for (var i = 0; i < lines.length; i++) {
@@ -222,23 +221,23 @@ class MarkdownConverter {
       // Parse inline markdown tokens inside this line
       final spans = _parseInlineMarkdown(line);
       for (final span in spans) {
-        doc.insert(currentOffset, span.text);
-        if (span.isBold) doc.format(currentOffset, span.text.length, Attribute.bold);
-        if (span.isItalic) doc.format(currentOffset, span.text.length, Attribute.italic);
-        if (span.isCode) doc.format(currentOffset, span.text.length, Attribute.inlineCode);
-        if (span.isStrike) doc.format(currentOffset, span.text.length, Attribute.strikeThrough);
-        currentOffset += span.text.length;
+        if (span.text.isEmpty) continue;
+        final Map<String, dynamic> attrs = {};
+        if (span.isBold) attrs[Attribute.bold.key] = Attribute.bold.value;
+        if (span.isItalic) attrs[Attribute.italic.key] = Attribute.italic.value;
+        if (span.isCode) attrs[Attribute.inlineCode.key] = Attribute.inlineCode.value;
+        if (span.isStrike) attrs[Attribute.strikeThrough.key] = Attribute.strikeThrough.value;
+
+        delta.insert(span.text, attrs.isNotEmpty ? attrs : null);
       }
 
       // Add newline and line format
-      doc.insert(currentOffset, '\n');
-      if (lineAttribute != null) {
-        doc.format(currentOffset, 1, lineAttribute);
-      }
-      currentOffset += 1;
+      final Map<String, dynamic>? lineAttrs =
+          lineAttribute != null ? {lineAttribute.key: lineAttribute.value} : null;
+      delta.insert('\n', lineAttrs);
     }
 
-    return doc;
+    return Document.fromDelta(delta);
   }
 
   static List<_InlineSpan> _parseInlineMarkdown(String text) {

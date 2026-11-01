@@ -571,6 +571,80 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // --- Code Block operations ---
+
+  Future<void> addCodeBlock(String noteId, {String language = 'dart', String code = ''}) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final newBlock = NoteCodeBlock(
+      id: const Uuid().v4(),
+      language: language,
+      code: code.isNotEmpty ? code : '// Write your $language code here\n',
+    );
+
+    final updated = List<NoteCodeBlock>.from(_notes[noteIndex].codeBlocks)..add(newBlock);
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      codeBlocks: updated,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  Future<void> updateCodeBlockText(String noteId, String codeBlockId, String code) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updated = _notes[noteIndex].codeBlocks.map((cb) {
+      if (cb.id == codeBlockId) {
+        return cb.copyWith(code: code);
+      }
+      return cb;
+    }).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      codeBlocks: updated,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  Future<void> updateCodeBlockLanguage(String noteId, String codeBlockId, String language) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updated = _notes[noteIndex].codeBlocks.map((cb) {
+      if (cb.id == codeBlockId) {
+        return cb.copyWith(language: language);
+      }
+      return cb;
+    }).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      codeBlocks: updated,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  Future<void> removeCodeBlock(String noteId, String codeBlockId) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updated = _notes[noteIndex].codeBlocks.where((cb) => cb.id != codeBlockId).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      codeBlocks: updated,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
   // --- Lock operations ---
 
   Future<void> setNoteLock(String noteId, {required bool isLocked, String? password}) async {
