@@ -84,13 +84,18 @@ class MongoDBManager:
 
     @classmethod
     def reset(cls) -> None:
-        """Resets all collections for test isolation."""
+        """Resets all collections for test isolation.
+
+        Refuses to touch a live MongoDB database unless its name ends with
+        '_test', so running the test suite can never wipe real note data.
+        """
         if cls._db is not None:
-            try:
-                cls._db['notes'].delete_many({})
-                cls._db['folders'].delete_many({})
-            except Exception:
-                pass
+            if not cls._db.name.endswith('_test'):
+                raise RuntimeError(
+                    f"Refusing to reset non-test MongoDB database '{cls._db.name}'."
+                )
+            cls._db['notes'].delete_many({})
+            cls._db['folders'].delete_many({})
         for store in cls._in_memory_stores.values():
             store.clear()
 

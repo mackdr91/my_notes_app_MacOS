@@ -1,5 +1,6 @@
 """Django settings for Apple Notes replica backend."""
 import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -76,6 +77,10 @@ DATABASES = {
 # MongoDB Database Configuration
 MONGODB_URI: str = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/')
 MONGODB_DB_NAME: str = os.getenv('MONGODB_DB_NAME', 'mac_notes_db')
+
+# Isolate the test suite in its own MongoDB database so tests never touch real data.
+if len(sys.argv) > 1 and sys.argv[1] == 'test':
+    MONGODB_DB_NAME = f'{MONGODB_DB_NAME}_test'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
