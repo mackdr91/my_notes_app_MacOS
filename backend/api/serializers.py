@@ -44,6 +44,7 @@ class NoteSerializer(serializers.Serializer):
     folderId = serializers.CharField(max_length=128)
     title = serializers.CharField(max_length=512, allow_blank=True, default='')
     body = serializers.CharField(allow_blank=True, default='')
+    richTextJson = serializers.CharField(allow_blank=True, allow_null=True, required=False, default=None)
     tags = serializers.ListField(child=serializers.CharField(max_length=64), required=False, default=list)
     isPinned = serializers.BooleanField(default=False)
     isLocked = serializers.BooleanField(default=False)
