@@ -334,6 +334,14 @@ class _EditorViewState extends State<EditorView> {
                             onAddRow: () => notesProvider.addTableRow(note.id, table.id),
                             onAddColumn: () => notesProvider.addTableColumn(note.id, table.id),
                             onDeleteTable: () => notesProvider.removeTable(note.id, table.id),
+                            onDeleteRow: (rowIndex) =>
+                                notesProvider.deleteTableRow(note.id, table.id, rowIndex),
+                            onDeleteColumn: (colIndex) =>
+                                notesProvider.deleteTableColumn(note.id, table.id, colIndex),
+                            onInsertRow: (atIndex) =>
+                                notesProvider.insertTableRow(note.id, table.id, atIndex),
+                            onInsertColumn: (atIndex) =>
+                                notesProvider.insertTableColumn(note.id, table.id, atIndex),
                           );
                         }),
                       ],

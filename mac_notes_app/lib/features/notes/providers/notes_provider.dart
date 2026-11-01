@@ -470,6 +470,107 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteTableRow(String noteId, String tableId, int rowIndex) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updatedTables = _notes[noteIndex].tables.map((table) {
+      if (table.id == tableId) {
+        if (table.rowCount <= 1) return table;
+        if (rowIndex < 0 || rowIndex >= table.cells.length) return table;
+
+        final newCells = table.cells.map((r) => List<String>.from(r)).toList();
+        newCells.removeAt(rowIndex);
+        return table.copyWith(rowCount: newCells.length, cells: newCells);
+      }
+      return table;
+    }).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      tables: updatedTables,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  Future<void> deleteTableColumn(String noteId, String tableId, int colIndex) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updatedTables = _notes[noteIndex].tables.map((table) {
+      if (table.id == tableId) {
+        if (table.colCount <= 1) return table;
+
+        final newCells = table.cells.map((r) {
+          final rowCopy = List<String>.from(r);
+          if (colIndex >= 0 && colIndex < rowCopy.length) {
+            rowCopy.removeAt(colIndex);
+          }
+          return rowCopy;
+        }).toList();
+
+        final newColCount = newCells.isNotEmpty ? newCells.first.length : (table.colCount - 1);
+        return table.copyWith(colCount: newColCount, cells: newCells);
+      }
+      return table;
+    }).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      tables: updatedTables,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  Future<void> insertTableRow(String noteId, String tableId, int atIndex) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updatedTables = _notes[noteIndex].tables.map((table) {
+      if (table.id == tableId) {
+        final newCells = table.cells.map((r) => List<String>.from(r)).toList();
+        final safeIndex = atIndex.clamp(0, newCells.length);
+        newCells.insert(safeIndex, List<String>.filled(table.colCount, ''));
+        return table.copyWith(rowCount: newCells.length, cells: newCells);
+      }
+      return table;
+    }).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      tables: updatedTables,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  Future<void> insertTableColumn(String noteId, String tableId, int atIndex) async {
+    final noteIndex = _notes.indexWhere((n) => n.id == noteId);
+    if (noteIndex == -1) return;
+
+    final updatedTables = _notes[noteIndex].tables.map((table) {
+      if (table.id == tableId) {
+        final newCells = table.cells.map((r) {
+          final rowCopy = List<String>.from(r);
+          final safeIndex = atIndex.clamp(0, rowCopy.length);
+          rowCopy.insert(safeIndex, '');
+          return rowCopy;
+        }).toList();
+        return table.copyWith(colCount: table.colCount + 1, cells: newCells);
+      }
+      return table;
+    }).toList();
+
+    _notes[noteIndex] = _notes[noteIndex].copyWith(
+      tables: updatedTables,
+      updatedAt: DateTime.now(),
+    );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
   // --- Lock operations ---
 
   Future<void> setNoteLock(String noteId, {required bool isLocked, String? password}) async {
