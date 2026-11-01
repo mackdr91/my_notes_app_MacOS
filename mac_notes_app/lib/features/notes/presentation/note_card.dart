@@ -35,9 +35,9 @@ class _NoteCardState extends State<NoteCard> {
 
     Color backgroundColor = Colors.transparent;
     if (widget.isSelected) {
-      backgroundColor = isDark ? const Color(0xFF4A3E1E) : const Color(0xFFFDECB2);
+      backgroundColor = NotesTheme.cardSelected(context);
     } else if (_isHovered) {
-      backgroundColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7);
+      backgroundColor = NotesTheme.cardHover(context);
     }
 
     final relativeDate = NotesUtils.formatListDate(widget.note.updatedAt);

@@ -40,7 +40,7 @@ class AttachmentWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6.0),
       constraints: const BoxConstraints(maxWidth: 420),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
+        color: isDark ? const Color(0xFF141416) : const Color(0xFFF2F2F7),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(color: NotesTheme.divider(context), width: 0.8),
       ),

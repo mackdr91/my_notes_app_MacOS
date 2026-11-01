@@ -4,6 +4,7 @@ import 'core/theme/notes_theme.dart';
 import 'core/widgets/mac_three_column_scaffold.dart';
 import 'features/folders/providers/folder_provider.dart';
 import 'features/notes/providers/notes_provider.dart';
+import 'features/theme/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,16 +19,21 @@ class MacNotesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => FolderProvider()),
         ChangeNotifierProvider(create: (_) => NotesProvider()),
       ],
-      child: MaterialApp(
-        title: 'Notes',
-        debugShowCheckedModeBanner: false,
-        theme: NotesTheme.lightTheme,
-        darkTheme: NotesTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        home: const MacThreeColumnScaffold(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            title: 'Notes',
+            debugShowCheckedModeBanner: false,
+            theme: NotesTheme.lightTheme,
+            darkTheme: NotesTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const MacThreeColumnScaffold(),
+          );
+        },
       ),
     );
   }

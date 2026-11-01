@@ -4,6 +4,7 @@ import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
 import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:mac_notes_app/features/theme/presentation/theme_mode_switcher.dart';
 import 'package:provider/provider.dart';
 
 /// Pixel-accurate macOS unified toolbar matching Apple Notes.
@@ -225,6 +226,11 @@ class _MacToolbarState extends State<MacToolbar> {
               },
             ),
           ),
+
+          const SizedBox(width: 10),
+
+          // 11. Theme Mode Switcher (System / Light / Dark)
+          const ThemeModeSwitcher(),
         ],
       ),
     );

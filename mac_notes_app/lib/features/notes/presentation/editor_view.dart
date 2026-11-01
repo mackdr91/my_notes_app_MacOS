@@ -166,7 +166,6 @@ class _EditorViewState extends State<EditorView> {
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
     final note = notesProvider.selectedNote;
-    final isDark = NotesTheme.isDark(context);
 
     if (note == null) {
       return Container(
@@ -269,7 +268,7 @@ class _EditorViewState extends State<EditorView> {
         const VerticalSpacing(4, 4),
         const VerticalSpacing(0, 0),
         BoxDecoration(
-          color: isDark ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
+          color: NotesTheme.codeBackground(context),
           borderRadius: BorderRadius.circular(4.0),
         ),
       ),

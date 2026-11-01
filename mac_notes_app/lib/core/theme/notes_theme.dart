@@ -1,38 +1,41 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// Authentic color palette and typography matching the native Apple Notes macOS desktop app.
+/// Authentic color palette and typography matching the native Apple Notes macOS desktop app,
+/// enhanced with a High Contrast Pure Black AMOLED Dark Mode and Ultra-Crisp Light Mode.
 class NotesTheme {
   // Apple Notes Signature Amber / Gold Accent
   static const Color accentGold = Color(0xFFECA825);
   static const Color accentGoldLight = Color(0xFFFFF3D4);
   static const Color accentGoldDark = Color(0xFFD48806);
 
-  // Light Mode Palette
-  static const Color lightSidebarBackground = Color(0xFFEBEBF0);
+  // High Contrast Light Mode Palette
+  static const Color lightSidebarBackground = Color(0xFFF2F2F7);
   static const Color lightListBackground = Color(0xFFFFFFFF);
   static const Color lightEditorBackground = Color(0xFFFFFFFF);
   static const Color lightDivider = Color(0xFFE5E5EA);
   static const Color lightCardHover = Color(0xFFF2F2F7);
   static const Color lightCardSelected = Color(0xFFFEEBBF);
-  static const Color lightTextPrimary = Color(0xFF1D1D1F);
-  static const Color lightTextSecondary = Color(0xFF86868B);
-  static const Color lightTextTertiary = Color(0xFFA1A1A6);
-  static const Color lightToolbarBackground = Color(0xFFEFEFF4);
-  static const Color lightSearchBackground = Color(0xFFE3E3E8);
+  static const Color lightTextPrimary = Color(0xFF000000); // Crisp pure black
+  static const Color lightTextSecondary = Color(0xFF6E6E73);
+  static const Color lightTextTertiary = Color(0xFF8E8E93);
+  static const Color lightToolbarBackground = Color(0xFFF7F7F9);
+  static const Color lightSearchBackground = Color(0xFFE5E5EA);
+  static const Color lightCodeBackground = Color(0xFFF2F2F7);
 
-  // Dark Mode Palette
-  static const Color darkSidebarBackground = Color(0xFF1E1E1E);
-  static const Color darkListBackground = Color(0xFF252528);
-  static const Color darkEditorBackground = Color(0xFF1C1C1E);
-  static const Color darkDivider = Color(0xFF38383A);
-  static const Color darkCardHover = Color(0xFF2C2C2E);
-  static const Color darkCardSelected = Color(0xFF4A3E1E);
-  static const Color darkTextPrimary = Color(0xFFF5F5F7);
-  static const Color darkTextSecondary = Color(0xFF8E8E93);
-  static const Color darkTextTertiary = Color(0xFF636366);
-  static const Color darkToolbarBackground = Color(0xFF262628);
-  static const Color darkSearchBackground = Color(0xFF323236);
+  // High Contrast Pure Black Dark Mode Palette
+  static const Color darkSidebarBackground = Color(0xFF0D0D0E); // Deep black-grey
+  static const Color darkListBackground = Color(0xFF141416); // High contrast slate
+  static const Color darkEditorBackground = Color(0xFF000000); // Pure AMOLED Black
+  static const Color darkDivider = Color(0xFF2C2C30);
+  static const Color darkCardHover = Color(0xFF202024);
+  static const Color darkCardSelected = Color(0xFF382A0E); // Subtle amber hue
+  static const Color darkTextPrimary = Color(0xFFFFFFFF); // Crisp pure white
+  static const Color darkTextSecondary = Color(0xFFA1A1A6);
+  static const Color darkTextTertiary = Color(0xFF71717A);
+  static const Color darkToolbarBackground = Color(0xFF121214);
+  static const Color darkSearchBackground = Color(0xFF1C1C20);
+  static const Color darkCodeBackground = Color(0xFF18181B);
 
   /// Check whether the current context is in dark mode
   static bool isDark(BuildContext context) {
@@ -73,6 +76,9 @@ class NotesTheme {
   static Color searchBackground(BuildContext context) =>
       isDark(context) ? darkSearchBackground : lightSearchBackground;
 
+  static Color codeBackground(BuildContext context) =>
+      isDark(context) ? darkCodeBackground : lightCodeBackground;
+
   /// Typography styles matching macOS Apple Notes SF Pro hierarchy
   static TextStyle titleStyle(BuildContext context) => TextStyle(
         fontFamily: '.AppleSystemUIFont',
@@ -111,7 +117,7 @@ class NotesTheme {
         fontSize: 13.5,
         fontWeight: FontWeight.normal,
         color: textPrimary(context),
-        backgroundColor: isDark(context) ? const Color(0xFF2C2C2E) : const Color(0xFFF2F2F7),
+        backgroundColor: codeBackground(context),
         height: 1.4,
       );
 
@@ -166,7 +172,7 @@ class NotesTheme {
       fontFamily: '.AppleSystemUIFont',
       tooltipTheme: const TooltipThemeData(
         decoration: BoxDecoration(
-          color: Color(0xE6323236),
+          color: Color(0xE61C1C20),
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
         ),
         textStyle: TextStyle(

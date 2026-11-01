@@ -13,6 +13,7 @@ import 'package:mac_notes_app/features/notes/presentation/notes_gallery_view.dar
 import 'package:mac_notes_app/features/notes/presentation/notes_list_view.dart';
 import 'package:mac_notes_app/features/notes/presentation/widgets/note_lock_dialog.dart';
 import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:mac_notes_app/features/theme/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -56,6 +57,10 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
         // Cmd+2: Gallery View
         const SingleActivator(LogicalKeyboardKey.digit2, meta: true): () {
           notesProvider.setViewMode(NotesViewMode.gallery);
+        },
+        // Cmd+Shift+T: Cycle Theme Mode
+        const SingleActivator(LogicalKeyboardKey.keyT, meta: true, shift: true): () {
+          context.read<ThemeProvider>().cycleThemeMode();
         },
       },
       child: Focus(
