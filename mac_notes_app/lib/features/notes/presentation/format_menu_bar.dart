@@ -1,4 +1,11 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Floating formatting toolbar ('Aa' popover) with animated inline style buttons and paragraph options.
+ */
+
 import 'package:flutter/material.dart';
+import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 
 enum NoteTextFormat {
@@ -26,7 +33,9 @@ class FormatMenuBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = NotesTheme.isDark(context);
 
-    return Container(
+    return AnimatedContainer(
+      duration: NotesConstants.microAnimationDuration,
+      curve: NotesConstants.defaultAnimationCurve,
       width: 230,
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       decoration: BoxDecoration(
@@ -152,6 +161,7 @@ class _InlineButton extends StatefulWidget {
 
 class _InlineButtonState extends State<_InlineButton> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -161,23 +171,36 @@ class _InlineButtonState extends State<_InlineButton> {
       message: widget.tooltip,
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
+        onExit: (_) => setState(() {
+          _isHovered = false;
+          _isPressed = false;
+        }),
         child: GestureDetector(
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
           onTap: widget.onTap,
-          child: Container(
-            width: 32,
-            height: 28,
-            decoration: BoxDecoration(
-              color: _isHovered
-                  ? (isDark ? const Color(0xFF3A3A3C) : const Color(0xFFE5E5EA))
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-            child: Center(
-              child: Text(
-                widget.label,
-                style: widget.style.copyWith(
-                  color: NotesTheme.textPrimary(context),
+          child: AnimatedScale(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            scale: _isPressed ? 0.92 : 1.0,
+            child: AnimatedContainer(
+              duration: NotesConstants.microAnimationDuration,
+              curve: NotesConstants.defaultAnimationCurve,
+              width: 32,
+              height: 28,
+              decoration: BoxDecoration(
+                color: _isHovered
+                    ? (isDark ? const Color(0xFF3A3A3C) : const Color(0xFFE5E5EA))
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              child: Center(
+                child: Text(
+                  widget.label,
+                  style: widget.style.copyWith(
+                    color: NotesTheme.textPrimary(context),
+                  ),
                 ),
               ),
             ),
@@ -215,7 +238,9 @@ class _FormatOptionState extends State<_FormatOption> {
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: NotesConstants.microAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
           padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 5.5),
           color: _isHovered
               ? (isDark ? const Color(0xFF3A3A3C) : const Color(0xFFF2F2F7))

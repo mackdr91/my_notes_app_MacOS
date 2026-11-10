@@ -1,5 +1,12 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Root application entry point and provider configuration with smooth theme mode interpolation.
+ */
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/constants/notes_constants.dart';
 import 'core/theme/notes_theme.dart';
 import 'core/widgets/mac_three_column_scaffold.dart';
 import 'features/folders/providers/folder_provider.dart';
@@ -31,6 +38,8 @@ class MacNotesApp extends StatelessWidget {
             theme: NotesTheme.lightTheme,
             darkTheme: NotesTheme.darkTheme,
             themeMode: themeProvider.themeMode,
+            themeAnimationDuration: NotesConstants.themeAnimationDuration,
+            themeAnimationCurve: NotesConstants.defaultAnimationCurve,
             home: const MacThreeColumnScaffold(),
           );
         },

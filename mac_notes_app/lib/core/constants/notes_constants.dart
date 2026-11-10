@@ -1,3 +1,11 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: System constants, layout constraints, and fluid animation timing definitions for the Apple Notes macOS replica.
+ */
+
+import 'package:flutter/animation.dart';
+
 /// System constants for the Apple Notes macOS replica.
 class NotesConstants {
   // Folder IDs
@@ -30,4 +38,14 @@ class NotesConstants {
 
   // Window titlebar traffic light inset
   static const double trafficLightInsetLeft = 80.0;
+
+  // Fluid Animation Timings & Curves
+  static const Duration microAnimationDuration = Duration(milliseconds: 150);
+  static const Duration contentAnimationDuration = Duration(milliseconds: 220);
+  static const Duration layoutAnimationDuration = Duration(milliseconds: 250);
+  static const Duration themeAnimationDuration = Duration(milliseconds: 240);
+
+  static const Curve defaultAnimationCurve = Curves.easeOutCubic;
+  static const Curve exitAnimationCurve = Curves.easeInCubic;
+  static const Curve layoutAnimationCurve = Curves.fastOutSlowIn;
 }

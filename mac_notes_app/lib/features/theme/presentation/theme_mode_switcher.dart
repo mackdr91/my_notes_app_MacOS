@@ -1,5 +1,12 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Segmented toolbar control for switching between System, Light, and Dark mode with smooth animated selection pills.
+ */
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 import 'package:mac_notes_app/features/theme/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +20,9 @@ class ThemeModeSwitcher extends StatelessWidget {
     final isDark = NotesTheme.isDark(context);
     final currentMode = context.select<ThemeProvider, ThemeMode>((p) => p.themeMode);
 
-    return Container(
+    return AnimatedContainer(
+      duration: NotesConstants.themeAnimationDuration,
+      curve: NotesConstants.defaultAnimationCurve,
       height: 28,
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF26262A) : const Color(0xFFE5E5EA),
@@ -81,6 +90,7 @@ class _ThemeSegmentButton extends StatefulWidget {
 
 class _ThemeSegmentButtonState extends State<_ThemeSegmentButton> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -104,30 +114,43 @@ class _ThemeSegmentButtonState extends State<_ThemeSegmentButton> {
       waitDuration: const Duration(milliseconds: 500),
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
+        onExit: (_) => setState(() {
+          _isHovered = false;
+          _isPressed = false;
+        }),
         child: GestureDetector(
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
           onTap: widget.onPressed,
-          child: Container(
-            width: 26,
-            height: 24,
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(4.5),
-              boxShadow: widget.isSelected
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
-                        blurRadius: 1.5,
-                        offset: const Offset(0, 0.5),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Center(
-              child: Icon(
-                widget.icon,
-                size: 13.5,
-                color: iconColor,
+          child: AnimatedScale(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            scale: _isPressed ? 0.92 : 1.0,
+            child: AnimatedContainer(
+              duration: NotesConstants.microAnimationDuration,
+              curve: NotesConstants.defaultAnimationCurve,
+              width: 26,
+              height: 24,
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(4.5),
+                boxShadow: widget.isSelected
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
+                          blurRadius: 1.5,
+                          offset: const Offset(0, 0.5),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Center(
+                child: Icon(
+                  widget.icon,
+                  size: 13.5,
+                  color: iconColor,
+                ),
               ),
             ),
           ),

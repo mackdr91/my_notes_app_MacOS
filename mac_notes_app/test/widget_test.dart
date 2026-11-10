@@ -1,8 +1,15 @@
-import 'dart:ui';
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Unit and widget tests for NotesUtils, FolderProvider, NotesProvider, and fluid UI transitions.
+ */
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/utils/notes_utils.dart';
 import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
+import 'package:mac_notes_app/features/notes/presentation/notes_gallery_view.dart';
 import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
 import 'package:mac_notes_app/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -104,6 +111,33 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.byType(MacNotesApp), findsOneWidget);
+    });
+
+    testWidgets('MacNotesApp animates sidebar toggle and view mode transitions smoothly', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(const MacNotesApp());
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      // Toggle sidebar collapse and pump mid-animation to verify zero overflow
+      await tester.tap(find.byIcon(CupertinoIcons.sidebar_left));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      // Switch to Gallery View and pump through transition
+      await tester.tap(find.byIcon(CupertinoIcons.square_grid_2x2));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(find.byType(NotesGalleryView), findsOneWidget);
+
+      // Switch back to List View
+      await tester.tap(find.byIcon(CupertinoIcons.list_bullet));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 250));
     });
   });
 }

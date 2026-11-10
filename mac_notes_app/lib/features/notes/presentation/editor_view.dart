@@ -1,6 +1,13 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Right-hand column WYSIWYG rich note editor featuring fluid note-switching transitions, animated format popover, and smooth embedded block animations.
+ */
+
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 import 'package:mac_notes_app/core/utils/markdown_converter.dart';
 import 'package:mac_notes_app/core/utils/notes_utils.dart';
@@ -171,125 +178,122 @@ class _EditorViewState extends State<EditorView> {
     final notesProvider = context.watch<NotesProvider>();
     final note = notesProvider.selectedNote;
 
+    Widget bodyContent;
+
     if (note == null) {
-      return Container(
-        color: NotesTheme.editorBackground(context),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                CupertinoIcons.square_pencil,
-                size: 48,
-                color: NotesTheme.textTertiary(context),
+      bodyContent = Center(
+        key: const ValueKey('editor_empty'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              CupertinoIcons.square_pencil,
+              size: 48,
+              color: NotesTheme.textTertiary(context),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No Note Selected',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: NotesTheme.textSecondary(context),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'No Note Selected',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: NotesTheme.textSecondary(context),
-                ),
-              ),
-            ],
+            ),
+          ],
+        ),
+      );
+    } else if (note.isLocked) {
+      bodyContent = _LockedNoteView(
+        key: ValueKey('editor_locked_${note.id}'),
+        note: note,
+      );
+    } else if (_quillController == null) {
+      bodyContent = const Center(
+        key: ValueKey('editor_loading'),
+        child: CupertinoActivityIndicator(),
+      );
+    } else {
+      final appleCustomStyles = DefaultStyles(
+        h1: DefaultTextBlockStyle(
+          TextStyle(
+            fontFamily: '.AppleSystemUIFont',
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: NotesTheme.textPrimary(context),
+            height: 1.25,
+          ),
+          const HorizontalSpacing(0, 0),
+          const VerticalSpacing(4, 8),
+          const VerticalSpacing(0, 0),
+          null,
+        ),
+        h2: DefaultTextBlockStyle(
+          TextStyle(
+            fontFamily: '.AppleSystemUIFont',
+            fontSize: 19.0,
+            fontWeight: FontWeight.w600,
+            color: NotesTheme.textPrimary(context),
+            height: 1.3,
+          ),
+          const HorizontalSpacing(0, 0),
+          const VerticalSpacing(4, 6),
+          const VerticalSpacing(0, 0),
+          null,
+        ),
+        h3: DefaultTextBlockStyle(
+          TextStyle(
+            fontFamily: '.AppleSystemUIFont',
+            fontSize: 16.0,
+            fontWeight: FontWeight.w600,
+            color: NotesTheme.textPrimary(context),
+            height: 1.35,
+          ),
+          const HorizontalSpacing(0, 0),
+          const VerticalSpacing(2, 4),
+          const VerticalSpacing(0, 0),
+          null,
+        ),
+        paragraph: DefaultTextBlockStyle(
+          TextStyle(
+            fontFamily: '.AppleSystemUIFont',
+            fontSize: 14.5,
+            fontWeight: FontWeight.normal,
+            color: NotesTheme.textPrimary(context),
+            height: 1.45,
+          ),
+          const HorizontalSpacing(0, 0),
+          const VerticalSpacing(2, 2),
+          const VerticalSpacing(0, 0),
+          null,
+        ),
+        code: DefaultTextBlockStyle(
+          TextStyle(
+            fontFamily: 'SF Mono',
+            fontSize: 13.0,
+            color: NotesTheme.textPrimary(context),
+          ),
+          const HorizontalSpacing(0, 0),
+          const VerticalSpacing(4, 4),
+          const VerticalSpacing(0, 0),
+          BoxDecoration(
+            color: NotesTheme.codeBackground(context),
+            borderRadius: BorderRadius.circular(4.0),
           ),
         ),
+        inlineCode: InlineCodeStyle(
+          style: TextStyle(
+            fontFamily: 'SF Mono',
+            fontSize: 13.0,
+            color: NotesTheme.textPrimary(context),
+          ),
+          backgroundColor: NotesTheme.codeBackground(context),
+          radius: const Radius.circular(3.0),
+        ),
       );
-    }
 
-    if (note.isLocked) {
-      return _LockedNoteView(note: note);
-    }
-
-    if (_quillController == null) {
-      return Container(
-        color: NotesTheme.editorBackground(context),
-        child: const Center(child: CupertinoActivityIndicator()),
-      );
-    }
-
-    final appleCustomStyles = DefaultStyles(
-      h1: DefaultTextBlockStyle(
-        TextStyle(
-          fontFamily: '.AppleSystemUIFont',
-          fontSize: 24.0,
-          fontWeight: FontWeight.bold,
-          color: NotesTheme.textPrimary(context),
-          height: 1.25,
-        ),
-        const HorizontalSpacing(0, 0),
-        const VerticalSpacing(4, 8),
-        const VerticalSpacing(0, 0),
-        null,
-      ),
-      h2: DefaultTextBlockStyle(
-        TextStyle(
-          fontFamily: '.AppleSystemUIFont',
-          fontSize: 19.0,
-          fontWeight: FontWeight.w600,
-          color: NotesTheme.textPrimary(context),
-          height: 1.3,
-        ),
-        const HorizontalSpacing(0, 0),
-        const VerticalSpacing(4, 6),
-        const VerticalSpacing(0, 0),
-        null,
-      ),
-      h3: DefaultTextBlockStyle(
-        TextStyle(
-          fontFamily: '.AppleSystemUIFont',
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600,
-          color: NotesTheme.textPrimary(context),
-          height: 1.35,
-        ),
-        const HorizontalSpacing(0, 0),
-        const VerticalSpacing(2, 4),
-        const VerticalSpacing(0, 0),
-        null,
-      ),
-      paragraph: DefaultTextBlockStyle(
-        TextStyle(
-          fontFamily: '.AppleSystemUIFont',
-          fontSize: 14.5,
-          fontWeight: FontWeight.normal,
-          color: NotesTheme.textPrimary(context),
-          height: 1.45,
-        ),
-        const HorizontalSpacing(0, 0),
-        const VerticalSpacing(2, 2),
-        const VerticalSpacing(0, 0),
-        null,
-      ),
-      code: DefaultTextBlockStyle(
-        TextStyle(
-          fontFamily: 'SF Mono',
-          fontSize: 13.0,
-          color: NotesTheme.textPrimary(context),
-        ),
-        const HorizontalSpacing(0, 0),
-        const VerticalSpacing(4, 4),
-        const VerticalSpacing(0, 0),
-        BoxDecoration(
-          color: NotesTheme.codeBackground(context),
-          borderRadius: BorderRadius.circular(4.0),
-        ),
-      ),
-      inlineCode: InlineCodeStyle(
-        style: TextStyle(
-          fontFamily: 'SF Mono',
-          fontSize: 13.0,
-          color: NotesTheme.textPrimary(context),
-        ),
-        backgroundColor: NotesTheme.codeBackground(context),
-        radius: const Radius.circular(3.0),
-      ),
-    );
-
-    return Container(
-      color: NotesTheme.editorBackground(context),
-      child: Stack(
+      bodyContent = Stack(
+        key: ValueKey('editor_unlocked_${note.id}'),
         children: [
           Column(
             children: [
@@ -322,72 +326,123 @@ class _EditorViewState extends State<EditorView> {
                         ),
                       ),
 
-                      // Interactive Checklists Section
-                      if (note.checklists.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        ...note.checklists.map((item) {
-                          return ChecklistItemWidget(
-                            item: item,
-                            onToggle: (_) => notesProvider.toggleChecklist(note.id, item.id),
-                            onTextChanged: (newText) =>
-                                notesProvider.updateChecklistText(note.id, item.id, newText),
-                            onDelete: () => notesProvider.removeChecklist(note.id, item.id),
-                          );
-                        }),
-                      ],
+                      // Interactive Checklists Section with animated size expansion
+                      AnimatedSize(
+                        duration: NotesConstants.contentAnimationDuration,
+                        curve: NotesConstants.defaultAnimationCurve,
+                        alignment: Alignment.topCenter,
+                        child: note.checklists.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: note.checklists.map((item) {
+                                    return ChecklistItemWidget(
+                                      key: ValueKey('checklist_${item.id}'),
+                                      item: item,
+                                      onToggle: (_) =>
+                                          notesProvider.toggleChecklist(note.id, item.id),
+                                      onTextChanged: (newText) => notesProvider
+                                          .updateChecklistText(note.id, item.id, newText),
+                                      onDelete: () =>
+                                          notesProvider.removeChecklist(note.id, item.id),
+                                    );
+                                  }).toList(),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
 
-                      // Embedded Data Tables Section
-                      if (note.tables.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        ...note.tables.map((table) {
-                          return NoteTableWidget(
-                            table: table,
-                            onCellChanged: (row, col, val) =>
-                                notesProvider.updateTableCell(note.id, table.id, row, col, val),
-                            onAddRow: () => notesProvider.addTableRow(note.id, table.id),
-                            onAddColumn: () => notesProvider.addTableColumn(note.id, table.id),
-                            onDeleteTable: () => notesProvider.removeTable(note.id, table.id),
-                            onDeleteRow: (rowIndex) =>
-                                notesProvider.deleteTableRow(note.id, table.id, rowIndex),
-                            onDeleteColumn: (colIndex) =>
-                                notesProvider.deleteTableColumn(note.id, table.id, colIndex),
-                            onInsertRow: (atIndex) =>
-                                notesProvider.insertTableRow(note.id, table.id, atIndex),
-                            onInsertColumn: (atIndex) =>
-                                notesProvider.insertTableColumn(note.id, table.id, atIndex),
-                          );
-                        }),
-                      ],
+                      // Embedded Data Tables Section with animated size expansion
+                      AnimatedSize(
+                        duration: NotesConstants.contentAnimationDuration,
+                        curve: NotesConstants.defaultAnimationCurve,
+                        alignment: Alignment.topCenter,
+                        child: note.tables.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: note.tables.map((table) {
+                                    return NoteTableWidget(
+                                      key: ValueKey('table_${table.id}'),
+                                      table: table,
+                                      onCellChanged: (row, col, val) => notesProvider
+                                          .updateTableCell(note.id, table.id, row, col, val),
+                                      onAddRow: () =>
+                                          notesProvider.addTableRow(note.id, table.id),
+                                      onAddColumn: () =>
+                                          notesProvider.addTableColumn(note.id, table.id),
+                                      onDeleteTable: () =>
+                                          notesProvider.removeTable(note.id, table.id),
+                                      onDeleteRow: (rowIndex) => notesProvider.deleteTableRow(
+                                          note.id, table.id, rowIndex),
+                                      onDeleteColumn: (colIndex) => notesProvider
+                                          .deleteTableColumn(note.id, table.id, colIndex),
+                                      onInsertRow: (atIndex) => notesProvider.insertTableRow(
+                                          note.id, table.id, atIndex),
+                                      onInsertColumn: (atIndex) => notesProvider
+                                          .insertTableColumn(note.id, table.id, atIndex),
+                                    );
+                                  }).toList(),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
 
-                      // Embedded Code Blocks Section
-                      if (note.codeBlocks.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        ...note.codeBlocks.map((block) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: CodeBlockWidget(
-                              codeBlock: block,
-                              onCodeChanged: (newCode) =>
-                                  notesProvider.updateCodeBlockText(note.id, block.id, newCode),
-                              onLanguageChanged: (newLang) =>
-                                  notesProvider.updateCodeBlockLanguage(note.id, block.id, newLang),
-                              onDelete: () =>
-                                  notesProvider.removeCodeBlock(note.id, block.id),
-                            ),
-                          );
-                        }),
-                      ],
+                      // Embedded Code Blocks Section with animated size expansion
+                      AnimatedSize(
+                        duration: NotesConstants.contentAnimationDuration,
+                        curve: NotesConstants.defaultAnimationCurve,
+                        alignment: Alignment.topCenter,
+                        child: note.codeBlocks.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: note.codeBlocks.map((block) {
+                                    return Padding(
+                                      key: ValueKey('codeblock_${block.id}'),
+                                      padding: const EdgeInsets.only(bottom: 12.0),
+                                      child: CodeBlockWidget(
+                                        codeBlock: block,
+                                        onCodeChanged: (newCode) => notesProvider
+                                            .updateCodeBlockText(note.id, block.id, newCode),
+                                        onLanguageChanged: (newLang) => notesProvider
+                                            .updateCodeBlockLanguage(
+                                                note.id, block.id, newLang),
+                                        onDelete: () => notesProvider.removeCodeBlock(
+                                            note.id, block.id),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
 
-                      // Attachments Section
-                      if (note.attachments.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        ...note.attachments.map((attachment) {
-                          return AttachmentWidget(
-                            attachment: attachment,
-                            onDelete: () => notesProvider.removeAttachment(note.id, attachment.id),
-                          );
-                        }),
-                      ],
+                      // Attachments Section with animated size expansion
+                      AnimatedSize(
+                        duration: NotesConstants.contentAnimationDuration,
+                        curve: NotesConstants.defaultAnimationCurve,
+                        alignment: Alignment.topCenter,
+                        child: note.attachments.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: note.attachments.map((attachment) {
+                                    return AttachmentWidget(
+                                      key: ValueKey('attachment_${attachment.id}'),
+                                      attachment: attachment,
+                                      onDelete: () => notesProvider.removeAttachment(
+                                          note.id, attachment.id),
+                                    );
+                                  }).toList(),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
 
                       const SizedBox(height: 60),
                     ],
@@ -396,7 +451,9 @@ class _EditorViewState extends State<EditorView> {
               ),
 
               // Bottom Status Bar (Word & Character Count)
-              Container(
+              AnimatedContainer(
+                duration: NotesConstants.themeAnimationDuration,
+                curve: NotesConstants.defaultAnimationCurve,
                 height: 24,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 decoration: BoxDecoration(
@@ -411,12 +468,16 @@ class _EditorViewState extends State<EditorView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Flexible(
-                      child: Text(
-                        '$_wordCount words, $_charCount characters',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 10.5,
-                          color: NotesTheme.textTertiary(context),
+                      child: AnimatedSwitcher(
+                        duration: NotesConstants.microAnimationDuration,
+                        child: Text(
+                          '$_wordCount words, $_charCount characters',
+                          key: ValueKey<String>('${_wordCount}_$_charCount'),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            color: NotesTheme.textTertiary(context),
+                          ),
                         ),
                       ),
                     ),
@@ -426,19 +487,65 @@ class _EditorViewState extends State<EditorView> {
             ],
           ),
 
-          // Floating Format Menu ('Aa' popover)
-          if (widget.showFormatMenu)
-            Positioned(
-              top: 10,
-              right: 60,
-              child: FormatMenuBar(
-                onSelectFormat: (format) {
-                  _applyFormat(format);
-                  widget.onCloseFormatMenu();
-                },
-              ),
+          // Floating Format Menu ('Aa' popover) with scale & fade animation
+          Positioned(
+            top: 10,
+            right: 60,
+            child: AnimatedSwitcher(
+              duration: NotesConstants.microAnimationDuration,
+              switchInCurve: NotesConstants.defaultAnimationCurve,
+              switchOutCurve: NotesConstants.exitAnimationCurve,
+              transitionBuilder: (child, animation) {
+                final scaleAnimation = Tween<double>(
+                  begin: 0.92,
+                  end: 1.0,
+                ).animate(animation);
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: scaleAnimation,
+                    alignment: Alignment.topRight,
+                    child: child,
+                  ),
+                );
+              },
+              child: widget.showFormatMenu
+                  ? FormatMenuBar(
+                      key: const ValueKey('format_menu_open'),
+                      onSelectFormat: (format) {
+                        _applyFormat(format);
+                        widget.onCloseFormatMenu();
+                      },
+                    )
+                  : const SizedBox.shrink(key: ValueKey('format_menu_closed')),
             ),
+          ),
         ],
+      );
+    }
+
+    return AnimatedContainer(
+      duration: NotesConstants.themeAnimationDuration,
+      curve: NotesConstants.defaultAnimationCurve,
+      color: NotesTheme.editorBackground(context),
+      child: AnimatedSwitcher(
+        duration: NotesConstants.contentAnimationDuration,
+        switchInCurve: NotesConstants.defaultAnimationCurve,
+        switchOutCurve: NotesConstants.exitAnimationCurve,
+        transitionBuilder: (child, animation) {
+          final slideAnimation = Tween<Offset>(
+            begin: const Offset(0.0, 0.015),
+            end: Offset.zero,
+          ).animate(animation);
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: slideAnimation,
+              child: child,
+            ),
+          );
+        },
+        child: bodyContent,
       ),
     );
   }
@@ -447,7 +554,7 @@ class _EditorViewState extends State<EditorView> {
 class _LockedNoteView extends StatefulWidget {
   final Note note;
 
-  const _LockedNoteView({required this.note});
+  const _LockedNoteView({super.key, required this.note});
 
   @override
   State<_LockedNoteView> createState() => _LockedNoteViewState();
@@ -474,73 +581,76 @@ class _LockedNoteViewState extends State<_LockedNoteView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: NotesTheme.editorBackground(context),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 320),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: NotesTheme.accentGold.withValues(alpha: 0.15),
-                ),
-                child: const Icon(
-                  CupertinoIcons.lock_fill,
-                  size: 26,
-                  color: NotesTheme.accentGold,
-                ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 320),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: NotesTheme.accentGold.withValues(alpha: 0.15),
               ),
-              const SizedBox(height: 16),
-              Text(
-                'This Note is Locked',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: NotesTheme.textPrimary(context),
-                ),
+              child: const Icon(
+                CupertinoIcons.lock_fill,
+                size: 26,
+                color: NotesTheme.accentGold,
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Enter password to view note contents',
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: NotesTheme.textSecondary(context),
-                ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'This Note is Locked',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: NotesTheme.textPrimary(context),
               ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _passwordController,
-                obscureText: true,
-                placeholder: 'Password',
-                style: TextStyle(
-                  color: NotesTheme.textPrimary(context),
-                  fontSize: 13.0,
-                ),
-                onSubmitted: (_) => _unlock(),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Enter password to view note contents',
+              style: TextStyle(
+                fontSize: 12.5,
+                color: NotesTheme.textSecondary(context),
               ),
-              if (_errorMessage != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  _errorMessage!,
-                  style: const TextStyle(
-                    color: CupertinoColors.destructiveRed,
-                    fontSize: 11.5,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 14),
-              CupertinoButton.filled(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                onPressed: _unlock,
-                child: const Text('Unlock', style: TextStyle(fontSize: 13)),
+            ),
+            const SizedBox(height: 16),
+            CupertinoTextField(
+              controller: _passwordController,
+              obscureText: true,
+              placeholder: 'Password',
+              style: TextStyle(
+                color: NotesTheme.textPrimary(context),
+                fontSize: 13.0,
               ),
-            ],
-          ),
+              onSubmitted: (_) => _unlock(),
+            ),
+            AnimatedSize(
+              duration: NotesConstants.microAnimationDuration,
+              curve: NotesConstants.defaultAnimationCurve,
+              child: _errorMessage != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(
+                          color: CupertinoColors.destructiveRed,
+                          fontSize: 11.5,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 14),
+            CupertinoButton.filled(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              onPressed: _unlock,
+              child: const Text('Unlock', style: TextStyle(fontSize: 13)),
+            ),
+          ],
         ),
       ),
     );

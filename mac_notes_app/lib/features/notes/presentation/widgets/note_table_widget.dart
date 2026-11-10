@@ -1,5 +1,12 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Embedded interactive table widget matching Apple Notes with fluid row/column handle hover animations and context menus.
+ */
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 import 'package:mac_notes_app/features/notes/models/note_model.dart';
 
@@ -33,7 +40,9 @@ class NoteTableWidget extends StatelessWidget {
     final isDark = NotesTheme.isDark(context);
     final borderColor = NotesTheme.divider(context);
 
-    return Container(
+    return AnimatedContainer(
+      duration: NotesConstants.microAnimationDuration,
+      curve: NotesConstants.defaultAnimationCurve,
       margin: const EdgeInsets.symmetric(vertical: 12.0),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0D0D0E) : Colors.white,
@@ -44,7 +53,9 @@ class NoteTableWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // 1. Table Top Action Bar
-          Container(
+          AnimatedContainer(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF141416) : const Color(0xFFF7F7F8),
@@ -55,7 +66,7 @@ class NoteTableWidget extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     CupertinoIcons.table,
                     size: 13,
                     color: NotesTheme.accentGold,
@@ -282,9 +293,9 @@ class NoteTableWidget extends StatelessWidget {
           ),
         ),
         const PopupMenuDivider(height: 6),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'delete_table',
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(CupertinoIcons.trash_fill, size: 13, color: CupertinoColors.destructiveRed),
@@ -350,7 +361,9 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapUp: (details) => _showMenu(context, details.globalPosition),
-        child: Container(
+        child: AnimatedContainer(
+          duration: NotesConstants.microAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
           height: 22,
           alignment: Alignment.center,
           color: _isHovered
@@ -359,12 +372,16 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                String.fromCharCode(65 + widget.colIndex), // A, B, C, ...
+              AnimatedDefaultTextStyle(
+                duration: NotesConstants.microAnimationDuration,
+                curve: NotesConstants.defaultAnimationCurve,
                 style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w600,
                   color: _isHovered ? NotesTheme.accentGold : NotesTheme.textTertiary(context),
+                ),
+                child: Text(
+                  String.fromCharCode(65 + widget.colIndex), // A, B, C, ...
                 ),
               ),
               const SizedBox(width: 3),
@@ -485,27 +502,34 @@ class _RowHeaderHandleState extends State<_RowHeaderHandle> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapUp: (details) => _showMenu(context, details.globalPosition),
-        child: Container(
+        child: AnimatedContainer(
+          duration: NotesConstants.microAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
           width: 26,
           height: 32,
           alignment: Alignment.center,
           color: _isHovered
               ? (isDark ? const Color(0xFF252528) : const Color(0xFFE5E5EA))
               : (isDark ? const Color(0xFF141416) : const Color(0xFFF7F7F9)),
-          child: _isHovered
-              ? Icon(
-                  CupertinoIcons.ellipsis,
-                  size: 12,
-                  color: NotesTheme.accentGold,
-                )
-              : Text(
-                  '${widget.rowIndex + 1}',
-                  style: TextStyle(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w500,
-                    color: NotesTheme.textTertiary(context),
+          child: AnimatedSwitcher(
+            duration: NotesConstants.microAnimationDuration,
+            child: _isHovered
+                ? const Icon(
+                    CupertinoIcons.ellipsis,
+                    key: ValueKey('row_ellipsis'),
+                    size: 12,
+                    color: NotesTheme.accentGold,
+                  )
+                : Text(
+                    '${widget.rowIndex + 1}',
+                    key: ValueKey('row_num_${widget.rowIndex}'),
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w500,
+                      color: NotesTheme.textTertiary(context),
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );

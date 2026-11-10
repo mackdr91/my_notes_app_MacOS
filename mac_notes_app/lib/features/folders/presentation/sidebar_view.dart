@@ -1,3 +1,9 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Native macOS 3-column left sidebar for Apple Notes with fluid hover, selection, and tag list animations.
+ */
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
@@ -18,7 +24,9 @@ class SidebarView extends StatelessWidget {
     final notesProvider = context.watch<NotesProvider>();
 
     if (folderProvider.isLoading) {
-      return Container(
+      return AnimatedContainer(
+        duration: NotesConstants.themeAnimationDuration,
+        curve: NotesConstants.defaultAnimationCurve,
         color: NotesTheme.sidebarBackground(context),
         child: const Center(
           child: CupertinoActivityIndicator(),
@@ -26,7 +34,9 @@ class SidebarView extends StatelessWidget {
       );
     }
 
-    return Container(
+    return AnimatedContainer(
+      duration: NotesConstants.themeAnimationDuration,
+      curve: NotesConstants.defaultAnimationCurve,
       color: NotesTheme.sidebarBackground(context),
       child: Column(
         children: [
@@ -38,6 +48,7 @@ class SidebarView extends StatelessWidget {
                 // 1. Quick Notes
                 if (folderProvider.quickNotesFolder != null) ...[
                   _SidebarItemTile(
+                    key: const ValueKey(NotesConstants.quickNotesFolderId),
                     folder: folderProvider.quickNotesFolder!,
                     isSelected: folderProvider.selectedFolderId == NotesConstants.quickNotesFolderId,
                     count: notesProvider.countNotesInFolder(NotesConstants.quickNotesFolderId),
@@ -55,6 +66,7 @@ class SidebarView extends StatelessWidget {
 
                 // All iCloud
                 _SidebarItemTile(
+                  key: const ValueKey(NotesConstants.allNotesFolderId),
                   folder: Folder(
                     id: NotesConstants.allNotesFolderId,
                     name: 'All iCloud',
@@ -72,6 +84,7 @@ class SidebarView extends StatelessWidget {
 
                 // Standard Notes Folder
                 _SidebarItemTile(
+                  key: const ValueKey(NotesConstants.defaultNotesFolderId),
                   folder: Folder(
                     id: NotesConstants.defaultNotesFolderId,
                     name: 'Notes',
@@ -91,6 +104,7 @@ class SidebarView extends StatelessWidget {
                 ...folderProvider.iCloudFolders
                     .where((f) => !f.isSystem)
                     .map((f) => _SidebarItemTile(
+                          key: ValueKey(f.id),
                           folder: f,
                           isSelected: folderProvider.selectedFolderId == f.id,
                           count: notesProvider.countNotesInFolder(f.id),
@@ -106,6 +120,7 @@ class SidebarView extends StatelessWidget {
                 if (folderProvider.trashFolder != null) ...[
                   const SizedBox(height: 8),
                   _SidebarItemTile(
+                    key: const ValueKey(NotesConstants.trashFolderId),
                     folder: folderProvider.trashFolder!,
                     isSelected: folderProvider.selectedFolderId == NotesConstants.trashFolderId,
                     count: notesProvider.countNotesInFolder(NotesConstants.trashFolderId),
@@ -118,28 +133,41 @@ class SidebarView extends StatelessWidget {
 
                 const SizedBox(height: 18),
 
-                // 3. TAGS Section
-                if (notesProvider.tagsWithCount.isNotEmpty) ...[
-                  const _SectionHeader(title: 'TAGS'),
-                  const SizedBox(height: 4),
-                  ...notesProvider.tagsWithCount.entries.map((entry) {
-                    final isTagSelected = notesProvider.activeTag == entry.key;
-                    return _TagTile(
-                      tagName: entry.key,
-                      count: entry.value,
-                      isSelected: isTagSelected,
-                      onTap: () {
-                        notesProvider.setActiveTag(isTagSelected ? null : entry.key);
-                      },
-                    );
-                  }),
-                ],
+                // 3. TAGS Section with smooth size & fade animation
+                AnimatedSize(
+                  duration: NotesConstants.contentAnimationDuration,
+                  curve: NotesConstants.defaultAnimationCurve,
+                  alignment: Alignment.topCenter,
+                  child: notesProvider.tagsWithCount.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const _SectionHeader(title: 'TAGS'),
+                            const SizedBox(height: 4),
+                            ...notesProvider.tagsWithCount.entries.map((entry) {
+                              final isTagSelected = notesProvider.activeTag == entry.key;
+                              return _TagTile(
+                                key: ValueKey('tag_${entry.key}'),
+                                tagName: entry.key,
+                                count: entry.value,
+                                isSelected: isTagSelected,
+                                onTap: () {
+                                  notesProvider.setActiveTag(isTagSelected ? null : entry.key);
+                                },
+                              );
+                            }),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
               ],
             ),
           ),
 
           // Bottom New Folder Action
-          Container(
+          AnimatedContainer(
+            duration: NotesConstants.themeAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
             padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
             decoration: BoxDecoration(
               border: Border(
@@ -244,6 +272,7 @@ class _SidebarItemTile extends StatefulWidget {
   final VoidCallback? onDelete;
 
   const _SidebarItemTile({
+    super.key,
     required this.folder,
     required this.isSelected,
     required this.count,
@@ -258,6 +287,7 @@ class _SidebarItemTile extends StatefulWidget {
 
 class _SidebarItemTileState extends State<_SidebarItemTile> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -274,51 +304,74 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onExit: (_) => setState(() {
+        _isHovered = false;
+        _isPressed = false;
+      }),
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         onSecondaryTapUp: (details) {
           if (!widget.folder.isSystem && (widget.onRename != null || widget.onDelete != null)) {
             _showContextMenu(context, details.globalPosition);
           }
         },
-        child: Container(
-          height: 30,
-          margin: const EdgeInsets.symmetric(vertical: 1.5),
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(6.0),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                widget.folder.iconData,
-                size: 15.0,
-                color: NotesTheme.accentGold,
-              ),
-              const SizedBox(width: 8.0),
-              Expanded(
-                child: Text(
-                  widget.folder.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
-                    color: NotesTheme.textPrimary(context),
+        child: AnimatedScale(
+          duration: NotesConstants.microAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
+          scale: _isPressed ? 0.985 : 1.0,
+          child: AnimatedContainer(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            height: 30,
+            margin: const EdgeInsets.symmetric(vertical: 1.5),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  widget.folder.iconData,
+                  size: 15.0,
+                  color: NotesTheme.accentGold,
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: AnimatedDefaultTextStyle(
+                    duration: NotesConstants.microAnimationDuration,
+                    curve: NotesConstants.defaultAnimationCurve,
+                    style: TextStyle(
+                      fontFamily: '.AppleSystemUIFont',
+                      fontSize: 12.5,
+                      fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                      color: NotesTheme.textPrimary(context),
+                    ),
+                    child: Text(
+                      widget.folder.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
-              ),
-              if (widget.count > 0)
-                Text(
-                  '${widget.count}',
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    color: NotesTheme.textTertiary(context),
-                  ),
+                AnimatedSwitcher(
+                  duration: NotesConstants.microAnimationDuration,
+                  child: widget.count > 0
+                      ? Text(
+                          '${widget.count}',
+                          key: ValueKey<int>(widget.count),
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: NotesTheme.textTertiary(context),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -358,13 +411,14 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
   }
 }
 
-class _TagTile extends StatelessWidget {
+class _TagTile extends StatefulWidget {
   final String tagName;
   final int count;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _TagTile({
+    super.key,
     required this.tagName,
     required this.count,
     required this.isSelected,
@@ -372,47 +426,84 @@ class _TagTile extends StatelessWidget {
   });
 
   @override
+  State<_TagTile> createState() => _TagTileState();
+}
+
+class _TagTileState extends State<_TagTile> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final isDark = NotesTheme.isDark(context);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 28,
-        margin: const EdgeInsets.symmetric(vertical: 1.0),
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark ? const Color(0xFF4A3E1E) : NotesTheme.accentGold.withValues(alpha: 0.18))
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(6.0),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              CupertinoIcons.number,
-              size: 13.0,
-              color: NotesTheme.textSecondary(context),
+    Color backgroundColor = Colors.transparent;
+    if (widget.isSelected) {
+      backgroundColor = isDark
+          ? const Color(0xFF4A3E1E)
+          : NotesTheme.accentGold.withValues(alpha: 0.18);
+    } else if (_isHovered) {
+      backgroundColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA);
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() {
+        _isHovered = false;
+        _isPressed = false;
+      }),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          duration: NotesConstants.microAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
+          scale: _isPressed ? 0.985 : 1.0,
+          child: AnimatedContainer(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            height: 28,
+            margin: const EdgeInsets.symmetric(vertical: 1.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(6.0),
             ),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Text(
-                tagName,
-                style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: NotesTheme.textPrimary(context),
+            child: Row(
+              children: [
+                Icon(
+                  CupertinoIcons.number,
+                  size: 13.0,
+                  color: widget.isSelected
+                      ? NotesTheme.accentGold
+                      : NotesTheme.textSecondary(context),
                 ),
-              ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: AnimatedDefaultTextStyle(
+                    duration: NotesConstants.microAnimationDuration,
+                    curve: NotesConstants.defaultAnimationCurve,
+                    style: TextStyle(
+                      fontFamily: '.AppleSystemUIFont',
+                      fontSize: 12.0,
+                      fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                      color: NotesTheme.textPrimary(context),
+                    ),
+                    child: Text(widget.tagName),
+                  ),
+                ),
+                Text(
+                  '${widget.count}',
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    color: NotesTheme.textTertiary(context),
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$count',
-              style: TextStyle(
-                fontSize: 11.0,
-                color: NotesTheme.textTertiary(context),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

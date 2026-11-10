@@ -1,3 +1,9 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Primary 3-column macOS window scaffold featuring fluid column collapse/expand and view mode transitions.
+ */
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +39,7 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
     final folderProvider = context.watch<FolderProvider>();
     final notesProvider = context.watch<NotesProvider>();
     final dividerColor = NotesTheme.divider(context);
+    final isListMode = notesProvider.viewMode == NotesViewMode.list;
 
     return CallbackShortcuts(
       bindings: {
@@ -101,46 +108,55 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                 onToggleLock: () => _handleToggleLock(context, notesProvider),
               ),
 
-              // 2. Three-Column Content Body
+              // 2. Three-Column Content Body with Fluid Transitions
               Expanded(
                 child: Row(
                   children: [
                     // Column 1: Sidebar (Folders & Accounts)
-                    if (!folderProvider.isSidebarCollapsed) ...[
-                      const SizedBox(
-                        width: NotesConstants.defaultSidebarWidth,
-                        child: SidebarView(),
-                      ),
-                      VerticalDivider(
-                        width: 1,
-                        thickness: 1,
-                        color: dividerColor,
-                      ),
-                    ],
+                    _AnimatedCollapsibleColumn(
+                      isVisible: !folderProvider.isSidebarCollapsed,
+                      width: NotesConstants.defaultSidebarWidth,
+                      dividerColor: dividerColor,
+                      child: const SidebarView(),
+                    ),
 
-                    // Column 2: Notes List or Gallery View
-                    if (notesProvider.viewMode == NotesViewMode.list) ...[
-                      const SizedBox(
-                        width: NotesConstants.defaultListWidth,
-                        child: NotesListView(),
-                      ),
-                      VerticalDivider(
-                        width: 1,
-                        thickness: 1,
-                        color: dividerColor,
-                      ),
-                    ],
+                    // Column 2: Notes List View (Collapses smoothly when switching to Gallery mode)
+                    _AnimatedCollapsibleColumn(
+                      isVisible: isListMode,
+                      width: NotesConstants.defaultListWidth,
+                      dividerColor: dividerColor,
+                      child: const NotesListView(),
+                    ),
 
-                    // Column 3: Note Editor (or full gallery view when in gallery mode)
+                    // Column 3: Note Editor or Full Gallery View with cross-fade & subtle scale
                     Expanded(
-                      child: notesProvider.viewMode == NotesViewMode.gallery
-                          ? const NotesGalleryView()
-                          : EditorView(
-                              showFormatMenu: _showFormatMenu,
-                              onCloseFormatMenu: () {
-                                setState(() => _showFormatMenu = false);
-                              },
+                      child: AnimatedSwitcher(
+                        duration: NotesConstants.contentAnimationDuration,
+                        switchInCurve: NotesConstants.defaultAnimationCurve,
+                        switchOutCurve: NotesConstants.exitAnimationCurve,
+                        transitionBuilder: (child, animation) {
+                          final scaleAnimation = Tween<double>(
+                            begin: 0.985,
+                            end: 1.0,
+                          ).animate(animation);
+                          return FadeTransition(
+                            opacity: animation,
+                            child: ScaleTransition(
+                              scale: scaleAnimation,
+                              child: child,
                             ),
+                          );
+                        },
+                        child: notesProvider.viewMode == NotesViewMode.gallery
+                            ? const NotesGalleryView(key: ValueKey('gallery_view'))
+                            : EditorView(
+                                key: const ValueKey('editor_view'),
+                                showFormatMenu: _showFormatMenu,
+                                onCloseFormatMenu: () {
+                                  setState(() => _showFormatMenu = false);
+                                },
+                              ),
+                      ),
                     ),
                   ],
                 ),
@@ -227,5 +243,52 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
         await provider.setNoteLock(note.id, isLocked: true, password: result);
       }
     }
+  }
+}
+
+/// Reusable animated column wrapper that smoothly collapses/expands its width
+/// and opacity without causing internal child layout reflow or flex overflow.
+class _AnimatedCollapsibleColumn extends StatelessWidget {
+  final bool isVisible;
+  final double width;
+  final Color dividerColor;
+  final Widget child;
+
+  const _AnimatedCollapsibleColumn({
+    required this.isVisible,
+    required this.width,
+    required this.dividerColor,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: AnimatedAlign(
+        duration: NotesConstants.layoutAnimationDuration,
+        curve: NotesConstants.layoutAnimationCurve,
+        alignment: Alignment.centerLeft,
+        widthFactor: isVisible ? 1.0 : 0.0,
+        child: AnimatedOpacity(
+          duration: NotesConstants.contentAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
+          opacity: isVisible ? 1.0 : 0.0,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: width,
+                child: child,
+              ),
+              VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: dividerColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

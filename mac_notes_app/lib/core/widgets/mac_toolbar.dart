@@ -1,3 +1,9 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Pixel-accurate macOS unified toolbar featuring fluid icon button hover/press feedback, animated segmented controls, and search transitions.
+ */
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
@@ -45,7 +51,9 @@ class _MacToolbarState extends State<MacToolbar> {
     final notesProvider = context.watch<NotesProvider>();
     final isDark = NotesTheme.isDark(context);
 
-    return Container(
+    return AnimatedContainer(
+      duration: NotesConstants.themeAnimationDuration,
+      curve: NotesConstants.defaultAnimationCurve,
       height: NotesConstants.toolbarHeight,
       padding: const EdgeInsets.only(
         left: NotesConstants.trafficLightInsetLeft,
@@ -73,7 +81,9 @@ class _MacToolbarState extends State<MacToolbar> {
           const SizedBox(width: 8),
 
           // 2. View Mode Switcher (List vs Gallery)
-          Container(
+          AnimatedContainer(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
             height: 28,
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF323236) : const Color(0xFFE5E5EA),
@@ -177,7 +187,7 @@ class _MacToolbarState extends State<MacToolbar> {
 
           const SizedBox(width: 4),
 
-          // 9. Lock Note button
+          // 10. Lock Note button
           _ToolbarIconButton(
             icon: notesProvider.selectedNote?.isLocked == true
                 ? CupertinoIcons.lock_fill
@@ -189,7 +199,7 @@ class _MacToolbarState extends State<MacToolbar> {
 
           const SizedBox(width: 14),
 
-          // 10. Search Input Pill
+          // 11. Search Input Pill
           SizedBox(
             width: 180,
             height: 28,
@@ -213,21 +223,30 @@ class _MacToolbarState extends State<MacToolbar> {
                   color: NotesTheme.textTertiary(context),
                 ),
               ),
-              suffix: _searchController.text.isNotEmpty
-                  ? CupertinoButton(
-                      padding: const EdgeInsets.only(right: 6.0),
-                      minimumSize: Size.zero,
-                      onPressed: () {
-                        _searchController.clear();
-                        notesProvider.setSearchQuery('');
-                      },
-                      child: Icon(
-                        CupertinoIcons.clear_circled_solid,
-                        size: 14.0,
-                        color: NotesTheme.textTertiary(context),
-                      ),
-                    )
-                  : null,
+              suffix: AnimatedSwitcher(
+                duration: NotesConstants.microAnimationDuration,
+                transitionBuilder: (child, animation) => ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(opacity: animation, child: child),
+                ),
+                child: _searchController.text.isNotEmpty
+                    ? CupertinoButton(
+                        key: const ValueKey('clear_search_btn'),
+                        padding: const EdgeInsets.only(right: 6.0),
+                        minimumSize: Size.zero,
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {});
+                          notesProvider.setSearchQuery('');
+                        },
+                        child: Icon(
+                          CupertinoIcons.clear_circled_solid,
+                          size: 14.0,
+                          color: NotesTheme.textTertiary(context),
+                        ),
+                      )
+                    : const SizedBox.shrink(key: ValueKey('empty_search_btn')),
+              ),
               decoration: BoxDecoration(
                 color: NotesTheme.searchBackground(context),
                 borderRadius: BorderRadius.circular(6.0),
@@ -241,7 +260,7 @@ class _MacToolbarState extends State<MacToolbar> {
 
           const SizedBox(width: 10),
 
-          // 11. Theme Mode Switcher (System / Light / Dark)
+          // 12. Theme Mode Switcher (System / Light / Dark)
           const ThemeModeSwitcher(),
         ],
       ),
@@ -249,7 +268,7 @@ class _MacToolbarState extends State<MacToolbar> {
   }
 }
 
-class _ToolbarIconButton extends StatelessWidget {
+class _ToolbarIconButton extends StatefulWidget {
   final IconData icon;
   final String tooltip;
   final VoidCallback? onPressed;
@@ -267,28 +286,71 @@ class _ToolbarIconButton extends StatelessWidget {
   });
 
   @override
+  State<_ToolbarIconButton> createState() => _ToolbarIconButtonState();
+}
+
+class _ToolbarIconButtonState extends State<_ToolbarIconButton> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final effectiveColor = enabled
-        ? (color ?? (isActive ? NotesTheme.accentGold : NotesTheme.textPrimary(context)))
+    final isDark = NotesTheme.isDark(context);
+    final effectiveColor = widget.enabled
+        ? (widget.color ??
+            (widget.isActive ? NotesTheme.accentGold : NotesTheme.textPrimary(context)))
         : NotesTheme.textTertiary(context);
 
+    final Color hoverBg = (widget.enabled && _isHovered)
+        ? (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
+        : Colors.transparent;
+
     return Tooltip(
-      message: tooltip,
-      child: CupertinoButton(
-        padding: const EdgeInsets.all(6.0),
-        minimumSize: const Size(30, 30),
-        onPressed: enabled ? onPressed : null,
-        child: Icon(
-          icon,
-          size: 17.5,
-          color: effectiveColor,
+      message: widget.tooltip,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() {
+          _isHovered = false;
+          _isPressed = false;
+        }),
+        child: GestureDetector(
+          onTapDown: widget.enabled ? (_) => setState(() => _isPressed = true) : null,
+          onTapUp: widget.enabled ? (_) => setState(() => _isPressed = false) : null,
+          onTapCancel: widget.enabled ? () => setState(() => _isPressed = false) : null,
+          onTap: widget.enabled ? widget.onPressed : null,
+          child: AnimatedScale(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            scale: (widget.enabled && _isPressed) ? 0.92 : 1.0,
+            child: AnimatedContainer(
+              duration: NotesConstants.microAnimationDuration,
+              curve: NotesConstants.defaultAnimationCurve,
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: hoverBg,
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: NotesConstants.microAnimationDuration,
+                  child: Icon(
+                    widget.icon,
+                    key: ValueKey<IconData>(widget.icon),
+                    size: 17.5,
+                    color: effectiveColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class _SegmentedIconButton extends StatelessWidget {
+class _SegmentedIconButton extends StatefulWidget {
   final IconData icon;
   final String tooltip;
   final bool isSelected;
@@ -302,37 +364,57 @@ class _SegmentedIconButton extends StatelessWidget {
   });
 
   @override
+  State<_SegmentedIconButton> createState() => _SegmentedIconButtonState();
+}
+
+class _SegmentedIconButtonState extends State<_SegmentedIconButton> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final isDark = NotesTheme.isDark(context);
 
+    Color bg = Colors.transparent;
+    if (widget.isSelected) {
+      bg = isDark ? const Color(0xFF4A4A4E) : Colors.white;
+    } else if (_isHovered) {
+      bg = isDark
+          ? Colors.white.withValues(alpha: 0.08)
+          : Colors.black.withValues(alpha: 0.04);
+    }
+
     return Tooltip(
-      message: tooltip,
-      child: GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          width: 28,
-          height: 24,
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark ? const Color(0xFF4A4A4E) : Colors.white)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(4.0),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 2,
-                      offset: const Offset(0, 1),
-                    )
-                  ]
-                : null,
-          ),
-          child: Icon(
-            icon,
-            size: 13.5,
-            color: isSelected
-                ? NotesTheme.textPrimary(context)
-                : NotesTheme.textSecondary(context),
+      message: widget.tooltip,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: widget.onPressed,
+          child: AnimatedContainer(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            width: 28,
+            height: 24,
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(4.0),
+              boxShadow: widget.isSelected
+                  ? [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      )
+                    ]
+                  : null,
+            ),
+            child: Icon(
+              widget.icon,
+              size: 13.5,
+              color: widget.isSelected
+                  ? NotesTheme.textPrimary(context)
+                  : NotesTheme.textSecondary(context),
+            ),
           ),
         ),
       ),

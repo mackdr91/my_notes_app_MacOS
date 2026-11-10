@@ -1,5 +1,12 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Note card item in the middle list view featuring fluid hover, press scale, selection, and badge animations.
+ */
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 import 'package:mac_notes_app/core/utils/notes_utils.dart';
 import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
@@ -26,6 +33,7 @@ class NoteCard extends StatefulWidget {
 
 class _NoteCardState extends State<NoteCard> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,110 +52,159 @@ class _NoteCardState extends State<NoteCard> {
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onExit: (_) => setState(() {
+        _isHovered = false;
+        _isPressed = false;
+      }),
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         onSecondaryTapUp: (details) {
           _showContextMenu(context, details.globalPosition, notesProvider, folderProvider);
         },
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.5),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(6.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Row 1: Title and Pin/Lock icons
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.note.title.isEmpty ? 'New Note' : widget.note.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.w600,
-                        color: NotesTheme.textPrimary(context),
-                      ),
-                    ),
-                  ),
-                  if (widget.note.isPinned) ...[
-                    const SizedBox(width: 4),
-                    const Icon(
-                      CupertinoIcons.pin_fill,
-                      size: 12.0,
-                      color: NotesTheme.accentGold,
-                    ),
-                  ],
-                  if (widget.note.isLocked) ...[
-                    const SizedBox(width: 4),
-                    Icon(
-                      CupertinoIcons.lock_fill,
-                      size: 11.5,
-                      color: NotesTheme.textSecondary(context),
-                    ),
-                  ],
-                ],
-              ),
-
-              const SizedBox(height: 3.0),
-
-              // Row 2: Relative timestamp + Snippet excerpt
-              Row(
-                children: [
-                  Text(
-                    relativeDate,
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w500,
-                      color: widget.isSelected
-                          ? NotesTheme.textPrimary(context)
-                          : NotesTheme.textSecondary(context),
-                    ),
-                  ),
-                  const SizedBox(width: 6.0),
-                  Expanded(
-                    child: Text(
-                      widget.note.snippet,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: NotesTheme.textTertiary(context),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              // Row 3: Folder or tag chips (if any)
-              if (widget.note.tags.isNotEmpty) ...[
-                const SizedBox(height: 4.0),
-                Wrap(
-                  spacing: 4.0,
-                  children: widget.note.tags.take(3).map((tag) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA),
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Text(
-                        '#$tag',
+        child: AnimatedScale(
+          duration: NotesConstants.microAnimationDuration,
+          curve: NotesConstants.defaultAnimationCurve,
+          scale: _isPressed ? 0.985 : 1.0,
+          child: AnimatedContainer(
+            duration: NotesConstants.microAnimationDuration,
+            curve: NotesConstants.defaultAnimationCurve,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.5),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Row 1: Title and animated Pin/Lock status icons
+                Row(
+                  children: [
+                    Expanded(
+                      child: AnimatedDefaultTextStyle(
+                        duration: NotesConstants.microAnimationDuration,
+                        curve: NotesConstants.defaultAnimationCurve,
                         style: TextStyle(
-                          fontSize: 9.5,
-                          color: NotesTheme.textSecondary(context),
+                          fontFamily: '.AppleSystemUIFont',
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w600,
+                          color: NotesTheme.textPrimary(context),
+                        ),
+                        child: Text(
+                          widget.note.title.isEmpty ? 'New Note' : widget.note.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    AnimatedSwitcher(
+                      duration: NotesConstants.microAnimationDuration,
+                      transitionBuilder: (child, animation) => ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: widget.note.isPinned
+                          ? const Padding(
+                              key: ValueKey('pinned_icon'),
+                              padding: EdgeInsets.only(left: 4.0),
+                              child: Icon(
+                                CupertinoIcons.pin_fill,
+                                size: 12.0,
+                                color: NotesTheme.accentGold,
+                              ),
+                            )
+                          : const SizedBox.shrink(key: ValueKey('unpinned_icon')),
+                    ),
+                    AnimatedSwitcher(
+                      duration: NotesConstants.microAnimationDuration,
+                      transitionBuilder: (child, animation) => ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: widget.note.isLocked
+                          ? Padding(
+                              key: const ValueKey('locked_icon'),
+                              padding: const EdgeInsets.only(left: 4.0),
+                              child: Icon(
+                                CupertinoIcons.lock_fill,
+                                size: 11.5,
+                                color: NotesTheme.textSecondary(context),
+                              ),
+                            )
+                          : const SizedBox.shrink(key: ValueKey('unlocked_icon')),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 3.0),
+
+                // Row 2: Relative timestamp + Snippet excerpt
+                Row(
+                  children: [
+                    AnimatedDefaultTextStyle(
+                      duration: NotesConstants.microAnimationDuration,
+                      curve: NotesConstants.defaultAnimationCurve,
+                      style: TextStyle(
+                        fontFamily: '.AppleSystemUIFont',
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                        color: widget.isSelected
+                            ? NotesTheme.textPrimary(context)
+                            : NotesTheme.textSecondary(context),
+                      ),
+                      child: Text(relativeDate),
+                    ),
+                    const SizedBox(width: 6.0),
+                    Expanded(
+                      child: Text(
+                        widget.note.snippet,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: NotesTheme.textTertiary(context),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Row 3: Animated tag chips section
+                AnimatedSize(
+                  duration: NotesConstants.microAnimationDuration,
+                  curve: NotesConstants.defaultAnimationCurve,
+                  alignment: Alignment.topLeft,
+                  child: widget.note.tags.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Wrap(
+                            spacing: 4.0,
+                            children: widget.note.tags.take(3).map((tag) {
+                              return AnimatedContainer(
+                                duration: NotesConstants.microAnimationDuration,
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA),
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                child: Text(
+                                  '#$tag',
+                                  style: TextStyle(
+                                    fontSize: 9.5,
+                                    color: NotesTheme.textSecondary(context),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
               ],
-            ],
+            ),
           ),
         ),
       ),
