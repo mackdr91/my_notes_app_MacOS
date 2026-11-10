@@ -11,6 +11,7 @@ import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
 import 'package:mac_notes_app/core/utils/markdown_converter.dart';
 import 'package:mac_notes_app/core/utils/notes_utils.dart';
+import 'package:mac_notes_app/core/widgets/about_notes_dialog.dart';
 import 'package:mac_notes_app/features/notes/models/note_model.dart';
 import 'package:mac_notes_app/features/notes/presentation/format_menu_bar.dart';
 import 'package:mac_notes_app/features/notes/presentation/widgets/attachment_widget.dart';
@@ -186,11 +187,7 @@ class _EditorViewState extends State<EditorView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              CupertinoIcons.square_pencil,
-              size: 48,
-              color: NotesTheme.textTertiary(context),
-            ),
+            const AppIconBadge(size: 68.0),
             const SizedBox(height: 12),
             Text(
               'No Note Selected',

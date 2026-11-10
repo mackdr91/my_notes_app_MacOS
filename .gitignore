@@ -1,9 +1,15 @@
+# Author: Domonick Mack
+# Date: 2026-11-09
+# Description: Git ignore rules for Flutter (macOS, iOS/iPadOS, Web), Django backend, and packaged release installers.
+
 # Flutter / Dart
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
 build/
+**/build/
+releases/
 *.mode1v3
 *.mode2v3
 *.moved-aside
@@ -17,11 +23,16 @@ build/
 .svn/
 migrate_working_dir/
 
-# macOS Desktop
+# macOS & iOS Runners
 **/macos/Flutter/ephemeral/
 **/macos/Pods/
 **/macos/.symlinks/
 **/macos/Flutter/Flutter-Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
 
 # Python / Django
 __pycache__/
@@ -30,7 +41,6 @@ __pycache__/
 *.so
 .Python
 env/
-build/
 develop-eggs/
 dist/
 downloads/

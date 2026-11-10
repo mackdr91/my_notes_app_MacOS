@@ -1,0 +1,46 @@
+# Author: Domonick Mack
+# Date: 2026-11-09
+# Description: Docker Compose orchestration for MongoDB 7 and the Django REST Framework sync/download server.
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mac_notes_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mac_notes_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_DEBUG=False
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-apple-notes-mac-ipad-production-secret-key-2026}
+      - MONGODB_URI=mongodb://mongodb:27017/
+      - MONGODB_DB_NAME=mac_notes_db
+      - RELEASES_DIR=/app/releases
+    volumes:
+      - ./releases:/app/releases:ro
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongodb_data:

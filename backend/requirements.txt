@@ -1,6 +1,11 @@
+# Author: Domonick Mack
+# Date: 2026-11-09
+# Description: Python package dependencies for the Django REST Framework and MongoDB backend.
+
 Django>=4.2.0,<5.2.0
 djangorestframework>=3.14.0
 django-cors-headers>=4.3.0
 pymongo>=4.6.0
 firebase-admin>=6.4.0
 python-dotenv>=1.0.0
+gunicorn>=21.2.0

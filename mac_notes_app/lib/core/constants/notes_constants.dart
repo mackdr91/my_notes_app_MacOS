@@ -24,6 +24,12 @@ class NotesConstants {
   static const String tagsStorageKey = 'apple_tags_data_v1';
   static const String activeFolderKey = 'apple_active_folder_id';
 
+  // App Branding & Asset Paths
+  static const String appName = 'Notes';
+  static const String appVersion = 'Version 1.0.0 (Build 1)';
+  static const String appCopyright = '© 2026 Domonick Mack. All rights reserved.';
+  static const String appIconAssetPath = 'assets/icons/app_icon.png';
+
   // Layout Constraints
   static const double minSidebarWidth = 190.0;
   static const double maxSidebarWidth = 300.0;

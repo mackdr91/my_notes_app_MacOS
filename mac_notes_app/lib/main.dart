@@ -1,7 +1,7 @@
 /*
  * Author: Domonick Mack
  * Date: 2026-11-09
- * Description: Root application entry point and provider configuration with smooth theme mode interpolation.
+ * Description: Root application entry point and provider configuration with smooth theme mode interpolation and cross-device sync.
  */
 
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'core/constants/notes_constants.dart';
 import 'core/theme/notes_theme.dart';
 import 'core/widgets/mac_three_column_scaffold.dart';
+import 'features/auth_sync/providers/sync_provider.dart';
 import 'features/folders/providers/folder_provider.dart';
 import 'features/notes/providers/notes_provider.dart';
 import 'features/theme/providers/theme_provider.dart';
@@ -18,7 +19,7 @@ void main() async {
   runApp(const MacNotesApp());
 }
 
-/// Root widget of the Apple Notes macOS replica.
+/// Root widget of the Apple Notes macOS and iPadOS replica.
 class MacNotesApp extends StatelessWidget {
   const MacNotesApp({super.key});
 
@@ -29,6 +30,7 @@ class MacNotesApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => FolderProvider()),
         ChangeNotifierProvider(create: (_) => NotesProvider()),
+        ChangeNotifierProvider(create: (_) => SyncProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

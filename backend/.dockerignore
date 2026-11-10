@@ -1,0 +1,12 @@
+# Author: Domonick Mack
+# Date: 2026-11-09
+# Description: Docker ignore rules for the Django backend container build.
+
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+db.sqlite3
+.DS_Store

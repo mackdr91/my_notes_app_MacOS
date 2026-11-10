@@ -1,3 +1,9 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: State management for Folders, Sidebar navigation, and cross-device folder synchronization.
+ */
+
 import 'package:flutter/foundation.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/features/folders/models/folder_model.dart';
@@ -139,5 +145,25 @@ class FolderProvider extends ChangeNotifier {
         notifyListeners();
       }
     }
+  }
+
+  /// Merges remote folders returned by the sync server using Last-Write-Wins (updatedAt).
+  Future<void> mergeSyncedFolders(List<Folder> remoteFolders) async {
+    if (remoteFolders.isEmpty) return;
+
+    final Map<String, Folder> byId = {
+      for (final f in _folders) f.id: f,
+    };
+
+    for (final remote in remoteFolders) {
+      final existing = byId[remote.id];
+      if (existing == null || !remote.updatedAt.isBefore(existing.updatedAt)) {
+        byId[remote.id] = remote;
+      }
+    }
+
+    _folders = byId.values.toList();
+    await _storageService.saveFolders(_folders);
+    notifyListeners();
   }
 }

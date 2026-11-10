@@ -1,55 +1,64 @@
-# Apple Notes macOS Desktop Replica
+# Apple Notes Replica for macOS & iPadOS
 
-A pixel-accurate, feature-complete replica of the native macOS **Apple Notes** desktop application built with **Flutter (macOS desktop)** and **Provider** state management following a strict feature-first architecture, backed by a **Django REST Framework + MongoDB** sync backend and **Firebase** authentication and media storage.
+A pixel-accurate, feature-complete replica of the native **Apple Notes** application built with **Flutter (macOS, iPadOS/iOS, and Web PWA)** and **Provider** state management following a strict feature-first architecture, backed by a containerized **Django REST Framework + MongoDB** two-way sync server and installer download portal.
 
 ## Key Features
 
-- **macOS Window Integration**: Unified titlebar with traffic light buttons, sidebar collapse button, view mode switchers, compose button, checklist toggle, rich formatting palette, table editor, media attachments, and search.
-- **Three-Column Navigation**:
-  1. **Sidebar**: Quick Notes, Accounts (iCloud / On My Mac), folder tree with live note count badges, expandable subfolders, tag selector (#tags), and bottom "+ New Folder" action.
-  2. **Notes List**: Chronological groupings ("Pinned", "Today", "Previous 7 Days", "Previous 30 Days", monthly/yearly), note preview cards with title, timestamp, body excerpt, and amber pin icon.
-  3. **Rich Note Editor**: Auto-title first line, interactive circular checkboxes, rich typography (Title, Heading, Subheading, Body, Monospaced), bold/italic/underline/strikethrough, formatted lists (bullet, numbered, dash), inline multi-column tables, attachments, and password locking.
-- **Visual Design**: Native SF Pro typography, authentic Apple Notes amber/gold accent palette (`#ECA825`), light and dark mode support, and frosted macOS materials.
-- **Architecture**:
-  - **Flutter Desktop Frontend**: Feature-first structure (`features/<feature_name>/{models, services, providers, presentation}`) with Provider.
-  - **Local Persistence & Sync**: Instant zero-latency offline-first local cache.
-  - **Django REST Framework Backend**: PEP 8 compliant backend connected to MongoDB.
-  - **Firebase**: Authentication and storage for media attachments.
+- **macOS & iPadOS Adaptive Interface**:
+  - **macOS Desktop**: Unified titlebar with traffic light buttons, sidebar collapse button, view mode switchers (List & Gallery), compose button, checklist toggle, rich formatting palette, table editor, code block editor, media attachments, search, and theme mode switcher.
+  - **iPadOS Multitasking**: Automatically adapts across **Wide Landscape (3-column)**, **Portrait / Split View (2-column + frosted slide-over sidebar drawer)**, and **Slide Over / Compact (1-column drill-down with `< Notes` back button)** with `SafeArea` insets and touch-friendly targets.
+- **Rich Note Editor**:
+  - Live interactive Markdown conversion, auto-title first line, interactive circular checkboxes, rich typography (Title, Heading, Subheading, Body, Monospaced), multi-line syntax-highlighted code blocks with language selector & copy button, inline multi-column tables with hover row/column insertion/deletion handles, file attachments, and password locking.
+- **Cross-Device Two-Way Sync & Offline-First Persistence**:
+  - Instant zero-latency local persistence on both Mac and iPad, plus two-way Last-Write-Wins batch synchronization with the Dockerized **Django REST Framework + MongoDB** backend.
 
-## Project Structure
+---
 
-```
-my_notes_app_MacOS/
-├── mac_notes_app/                    # Flutter macOS Desktop App
-│   ├── macos/                        # macOS native runner configuration
-│   └── lib/
-│       ├── main.dart
-│       ├── core/                     # Constants, themes, widgets, utils
-│       └── features/
-│           ├── folders/              # Folders & Accounts feature
-│           ├── notes/                # Notes list & Rich Editor feature
-│           ├── tags/                 # Tags feature
-│           └── auth_sync/            # Sync & Auth feature
-└── backend/                          # Django REST Framework Backend
-    ├── manage.py
-    ├── notes_backend/                # Core settings & URLs
-    └── api/                          # Django REST API connected to MongoDB
-```
+## Building & Packaging Installers (`.dmg`, `.zip`, `.ipa`, Web PWA)
 
-## Running the App
+Run the automated packaging script to generate all release artifacts inside `releases/`:
 
-### macOS Flutter App
 ```bash
-cd mac_notes_app
-flutter pub get
-flutter run -d macos
+./mac_notes_app/scripts/build_and_package.sh
 ```
 
-### Django Backend
+This produces:
+- `releases/Notes-macOS-v1.0.0.dmg` — Drag-and-drop macOS Disk Image installer (`Notes.app` -> `/Applications`).
+- `releases/Notes-macOS-v1.0.0.zip` — Zipped macOS `.app` bundle.
+- `releases/Notes-iPadOS-v1.0.0.ipa` — iPadOS / iOS application archive for **AltStore**, **Sideloadly**, or **Xcode Direct Install**.
+- `releases/Notes-Web-PWA-v1.0.0.zip` — Standalone Web PWA bundle for Safari **Add to Home Screen** on iPad.
+
+---
+
+## Installing on Your Mac & iPad
+
+### 1. Install on macOS
+1. Open `releases/Notes-macOS-v1.0.0.dmg` (or download from GitHub Releases / the local `/download/` portal).
+2. Drag **Notes.app** into the **Applications** folder.
+3. If macOS Gatekeeper prompts on first launch (since it uses free ad-hoc signing), right-click **Notes.app** and choose **Open**, or run:
+   ```bash
+   xattr -cr /Applications/Notes.app
+   ```
+
+### 2. Install on iPad
+- **Option A — AltStore or Sideloadly (`.ipa`)**:
+  Download `Notes-iPadOS-v1.0.0.ipa` from GitHub Releases or `http://<your-mac-ip>:8000/download/` and install via **AltStore** or **Sideloadly** using your free Apple ID.
+- **Option B — Direct USB / Wi-Fi Install via Xcode**:
+  Connect your iPad to your Mac, open `mac_notes_app/ios/Runner.xcworkspace` in Xcode, select your personal Team under **Signing & Capabilities**, and press **Run** (`Cmd+R`) or run:
+  ```bash
+  cd mac_notes_app && flutter run --release -d <your-ipad-device-id>
+  ```
+
+---
+
+## Running the Containerized Sync & Download Server (Docker Compose)
+
+To sync notes between your Mac and iPad (and serve the `/download/` installer portal over your local network or cloud host):
+
 ```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python manage.py runserver 8000
+docker compose up --build -d
 ```
+
+- **Download Portal**: Open `http://localhost:8000/download/` (or `http://<your-mac-lan-ip>:8000/download/` on your iPad).
+- **API Health Check**: `http://localhost:8000/api/health/`
+- **Configure in App**: Click the **Cloud Sync** icon in the Notes toolbar, enter `http://<your-mac-lan-ip>:8000/api`, and click **Sync Now**.

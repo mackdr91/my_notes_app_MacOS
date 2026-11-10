@@ -1,7 +1,7 @@
 /*
  * Author: Domonick Mack
  * Date: 2026-11-09
- * Description: Primary 3-column macOS window scaffold featuring fluid column collapse/expand and view mode transitions.
+ * Description: Responsive multi-column scaffold supporting 3-column macOS/iPad Landscape, 2-column iPad Portrait/Split-View, and compact Slide-Over with slide-over drawer.
  */
 
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
+import 'package:mac_notes_app/core/utils/platform_layout.dart';
 import 'package:mac_notes_app/core/widgets/mac_toolbar.dart';
 import 'package:mac_notes_app/features/folders/presentation/sidebar_view.dart';
 import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
@@ -23,7 +24,7 @@ import 'package:mac_notes_app/features/theme/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-/// Primary 3-Column macOS Window Scaffold matching Apple Notes.
+/// Primary responsive multi-column scaffold matching Apple Notes on macOS and iPadOS.
 class MacThreeColumnScaffold extends StatefulWidget {
   const MacThreeColumnScaffold({super.key});
 
@@ -33,6 +34,8 @@ class MacThreeColumnScaffold extends StatefulWidget {
 
 class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
   bool _showFormatMenu = false;
+  bool _compactShowingList = false;
+  String? _lastSelectedNoteId;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,14 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
     final notesProvider = context.watch<NotesProvider>();
     final dividerColor = NotesTheme.divider(context);
     final isListMode = notesProvider.viewMode == NotesViewMode.list;
+
+    // Automatically navigate to the editor when a user selects or creates a note in compact mode
+    if (notesProvider.selectedNoteId != _lastSelectedNoteId) {
+      _lastSelectedNoteId = notesProvider.selectedNoteId;
+      if (_lastSelectedNoteId != null) {
+        _compactShowingList = false;
+      }
+    }
 
     return CallbackShortcuts(
       bindings: {
@@ -78,91 +89,170 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
       },
       child: Focus(
         autofocus: true,
-        child: Scaffold(
-          backgroundColor: NotesTheme.editorBackground(context),
-          body: Column(
-            children: [
-              // 1. Unified macOS Toolbar
-              MacToolbar(
-                onToggleChecklist: () {
-                  if (notesProvider.selectedNoteId != null) {
-                    notesProvider.addChecklist(notesProvider.selectedNoteId!);
-                  }
-                },
-                onInsertTable: () {
-                  if (notesProvider.selectedNoteId != null) {
-                    notesProvider.addTable(notesProvider.selectedNoteId!);
-                  }
-                },
-                onToggleFormatMenu: () {
-                  setState(() {
-                    _showFormatMenu = !_showFormatMenu;
-                  });
-                },
-                onInsertCodeBlock: () {
-                  if (notesProvider.selectedNoteId != null) {
-                    notesProvider.addCodeBlock(notesProvider.selectedNoteId!);
-                  }
-                },
-                onAttachMedia: () => _handlePickAttachment(context, notesProvider),
-                onToggleLock: () => _handleToggleLock(context, notesProvider),
-              ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final sizeClass = PlatformLayout.sizeClassForWidth(constraints.maxWidth);
+            final isWide = sizeClass == ScreenSizeClass.wide;
+            final isCompact = sizeClass == ScreenSizeClass.compact;
+            final showOverlayDrawer = !isWide && !folderProvider.isSidebarCollapsed;
 
-              // 2. Three-Column Content Body with Fluid Transitions
-              Expanded(
-                child: Row(
-                  children: [
-                    // Column 1: Sidebar (Folders & Accounts)
-                    _AnimatedCollapsibleColumn(
-                      isVisible: !folderProvider.isSidebarCollapsed,
-                      width: NotesConstants.defaultSidebarWidth,
-                      dividerColor: dividerColor,
-                      child: const SidebarView(),
-                    ),
+            return Scaffold(
+              backgroundColor: NotesTheme.editorBackground(context),
+              body: Column(
+                children: [
+                  // 1. Unified Platform-Adaptive Toolbar
+                  MacToolbar(
+                    showCompactBackButton:
+                        isCompact && isListMode && !_compactShowingList,
+                    onCompactBack: () {
+                      setState(() {
+                        _compactShowingList = true;
+                      });
+                    },
+                    onToggleChecklist: () {
+                      if (notesProvider.selectedNoteId != null) {
+                        notesProvider.addChecklist(notesProvider.selectedNoteId!);
+                      }
+                    },
+                    onInsertTable: () {
+                      if (notesProvider.selectedNoteId != null) {
+                        notesProvider.addTable(notesProvider.selectedNoteId!);
+                      }
+                    },
+                    onToggleFormatMenu: () {
+                      setState(() {
+                        _showFormatMenu = !_showFormatMenu;
+                      });
+                    },
+                    onInsertCodeBlock: () {
+                      if (notesProvider.selectedNoteId != null) {
+                        notesProvider.addCodeBlock(notesProvider.selectedNoteId!);
+                      }
+                    },
+                    onAttachMedia: () => _handlePickAttachment(context, notesProvider),
+                    onToggleLock: () => _handleToggleLock(context, notesProvider),
+                  ),
 
-                    // Column 2: Notes List View (Collapses smoothly when switching to Gallery mode)
-                    _AnimatedCollapsibleColumn(
-                      isVisible: isListMode,
-                      width: NotesConstants.defaultListWidth,
-                      dividerColor: dividerColor,
-                      child: const NotesListView(),
-                    ),
-
-                    // Column 3: Note Editor or Full Gallery View with cross-fade & subtle scale
-                    Expanded(
-                      child: AnimatedSwitcher(
-                        duration: NotesConstants.contentAnimationDuration,
-                        switchInCurve: NotesConstants.defaultAnimationCurve,
-                        switchOutCurve: NotesConstants.exitAnimationCurve,
-                        transitionBuilder: (child, animation) {
-                          final scaleAnimation = Tween<double>(
-                            begin: 0.985,
-                            end: 1.0,
-                          ).animate(animation);
-                          return FadeTransition(
-                            opacity: animation,
-                            child: ScaleTransition(
-                              scale: scaleAnimation,
-                              child: child,
+                  // 2. Responsive Multi-Column Content Body + Optional iPad Slide-Over Sidebar Drawer
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            // Column 1: Inline Sidebar (Shown inline on Wide viewports)
+                            _AnimatedCollapsibleColumn(
+                              isVisible: isWide && !folderProvider.isSidebarCollapsed,
+                              width: NotesConstants.defaultSidebarWidth,
+                              dividerColor: dividerColor,
+                              child: const SidebarView(),
                             ),
-                          );
-                        },
-                        child: notesProvider.viewMode == NotesViewMode.gallery
-                            ? const NotesGalleryView(key: ValueKey('gallery_view'))
-                            : EditorView(
-                                key: const ValueKey('editor_view'),
-                                showFormatMenu: _showFormatMenu,
-                                onCloseFormatMenu: () {
-                                  setState(() => _showFormatMenu = false);
-                                },
+
+                            // Column 2: Notes List View (Inline on Wide/Medium; full-width in Compact list state)
+                            if (!isCompact)
+                              _AnimatedCollapsibleColumn(
+                                isVisible: isListMode,
+                                width: sizeClass == ScreenSizeClass.medium
+                                    ? 260.0
+                                    : NotesConstants.defaultListWidth,
+                                dividerColor: dividerColor,
+                                child: const NotesListView(),
                               ),
-                      ),
+
+                            // Column 3: Main Content Area (Editor, Gallery, or Compact List)
+                            Expanded(
+                              child: AnimatedSwitcher(
+                                duration: NotesConstants.contentAnimationDuration,
+                                switchInCurve: NotesConstants.defaultAnimationCurve,
+                                switchOutCurve: NotesConstants.exitAnimationCurve,
+                                transitionBuilder: (child, animation) {
+                                  final scaleAnimation = Tween<double>(
+                                    begin: 0.985,
+                                    end: 1.0,
+                                  ).animate(animation);
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: ScaleTransition(
+                                      scale: scaleAnimation,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: notesProvider.viewMode == NotesViewMode.gallery
+                                    ? const NotesGalleryView(key: ValueKey('gallery_view'))
+                                    : (isCompact && _compactShowingList
+                                        ? const NotesListView(
+                                            key: ValueKey('compact_list_view'),
+                                          )
+                                        : EditorView(
+                                            key: const ValueKey('editor_view'),
+                                            showFormatMenu: _showFormatMenu,
+                                            onCloseFormatMenu: () {
+                                              setState(() => _showFormatMenu = false);
+                                            },
+                                          )),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Slide-over Sidebar Drawer for iPad Portrait / Split-View / Compact widths
+                        if (!isWide)
+                          IgnorePointer(
+                            ignoring: !showOverlayDrawer,
+                            child: AnimatedOpacity(
+                              duration: NotesConstants.contentAnimationDuration,
+                              curve: NotesConstants.defaultAnimationCurve,
+                              opacity: showOverlayDrawer ? 1.0 : 0.0,
+                              child: Stack(
+                                children: [
+                                  GestureDetector(
+                                    key: const ValueKey('sidebar_drawer_scrim'),
+                                    onTap: () => folderProvider.setSidebarCollapsed(true),
+                                    child: Container(
+                                      color: Colors.black.withValues(alpha: 0.32),
+                                    ),
+                                  ),
+                                  AnimatedSlide(
+                                    duration: NotesConstants.layoutAnimationDuration,
+                                    curve: NotesConstants.layoutAnimationCurve,
+                                    offset: showOverlayDrawer
+                                        ? Offset.zero
+                                        : const Offset(-1.0, 0.0),
+                                    child: SizedBox(
+                                      width: NotesConstants.defaultSidebarWidth + 20,
+                                      height: double.infinity,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color: NotesTheme.sidebarBackground(context),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: dividerColor,
+                                              width: 0.8,
+                                            ),
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(alpha: 0.25),
+                                              blurRadius: 16,
+                                              offset: const Offset(4, 0),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const SidebarView(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

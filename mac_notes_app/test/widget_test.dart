@@ -8,6 +8,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/utils/notes_utils.dart';
+import 'package:mac_notes_app/core/utils/platform_layout.dart';
+import 'package:mac_notes_app/core/widgets/about_notes_dialog.dart';
+import 'package:mac_notes_app/features/auth_sync/presentation/sync_settings_dialog.dart';
 import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
 import 'package:mac_notes_app/features/notes/presentation/notes_gallery_view.dart';
 import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
@@ -138,6 +141,77 @@ void main() {
       await tester.tap(find.byIcon(CupertinoIcons.list_bullet));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 250));
+    });
+
+    testWidgets('Sidebar displays AppIconBadge and opens AboutNotesDialog', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(const MacNotesApp());
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(find.byType(AppIconBadge), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('about_notes_btn')));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(find.byType(AboutNotesDialog), findsOneWidget);
+      expect(find.text(NotesConstants.appVersion), findsOneWidget);
+
+      await tester.tap(find.text('OK'));
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(find.byType(AboutNotesDialog), findsNothing);
+    });
+
+    testWidgets('iPad Portrait (820x1180) and Compact Slide-Over (540x900) adapt without overflow', (WidgetTester tester) async {
+      expect(PlatformLayout.sizeClassForWidth(1180), ScreenSizeClass.wide);
+      expect(PlatformLayout.sizeClassForWidth(820), ScreenSizeClass.medium);
+      expect(PlatformLayout.sizeClassForWidth(540), ScreenSizeClass.compact);
+
+      // Test iPad Portrait (820x1180)
+      tester.view.physicalSize = const Size(820, 1180);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(const MacNotesApp());
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      // Dismiss slide-over drawer via scrim
+      await tester.tap(find.byKey(const ValueKey('sidebar_drawer_scrim')));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      // Test Compact Slide-Over (540x900)
+      tester.view.physicalSize = const Size(540, 900);
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(find.byKey(const ValueKey('compact_back_to_list_btn')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('compact_back_to_list_btn')));
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(find.byKey(const ValueKey('compact_list_view')), findsOneWidget);
+    });
+
+    testWidgets('Toolbar opens SyncSettingsDialog when tapping Cloud Sync icon', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(const MacNotesApp());
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      await tester.tap(find.byIcon(CupertinoIcons.cloud));
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(find.byType(SyncSettingsDialog), findsOneWidget);
+      await tester.tap(find.text('Close'));
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(find.byType(SyncSettingsDialog), findsNothing);
     });
   });
 }

@@ -1,4 +1,8 @@
-"""API URL Routing for Notes and Folders endpoints."""
+"""
+Author: Domonick Mack
+Date: 2026-11-09
+Description: API URL Routing for Notes, Folders, Batch Sync, and Health Check endpoints.
+"""
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 

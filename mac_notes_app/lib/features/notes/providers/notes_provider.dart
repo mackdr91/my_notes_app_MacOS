@@ -1,3 +1,9 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-09
+ * Description: Provider managing notes list, selection, CRUD, search, rich editing, and cross-device sync merging.
+ */
+
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
@@ -692,6 +698,32 @@ class NotesProvider extends ChangeNotifier {
       attachments: updatedAttachments,
       updatedAt: DateTime.now(),
     );
+    await _storageService.saveNotes(_notes);
+    notifyListeners();
+  }
+
+  /// Merges remote notes returned by the sync server using Last-Write-Wins (updatedAt).
+  Future<void> mergeSyncedNotes(List<Note> remoteNotes) async {
+    if (remoteNotes.isEmpty) return;
+
+    final Map<String, Note> byId = {
+      for (final n in _notes) n.id: n,
+    };
+
+    for (final remote in remoteNotes) {
+      final existing = byId[remote.id];
+      if (existing == null || !remote.updatedAt.isBefore(existing.updatedAt)) {
+        byId[remote.id] = remote;
+      }
+    }
+
+    _notes = byId.values.toList()
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+    if (_selectedNoteId == null && _notes.isNotEmpty) {
+      _selectedNoteId = _notes.first.id;
+    }
+
     await _storageService.saveNotes(_notes);
     notifyListeners();
   }

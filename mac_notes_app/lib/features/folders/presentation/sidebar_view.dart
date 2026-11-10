@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mac_notes_app/core/constants/notes_constants.dart';
 import 'package:mac_notes_app/core/theme/notes_theme.dart';
+import 'package:mac_notes_app/core/widgets/about_notes_dialog.dart';
 import 'package:mac_notes_app/features/folders/models/folder_model.dart';
 import 'package:mac_notes_app/features/folders/presentation/add_folder_dialog.dart';
 import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
@@ -200,6 +201,17 @@ class SidebarView extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ),
+                const Spacer(),
+                Tooltip(
+                  message: 'About Notes',
+                  child: CupertinoButton(
+                    key: const ValueKey('about_notes_btn'),
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () => AboutNotesDialog.show(context),
+                    child: const AppIconBadge(size: 22.0),
                   ),
                 ),
               ],

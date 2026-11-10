@@ -1,5 +1,9 @@
-"""Comprehensive unit and integration tests for the Notes and Folders API."""
-from datetime import datetime, timezone
+"""
+Author: Domonick Mack
+Date: 2026-11-09
+Description: Comprehensive unit and integration tests for the Notes, Folders, Two-Way Sync, and Download Portal API.
+"""
+from datetime import datetime, timedelta, timezone
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -7,11 +11,12 @@ from api.mongodb import MongoDBManager
 
 
 class NotesAPITests(APITestCase):
-    """Test suite for Notes endpoints and validation."""
+    """Test suite for Notes endpoints, two-way batch sync, and download portal."""
 
     def setUp(self) -> None:
         MongoDBManager.reset()
-        self.now_iso = datetime.now(timezone.utc).isoformat()
+        self.now_dt = datetime.now(timezone.utc)
+        self.now_iso = self.now_dt.isoformat()
         self.sample_note_payload = {
             'id': 'test_note_101',
             'folderId': 'notes',
@@ -61,11 +66,9 @@ class NotesAPITests(APITestCase):
 
     def test_update_note(self) -> None:
         """Updating note content returns 200 OK."""
-        # First create
         url = reverse('note-list')
         self.client.post(url, self.sample_note_payload, format='json')
 
-        # Update note
         updated_payload = dict(self.sample_note_payload)
         updated_payload['title'] = 'Updated Architecture Meeting'
         detail_url = reverse('note-detail', kwargs={'pk': 'test_note_101'})
@@ -82,7 +85,6 @@ class NotesAPITests(APITestCase):
         response = self.client.delete(detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        # Confirm deleted
         get_response = self.client.get(detail_url)
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -107,8 +109,8 @@ class NotesAPITests(APITestCase):
         self.assertEqual(get_res.status_code, status.HTTP_200_OK)
         self.assertEqual(get_res.data['name'], 'Personal Projects')
 
-    def test_batch_sync(self) -> None:
-        """Batch sync reconciles offline notes and folders."""
+    def test_batch_sync_and_last_write_wins(self) -> None:
+        """Batch sync reconciles offline notes/folders and returns merged state with Last-Write-Wins."""
         sync_payload = {
             'notes': [self.sample_note_payload],
             'folders': [
@@ -130,3 +132,21 @@ class NotesAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['syncedNotes'], 1)
         self.assertEqual(response.data['syncedFolders'], 1)
+        self.assertEqual(len(response.data['notes']), 1)
+        self.assertEqual(len(response.data['folders']), 1)
+
+        # Older edit from a stale device should NOT overwrite newer server state
+        stale_note = dict(self.sample_note_payload)
+        stale_note['title'] = 'Stale Title From Offline Device'
+        stale_note['updatedAt'] = (self.now_dt - timedelta(minutes=10)).isoformat()
+
+        res_stale = self.client.post(url, {'notes': [stale_note], 'folders': []}, format='json')
+        self.assertEqual(res_stale.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_stale.data['notes'][0]['title'], 'Test Meeting Note')
+
+    def test_download_portal_renders(self) -> None:
+        """Download portal HTML page renders 200 OK."""
+        url = reverse('download-portal')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(b'Notes for macOS &amp; iPadOS', response.content)
