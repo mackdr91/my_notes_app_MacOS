@@ -88,7 +88,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download compiled Web PWA static bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: lusid-web-pwa-static
           path: web_pwa_dist
@@ -112,7 +112,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download packaged installers & SHA256SUMS
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: lusid-release-installers
           path: release_assets
