@@ -16,13 +16,16 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: stage1-quality-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   header-and-completeness-check:
     name: "File Header & Code Standards Verification"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,7 +40,7 @@ jobs:
 
   flutter-static-analysis:
     name: "Flutter Format & Analyzer (mac_notes_app)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: mac_notes_app
@@ -62,7 +65,7 @@ jobs:
 
   backend-static-analysis:
     name: "Django & Python Linting (backend)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: backend
@@ -96,7 +99,7 @@ jobs:
 
   infrastructure-lint:
     name: "Dockerfile, Shell Script & Compose Validation"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

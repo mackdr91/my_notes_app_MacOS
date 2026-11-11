@@ -5,11 +5,9 @@
 name: "Stage 4 - Multi-Platform Artifact Packaging"
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-    tags:
-      - "v*.*.*"
   workflow_dispatch:
     inputs:
       release_version:
@@ -22,10 +20,13 @@ on:
         description: "Optional version override (e.g., 1.0.0)"
         required: false
         type: string
+    outputs:
+      version_tag:
+        description: "Resolved release version tag (e.g., v1.0.0)"
+        value: ${{ jobs.package-installers.outputs.version_tag }}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   package-installers:
