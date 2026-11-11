@@ -18,7 +18,9 @@ class ThemeModeSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = NotesTheme.isDark(context);
-    final currentMode = context.select<ThemeProvider, ThemeMode>((p) => p.themeMode);
+    final currentMode = context.select<ThemeProvider, ThemeMode>(
+      (p) => p.themeMode,
+    );
 
     return AnimatedContainer(
       duration: NotesConstants.themeAnimationDuration,
@@ -138,7 +140,9 @@ class _ThemeSegmentButtonState extends State<_ThemeSegmentButton> {
                 boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
+                          color: Colors.black.withValues(
+                            alpha: isDark ? 0.4 : 0.12,
+                          ),
                           blurRadius: 1.5,
                           offset: const Offset(0, 0.5),
                         ),
@@ -146,11 +150,7 @@ class _ThemeSegmentButtonState extends State<_ThemeSegmentButton> {
                     : null,
               ),
               child: Center(
-                child: Icon(
-                  widget.icon,
-                  size: 13.5,
-                  color: iconColor,
-                ),
+                child: Icon(widget.icon, size: 13.5, color: iconColor),
               ),
             ),
           ),

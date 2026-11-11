@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Core domain models for Notes, ChecklistItems, NoteTables, and NoteAttachments.
+
 import 'package:lusid/core/utils/notes_utils.dart';
 
 /// Represents a single checklist item inside an Apple Note.
@@ -12,11 +16,7 @@ class ChecklistItem {
     this.isCompleted = false,
   });
 
-  ChecklistItem copyWith({
-    String? id,
-    String? text,
-    bool? isCompleted,
-  }) {
+  ChecklistItem copyWith({String? id, String? text, bool? isCompleted}) {
     return ChecklistItem(
       id: id ?? this.id,
       text: text ?? this.text,
@@ -25,11 +25,7 @@ class ChecklistItem {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'text': text,
-      'isCompleted': isCompleted,
-    };
+    return {'id': id, 'text': text, 'isCompleted': isCompleted};
   }
 
   factory ChecklistItem.fromJson(Map<String, dynamic> json) {
@@ -88,7 +84,9 @@ class NoteTable {
     return NoteTable(
       id: json['id'] as String,
       rowCount: (json['rowCount'] as int?) ?? parsedCells.length,
-      colCount: (json['colCount'] as int?) ?? (parsedCells.isNotEmpty ? parsedCells.first.length : 2),
+      colCount:
+          (json['colCount'] as int?) ??
+          (parsedCells.isNotEmpty ? parsedCells.first.length : 2),
       cells: parsedCells,
     );
   }
@@ -155,11 +153,7 @@ class NoteCodeBlock {
     this.language = 'dart',
   });
 
-  NoteCodeBlock copyWith({
-    String? id,
-    String? code,
-    String? language,
-  }) {
+  NoteCodeBlock copyWith({String? id, String? code, String? language}) {
     return NoteCodeBlock(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -168,11 +162,7 @@ class NoteCodeBlock {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'code': code,
-      'language': language,
-    };
+    return {'id': id, 'code': code, 'language': language};
   }
 
   factory NoteCodeBlock.fromJson(Map<String, dynamic> json) {
@@ -284,7 +274,8 @@ class Note {
     final rawChecklists = (json['checklists'] as List<dynamic>?) ?? [];
     final rawTables = (json['tables'] as List<dynamic>?) ?? [];
     final rawAttachments = (json['attachments'] as List<dynamic>?) ?? [];
-    final rawCodeBlocks = (json['codeBlocks'] as List<dynamic>?) ??
+    final rawCodeBlocks =
+        (json['codeBlocks'] as List<dynamic>?) ??
         (json['code_blocks'] as List<dynamic>?) ??
         [];
     final rawTags = (json['tags'] as List<dynamic>?) ?? [];
@@ -299,10 +290,18 @@ class Note {
       isPinned: (json['isPinned'] as bool?) ?? false,
       isLocked: (json['isLocked'] as bool?) ?? false,
       passwordHash: json['passwordHash'] as String?,
-      checklists: rawChecklists.map((c) => ChecklistItem.fromJson(c as Map<String, dynamic>)).toList(),
-      tables: rawTables.map((t) => NoteTable.fromJson(t as Map<String, dynamic>)).toList(),
-      attachments: rawAttachments.map((a) => NoteAttachment.fromJson(a as Map<String, dynamic>)).toList(),
-      codeBlocks: rawCodeBlocks.map((cb) => NoteCodeBlock.fromJson(cb as Map<String, dynamic>)).toList(),
+      checklists: rawChecklists
+          .map((c) => ChecklistItem.fromJson(c as Map<String, dynamic>))
+          .toList(),
+      tables: rawTables
+          .map((t) => NoteTable.fromJson(t as Map<String, dynamic>))
+          .toList(),
+      attachments: rawAttachments
+          .map((a) => NoteAttachment.fromJson(a as Map<String, dynamic>))
+          .toList(),
+      codeBlocks: rawCodeBlocks
+          .map((cb) => NoteCodeBlock.fromJson(cb as Map<String, dynamic>))
+          .toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );

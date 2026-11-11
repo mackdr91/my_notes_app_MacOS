@@ -3,10 +3,13 @@ Author: Domonick Mack
 Date: 2026-11-10
 Description: RESTful API Views for Lusid backend with two-way batch sync and installer download portal.
 """
+
+from __future__ import annotations
+
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse
@@ -19,7 +22,7 @@ from api.mongodb import get_folders_collection, get_notes_collection
 from api.serializers import BatchSyncSerializer, FolderSerializer, NoteSerializer
 
 
-def _parse_iso_datetime(value: Any) -> Optional[datetime]:
+def _parse_iso_datetime(value: Any) -> datetime | None:
     """Safely parses an ISO-8601 string or datetime into a timezone-aware UTC datetime."""
     if isinstance(value, datetime):
         if value.tzinfo is None:
@@ -43,24 +46,25 @@ class NoteViewSet(viewsets.ViewSet):
     def list(self, request: Request) -> Response:
         """Retrieves notes with optional folder, tag, and query filtering."""
         collection = get_notes_collection()
-        query: Dict[str, Any] = {}
+        query: dict[str, Any] = {}
 
-        folder_id: Optional[str] = request.query_params.get('folder_id')
+        folder_id: str | None = request.query_params.get('folder_id')
         if folder_id:
             query['folderId'] = folder_id
 
-        tag: Optional[str] = request.query_params.get('tag')
+        tag: str | None = request.query_params.get('tag')
         if tag:
             query['tags'] = tag
 
-        raw_notes: List[Dict[str, Any]] = list(collection.find(query))
+        raw_notes: list[dict[str, Any]] = list(collection.find(query))
 
         # In-memory search filtering if query param present
-        search_term: Optional[str] = request.query_params.get('search')
+        search_term: str | None = request.query_params.get('search')
         if search_term:
             term_lower = search_term.lower()
             raw_notes = [
-                n for n in raw_notes
+                n
+                for n in raw_notes
                 if term_lower in n.get('title', '').lower()
                 or term_lower in n.get('body', '').lower()
             ]
@@ -68,7 +72,7 @@ class NoteViewSet(viewsets.ViewSet):
         serializer = NoteSerializer(raw_notes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def retrieve(self, request: Request, pk: Optional[str] = None) -> Response:
+    def retrieve(self, request: Request, pk: str | None = None) -> Response:
         """Retrieves a single note by ID."""
         if not pk:
             return Response({'error': 'Note ID required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -76,7 +80,9 @@ class NoteViewSet(viewsets.ViewSet):
         collection = get_notes_collection()
         doc = collection.find_one({'id': pk})
         if not doc:
-            return Response({'error': f"Note with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': f"Note with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = NoteSerializer(doc)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -87,8 +93,8 @@ class NoteViewSet(viewsets.ViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        validated_data: Dict[str, Any] = serializer.validated_data
-        doc: Dict[str, Any] = {
+        validated_data: dict[str, Any] = serializer.validated_data
+        doc: dict[str, Any] = {
             **validated_data,
             'createdAt': validated_data['createdAt'].isoformat(),
             'updatedAt': validated_data['updatedAt'].isoformat(),
@@ -99,7 +105,7 @@ class NoteViewSet(viewsets.ViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def update(self, request: Request, pk: Optional[str] = None) -> Response:
+    def update(self, request: Request, pk: str | None = None) -> Response:
         """Updates an existing note document."""
         if not pk:
             return Response({'error': 'Note ID required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -107,14 +113,16 @@ class NoteViewSet(viewsets.ViewSet):
         collection = get_notes_collection()
         existing = collection.find_one({'id': pk})
         if not existing:
-            return Response({'error': f"Note with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': f"Note with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        validated_data: Dict[str, Any] = serializer.validated_data
-        update_doc: Dict[str, Any] = {
+        validated_data: dict[str, Any] = serializer.validated_data
+        update_doc: dict[str, Any] = {
             **validated_data,
             'createdAt': validated_data['createdAt'].isoformat(),
             'updatedAt': validated_data['updatedAt'].isoformat(),
@@ -123,7 +131,7 @@ class NoteViewSet(viewsets.ViewSet):
         collection.update_one({'id': pk}, {'$set': update_doc})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request: Request, pk: Optional[str] = None) -> Response:
+    def destroy(self, request: Request, pk: str | None = None) -> Response:
         """Permanently removes a note."""
         if not pk:
             return Response({'error': 'Note ID required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -131,7 +139,9 @@ class NoteViewSet(viewsets.ViewSet):
         collection = get_notes_collection()
         existing = collection.find_one({'id': pk})
         if not existing:
-            return Response({'error': f"Note with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': f"Note with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         collection.delete_many({'id': pk})
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -147,7 +157,7 @@ class FolderViewSet(viewsets.ViewSet):
         serializer = FolderSerializer(raw_folders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def retrieve(self, request: Request, pk: Optional[str] = None) -> Response:
+    def retrieve(self, request: Request, pk: str | None = None) -> Response:
         """Retrieves a single folder by ID."""
         if not pk:
             return Response({'error': 'Folder ID required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -155,7 +165,9 @@ class FolderViewSet(viewsets.ViewSet):
         collection = get_folders_collection()
         doc = collection.find_one({'id': pk})
         if not doc:
-            return Response({'error': f"Folder with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': f"Folder with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = FolderSerializer(doc)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -166,8 +178,8 @@ class FolderViewSet(viewsets.ViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        validated_data: Dict[str, Any] = serializer.validated_data
-        doc: Dict[str, Any] = {
+        validated_data: dict[str, Any] = serializer.validated_data
+        doc: dict[str, Any] = {
             **validated_data,
             'createdAt': validated_data['createdAt'].isoformat(),
             'updatedAt': validated_data['updatedAt'].isoformat(),
@@ -178,7 +190,7 @@ class FolderViewSet(viewsets.ViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def update(self, request: Request, pk: Optional[str] = None) -> Response:
+    def update(self, request: Request, pk: str | None = None) -> Response:
         """Updates folder metadata."""
         if not pk:
             return Response({'error': 'Folder ID required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -186,14 +198,16 @@ class FolderViewSet(viewsets.ViewSet):
         collection = get_folders_collection()
         existing = collection.find_one({'id': pk})
         if not existing:
-            return Response({'error': f"Folder with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': f"Folder with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        validated_data: Dict[str, Any] = serializer.validated_data
-        update_doc: Dict[str, Any] = {
+        validated_data: dict[str, Any] = serializer.validated_data
+        update_doc: dict[str, Any] = {
             **validated_data,
             'createdAt': validated_data['createdAt'].isoformat(),
             'updatedAt': validated_data['updatedAt'].isoformat(),
@@ -202,7 +216,7 @@ class FolderViewSet(viewsets.ViewSet):
         collection.update_one({'id': pk}, {'$set': update_doc})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request: Request, pk: Optional[str] = None) -> Response:
+    def destroy(self, request: Request, pk: str | None = None) -> Response:
         """Deletes a user-created folder."""
         if not pk:
             return Response({'error': 'Folder ID required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -210,7 +224,9 @@ class FolderViewSet(viewsets.ViewSet):
         collection = get_folders_collection()
         existing = collection.find_one({'id': pk})
         if not existing:
-            return Response({'error': f"Folder with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': f"Folder with ID '{pk}' not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         if existing.get('isSystem', False):
             return Response(
@@ -230,8 +246,8 @@ class BatchSyncView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        notes_data: List[Dict[str, Any]] = serializer.validated_data.get('notes', [])
-        folders_data: List[Dict[str, Any]] = serializer.validated_data.get('folders', [])
+        notes_data: list[dict[str, Any]] = serializer.validated_data.get('notes', [])
+        folders_data: list[dict[str, Any]] = serializer.validated_data.get('folders', [])
 
         notes_col = get_notes_collection()
         folders_col = get_folders_collection()
@@ -323,20 +339,24 @@ class DownloadPortalView(APIView):
 
     def get(self, request: Request) -> HttpResponse:
         releases_dir = _get_releases_dir()
-        files: List[Dict[str, Any]] = []
+        files: list[dict[str, Any]] = []
         if releases_dir.exists() and releases_dir.is_dir():
             for entry in sorted(releases_dir.iterdir()):
                 if entry.is_file() and not entry.name.startswith('.'):
                     size_mb = round(entry.stat().st_size / (1024 * 1024), 2)
                     ext = entry.suffix.lower()
-                    platform_label = 'macOS Installer' if ext in ('.dmg', '.zip') else (
-                        'iPadOS / iOS Package' if ext == '.ipa' else 'Release Artifact'
+                    platform_label = (
+                        'macOS Installer'
+                        if ext in ('.dmg', '.zip')
+                        else ('iPadOS / iOS Package' if ext == '.ipa' else 'Release Artifact')
                     )
-                    files.append({
-                        'name': entry.name,
-                        'size_mb': size_mb,
-                        'platform': platform_label,
-                    })
+                    files.append(
+                        {
+                            'name': entry.name,
+                            'size_mb': size_mb,
+                            'platform': platform_label,
+                        }
+                    )
 
         cards_html = ''
         if files:

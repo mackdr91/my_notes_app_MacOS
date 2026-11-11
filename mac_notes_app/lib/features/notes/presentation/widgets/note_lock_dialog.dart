@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Modal dialog for setting, unlocking, or removing password protection on a note.
+
 import 'package:flutter/cupertino.dart';
 import 'package:lusid/core/theme/notes_theme.dart';
 
@@ -26,7 +30,9 @@ class _NoteLockDialogState extends State<NoteLockDialog> {
   @override
   Widget build(BuildContext context) {
     return CupertinoAlertDialog(
-      title: Text(widget.isCurrentlyLocked ? 'Remove Password Lock' : 'Lock Note'),
+      title: Text(
+        widget.isCurrentlyLocked ? 'Remove Password Lock' : 'Lock Note',
+      ),
       content: Padding(
         padding: const EdgeInsets.only(top: 12.0),
         child: Column(

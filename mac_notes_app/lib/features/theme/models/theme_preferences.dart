@@ -1,16 +1,16 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: User theme appearance preferences model (System, Light, Dark).
+
 import 'package:flutter/material.dart';
 
 /// User theme preferences model for Apple Notes replica.
 class ThemePreferences {
   final ThemeMode themeMode;
 
-  const ThemePreferences({
-    this.themeMode = ThemeMode.system,
-  });
+  const ThemePreferences({this.themeMode = ThemeMode.system});
 
-  Map<String, dynamic> toJson() => {
-        'themeMode': themeMode.name,
-      };
+  Map<String, dynamic> toJson() => {'themeMode': themeMode.name};
 
   factory ThemePreferences.fromJson(Map<String, dynamic> json) {
     final modeStr = json['themeMode'] as String? ?? 'system';
@@ -22,8 +22,6 @@ class ThemePreferences {
   }
 
   ThemePreferences copyWith({ThemeMode? themeMode}) {
-    return ThemePreferences(
-      themeMode: themeMode ?? this.themeMode,
-    );
+    return ThemePreferences(themeMode: themeMode ?? this.themeMode);
   }
 }

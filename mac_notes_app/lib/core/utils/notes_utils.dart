@@ -9,7 +9,10 @@ import 'package:intl/intl.dart';
 /// Utilities for Lusid note formatting, dates, and text extraction.
 class NotesUtils {
   /// Extracts the title from note content using the first non-empty line.
-  static String extractTitle(String content, {String defaultTitle = 'New Note'}) {
+  static String extractTitle(
+    String content, {
+    String defaultTitle = 'New Note',
+  }) {
     final lines = content.trim().split('\n');
     for (final line in lines) {
       final trimmed = line.trim();

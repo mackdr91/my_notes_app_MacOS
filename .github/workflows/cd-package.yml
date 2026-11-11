@@ -1,0 +1,103 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: GitHub Actions CD pipeline for multi-platform artifact packaging (.dmg, .zip, .ipa, Web PWA, SHA256SUMS.txt).
+
+name: "Stage 4 - Multi-Platform Artifact Packaging"
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Optional version override (e.g., 1.0.0)"
+        required: false
+        type: string
+  workflow_call:
+    inputs:
+      release_version:
+        description: "Optional version override (e.g., 1.0.0)"
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-installers:
+    name: "Build macOS (.dmg/.zip), iPadOS (.ipa) & Web PWA"
+    runs-on: macos-latest
+    outputs:
+      version_tag: ${{ steps.resolve_version.outputs.version_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Resolve release version
+        id: resolve_version
+        run: |
+          if [ -n "${{ inputs.release_version }}" ]; then
+            VER="${{ inputs.release_version }}"
+            VER="${VER#v}"
+          elif [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VER="${GITHUB_REF#refs/tags/v}"
+          else
+            VER="$(awk '/^version:/ {print $2}' mac_notes_app/pubspec.yaml | cut -d'+' -f1)"
+          fi
+          echo "version=${VER}" >> "$GITHUB_OUTPUT"
+          echo "version_tag=v${VER}" >> "$GITHUB_OUTPUT"
+          echo "Resolved release version: v${VER}"
+
+      - name: Set up Flutter SDK on macOS
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Enable macOS desktop & install CocoaPods dependencies
+        working-directory: mac_notes_app
+        run: |
+          flutter config --enable-macos-desktop
+          flutter pub get
+
+      - name: Execute multi-platform packaging script
+        env:
+          RELEASE_VERSION: ${{ steps.resolve_version.outputs.version }}
+          FLUTTER_WEB_BASE_HREF: "/${{ github.event.repository.name }}/"
+        run: |
+          chmod +x mac_notes_app/scripts/build_and_package.sh
+          ./mac_notes_app/scripts/build_and_package.sh
+
+      - name: Verify packaged artifacts & SHA-256 checksums
+        run: |
+          cd releases
+          test -f "Lusid-macOS-${{ steps.resolve_version.outputs.version_tag }}.dmg"
+          test -f "Lusid-macOS-${{ steps.resolve_version.outputs.version_tag }}.zip"
+          test -f "Lusid-iPadOS-${{ steps.resolve_version.outputs.version_tag }}.ipa"
+          test -f "Lusid-Web-PWA-${{ steps.resolve_version.outputs.version_tag }}.zip"
+          test -f "SHA256SUMS.txt"
+          shasum -a 256 -c SHA256SUMS.txt
+
+      - name: Upload packaged installers & SHA256SUMS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lusid-release-installers
+          path: |
+            releases/*.dmg
+            releases/*.zip
+            releases/*.ipa
+            releases/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload compiled Web PWA directory for hosting deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: lusid-web-pwa-static
+          path: mac_notes_app/build/web
+          if-no-files-found: error
+          retention-days: 14

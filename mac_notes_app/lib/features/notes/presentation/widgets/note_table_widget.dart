@@ -56,11 +56,18 @@ class NoteTableWidget extends StatelessWidget {
           AnimatedContainer(
             duration: NotesConstants.microAnimationDuration,
             curve: NotesConstants.defaultAnimationCurve,
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 5.0,
+            ),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF141416) : const Color(0xFFF7F7F8),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(6.0)),
-              border: Border(bottom: BorderSide(color: borderColor, width: 0.8)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(6.0),
+              ),
+              border: Border(
+                bottom: BorderSide(color: borderColor, width: 0.8),
+              ),
             ),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -112,7 +119,8 @@ class NoteTableWidget extends StatelessWidget {
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             columnWidths: {
               0: const FixedColumnWidth(26.0), // Row Handle Column
-              for (int c = 0; c < table.colCount; c++) (c + 1): const FlexColumnWidth(1.0),
+              for (int c = 0; c < table.colCount; c++)
+                (c + 1): const FlexColumnWidth(1.0),
             },
             border: TableBorder(
               horizontalInside: BorderSide(color: borderColor, width: 0.8),
@@ -122,7 +130,9 @@ class NoteTableWidget extends StatelessWidget {
               // Top Column Handles Header Row
               TableRow(
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF18181A) : const Color(0xFFF0F0F3),
+                  color: isDark
+                      ? const Color(0xFF18181A)
+                      : const Color(0xFFF0F0F3),
                 ),
                 children: [
                   // Corner spacing
@@ -143,7 +153,9 @@ class NoteTableWidget extends StatelessWidget {
                 TableRow(
                   decoration: BoxDecoration(
                     color: r == 0
-                        ? (isDark ? const Color(0xFF1C1C1F) : const Color(0xFFFAFAFC))
+                        ? (isDark
+                              ? const Color(0xFF1C1C1F)
+                              : const Color(0xFFFAFAFC))
                         : Colors.transparent,
                   ),
                   children: [
@@ -159,7 +171,9 @@ class NoteTableWidget extends StatelessWidget {
                     // Cells for this row
                     for (int c = 0; c < table.colCount; c++)
                       _TableCellItem(
-                        value: (r < table.cells.length && c < table.cells[r].length)
+                        value:
+                            (r < table.cells.length &&
+                                c < table.cells[r].length)
                             ? table.cells[r][c]
                             : '',
                         isHeader: r == 0,
@@ -194,7 +208,12 @@ class NoteTableWidget extends StatelessWidget {
 
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx + 1, position.dy + 1),
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx + 1,
+        position.dy + 1,
+      ),
       constraints: const BoxConstraints(minWidth: 160, maxWidth: 320),
       color: isDark ? const Color(0xFF1E1E22) : Colors.white,
       elevation: 8,
@@ -212,14 +231,18 @@ class NoteTableWidget extends StatelessWidget {
               Icon(
                 CupertinoIcons.trash,
                 size: 13,
-                color: canDeleteRow ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                color: canDeleteRow
+                    ? CupertinoColors.destructiveRed
+                    : NotesTheme.textTertiary(context),
               ),
               const SizedBox(width: 8),
               Text(
                 'Delete Row ${rowIndex + 1}',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: canDeleteRow ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                  color: canDeleteRow
+                      ? CupertinoColors.destructiveRed
+                      : NotesTheme.textTertiary(context),
                 ),
               ),
             ],
@@ -234,14 +257,18 @@ class NoteTableWidget extends StatelessWidget {
               Icon(
                 CupertinoIcons.trash,
                 size: 13,
-                color: canDeleteCol ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                color: canDeleteCol
+                    ? CupertinoColors.destructiveRed
+                    : NotesTheme.textTertiary(context),
               ),
               const SizedBox(width: 8),
               Text(
                 'Delete Column ${colIndex + 1}',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: canDeleteCol ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                  color: canDeleteCol
+                      ? CupertinoColors.destructiveRed
+                      : NotesTheme.textTertiary(context),
                 ),
               ),
             ],
@@ -253,9 +280,19 @@ class NoteTableWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_up, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_up,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Row Above', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Row Above',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -264,9 +301,19 @@ class NoteTableWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_down, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_down,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Row Below', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Row Below',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -275,9 +322,19 @@ class NoteTableWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_left, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_left,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Column Left', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Column Left',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -286,9 +343,19 @@ class NoteTableWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_right, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_right,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Column Right', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Column Right',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -298,11 +365,18 @@ class NoteTableWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.trash_fill, size: 13, color: CupertinoColors.destructiveRed),
+              Icon(
+                CupertinoIcons.trash_fill,
+                size: 13,
+                color: CupertinoColors.destructiveRed,
+              ),
               SizedBox(width: 8),
               Text(
                 'Delete Table',
-                style: TextStyle(fontSize: 12.5, color: CupertinoColors.destructiveRed),
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: CupertinoColors.destructiveRed,
+                ),
               ),
             ],
           ),
@@ -378,7 +452,9 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
                 style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w600,
-                  color: _isHovered ? NotesTheme.accentGold : NotesTheme.textTertiary(context),
+                  color: _isHovered
+                      ? NotesTheme.accentGold
+                      : NotesTheme.textTertiary(context),
                 ),
                 child: Text(
                   String.fromCharCode(65 + widget.colIndex), // A, B, C, ...
@@ -388,7 +464,9 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
               Icon(
                 CupertinoIcons.chevron_down,
                 size: 9.0,
-                color: _isHovered ? NotesTheme.accentGold : NotesTheme.textTertiary(context),
+                color: _isHovered
+                    ? NotesTheme.accentGold
+                    : NotesTheme.textTertiary(context),
               ),
             ],
           ),
@@ -402,7 +480,12 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
 
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx + 1, position.dy + 1),
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx + 1,
+        position.dy + 1,
+      ),
       constraints: const BoxConstraints(minWidth: 160, maxWidth: 320),
       color: isDark ? const Color(0xFF1E1E22) : Colors.white,
       elevation: 8,
@@ -420,14 +503,18 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
               Icon(
                 CupertinoIcons.trash,
                 size: 13,
-                color: widget.canDelete ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                color: widget.canDelete
+                    ? CupertinoColors.destructiveRed
+                    : NotesTheme.textTertiary(context),
               ),
               const SizedBox(width: 8),
               Text(
                 'Delete Column',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: widget.canDelete ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                  color: widget.canDelete
+                      ? CupertinoColors.destructiveRed
+                      : NotesTheme.textTertiary(context),
                 ),
               ),
             ],
@@ -439,9 +526,19 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_left, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_left,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Column Left', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Column Left',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -450,9 +547,19 @@ class _ColumnHeaderHandleState extends State<_ColumnHeaderHandle> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_right, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_right,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Column Right', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Column Right',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -540,7 +647,12 @@ class _RowHeaderHandleState extends State<_RowHeaderHandle> {
 
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx + 1, position.dy + 1),
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx + 1,
+        position.dy + 1,
+      ),
       constraints: const BoxConstraints(minWidth: 160, maxWidth: 320),
       color: isDark ? const Color(0xFF1E1E22) : Colors.white,
       elevation: 8,
@@ -558,14 +670,18 @@ class _RowHeaderHandleState extends State<_RowHeaderHandle> {
               Icon(
                 CupertinoIcons.trash,
                 size: 13,
-                color: widget.canDelete ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                color: widget.canDelete
+                    ? CupertinoColors.destructiveRed
+                    : NotesTheme.textTertiary(context),
               ),
               const SizedBox(width: 8),
               Text(
                 'Delete Row',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: widget.canDelete ? CupertinoColors.destructiveRed : NotesTheme.textTertiary(context),
+                  color: widget.canDelete
+                      ? CupertinoColors.destructiveRed
+                      : NotesTheme.textTertiary(context),
                 ),
               ),
             ],
@@ -577,9 +693,19 @@ class _RowHeaderHandleState extends State<_RowHeaderHandle> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_up, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_up,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Row Above', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Row Above',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -588,9 +714,19 @@ class _RowHeaderHandleState extends State<_RowHeaderHandle> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(CupertinoIcons.arrow_down, size: 13, color: NotesTheme.textPrimary(context)),
+              Icon(
+                CupertinoIcons.arrow_down,
+                size: 13,
+                color: NotesTheme.textPrimary(context),
+              ),
               const SizedBox(width: 8),
-              Text('Insert Row Below', style: TextStyle(fontSize: 12.5, color: NotesTheme.textPrimary(context))),
+              Text(
+                'Insert Row Below',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: NotesTheme.textPrimary(context),
+                ),
+              ),
             ],
           ),
         ),
@@ -634,7 +770,11 @@ class _SmallTableButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 11, color: color ?? NotesTheme.textSecondary(context)),
+            Icon(
+              icon,
+              size: 11,
+              color: color ?? NotesTheme.textSecondary(context),
+            ),
             if (label.isNotEmpty) ...[
               const SizedBox(width: 4),
               Text(

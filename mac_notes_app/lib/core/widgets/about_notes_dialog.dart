@@ -14,10 +14,7 @@ import 'package:lusid/core/theme/notes_theme.dart';
 class AppIconBadge extends StatelessWidget {
   final double size;
 
-  const AppIconBadge({
-    super.key,
-    this.size = 64.0,
-  });
+  const AppIconBadge({super.key, this.size = 64.0});
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +35,7 @@ class AppIconBadge extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF26262E),
-                  Color(0xFF101015),
-                ],
+                colors: [Color(0xFF26262E), Color(0xFF101015)],
               ),
               borderRadius: BorderRadius.circular(size * 0.225),
               border: Border.all(
@@ -76,9 +70,7 @@ class AboutLusidDialog extends StatelessWidget {
       barrierColor: Colors.black.withValues(alpha: 0.45),
       transitionDuration: NotesConstants.contentAnimationDuration,
       pageBuilder: (context, animation, secondaryAnimation) {
-        return const Center(
-          child: AboutLusidDialog(),
-        );
+        return const Center(child: AboutLusidDialog());
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         final curved = CurvedAnimation(

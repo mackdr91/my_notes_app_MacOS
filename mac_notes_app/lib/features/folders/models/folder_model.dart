@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Data model representing a folder or smart container in Apple Notes.
+
 import 'package:flutter/cupertino.dart';
 import 'package:lusid/core/constants/notes_constants.dart';
 

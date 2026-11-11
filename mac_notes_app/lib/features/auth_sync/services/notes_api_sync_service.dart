@@ -5,6 +5,7 @@
  */
 
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:lusid/features/folders/models/folder_model.dart';
 import 'package:lusid/features/notes/models/note_model.dart';
@@ -17,8 +18,8 @@ class NotesApiSyncService {
   NotesApiSyncService({
     String baseUrl = 'http://127.0.0.1:8000/api',
     http.Client? client,
-  })  : _baseUrl = _normalizeUrl(baseUrl),
-        _client = client ?? http.Client();
+  }) : _baseUrl = _normalizeUrl(baseUrl),
+       _client = client ?? http.Client();
 
   String get baseUrl => _baseUrl;
 
@@ -38,10 +39,14 @@ class NotesApiSyncService {
 
   /// Checks if the Django backend is reachable and healthy.
   Future<bool> checkHealth({String? overrideUrl}) async {
-    final targetBase = overrideUrl != null ? _normalizeUrl(overrideUrl) : _baseUrl;
+    final targetBase = overrideUrl != null
+        ? _normalizeUrl(overrideUrl)
+        : _baseUrl;
     try {
       final uri = Uri.parse('$targetBase/health/');
-      final response = await _client.get(uri).timeout(const Duration(seconds: 3));
+      final response = await _client
+          .get(uri)
+          .timeout(const Duration(seconds: 3));
       return response.statusCode == 200;
     } catch (_) {
       return false;
@@ -73,16 +78,10 @@ class NotesApiSyncService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
-        return {
-          'status': 'error',
-          'statusCode': response.statusCode,
-        };
+        return {'status': 'error', 'statusCode': response.statusCode};
       }
     } catch (e) {
-      return {
-        'status': 'offline',
-        'error': e.toString(),
-      };
+      return {'status': 'offline', 'error': e.toString()};
     }
   }
 }

@@ -64,10 +64,7 @@ class _MacToolbarState extends State<MacToolbar> {
       decoration: BoxDecoration(
         color: NotesTheme.toolbarBackground(context),
         border: Border(
-          bottom: BorderSide(
-            color: NotesTheme.divider(context),
-            width: 0.8,
-          ),
+          bottom: BorderSide(color: NotesTheme.divider(context), width: 0.8),
         ),
       ),
       child: SafeArea(
@@ -83,10 +80,7 @@ class _MacToolbarState extends State<MacToolbar> {
               duration: NotesConstants.themeAnimationDuration,
               curve: NotesConstants.defaultAnimationCurve,
               height: toolbarHeight,
-              padding: EdgeInsets.only(
-                left: leftInset,
-                right: 14.0,
-              ),
+              padding: EdgeInsets.only(left: leftInset, right: 14.0),
               child: Row(
                 children: [
                   // 1. Sidebar Toggle Button
@@ -97,11 +91,15 @@ class _MacToolbarState extends State<MacToolbar> {
                     onPressed: () => folderProvider.toggleSidebar(),
                   ),
 
-                  if (widget.showCompactBackButton && widget.onCompactBack != null) ...[
+                  if (widget.showCompactBackButton &&
+                      widget.onCompactBack != null) ...[
                     const SizedBox(width: 4),
                     CupertinoButton(
                       key: const ValueKey('compact_back_to_list_btn'),
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
                       minimumSize: Size.zero,
                       onPressed: widget.onCompactBack,
                       child: const Row(
@@ -135,7 +133,9 @@ class _MacToolbarState extends State<MacToolbar> {
                       curve: NotesConstants.defaultAnimationCurve,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF323236) : const Color(0xFFE5E5EA),
+                        color: isDark
+                            ? const Color(0xFF323236)
+                            : const Color(0xFFE5E5EA),
                         borderRadius: BorderRadius.circular(6.0),
                       ),
                       padding: const EdgeInsets.all(2.0),
@@ -145,14 +145,19 @@ class _MacToolbarState extends State<MacToolbar> {
                           _SegmentedIconButton(
                             icon: CupertinoIcons.list_bullet,
                             tooltip: 'View notes as a list',
-                            isSelected: notesProvider.viewMode == NotesViewMode.list,
-                            onPressed: () => notesProvider.setViewMode(NotesViewMode.list),
+                            isSelected:
+                                notesProvider.viewMode == NotesViewMode.list,
+                            onPressed: () =>
+                                notesProvider.setViewMode(NotesViewMode.list),
                           ),
                           _SegmentedIconButton(
                             icon: CupertinoIcons.square_grid_2x2,
                             tooltip: 'View notes as a gallery',
-                            isSelected: notesProvider.viewMode == NotesViewMode.gallery,
-                            onPressed: () => notesProvider.setViewMode(NotesViewMode.gallery),
+                            isSelected:
+                                notesProvider.viewMode == NotesViewMode.gallery,
+                            onPressed: () => notesProvider.setViewMode(
+                              NotesViewMode.gallery,
+                            ),
                           ),
                         ],
                       ),
@@ -180,7 +185,9 @@ class _MacToolbarState extends State<MacToolbar> {
                     tooltip: 'Create a new note (Cmd+N)',
                     color: NotesTheme.accentGold,
                     onPressed: () {
-                      notesProvider.createNote(folderId: folderProvider.selectedFolderId);
+                      notesProvider.createNote(
+                        folderId: folderProvider.selectedFolderId,
+                      );
                     },
                   ),
 
@@ -197,14 +204,22 @@ class _MacToolbarState extends State<MacToolbar> {
                               _SegmentedIconButton(
                                 icon: CupertinoIcons.list_bullet,
                                 tooltip: 'View notes as a list',
-                                isSelected: notesProvider.viewMode == NotesViewMode.list,
-                                onPressed: () => notesProvider.setViewMode(NotesViewMode.list),
+                                isSelected:
+                                    notesProvider.viewMode ==
+                                    NotesViewMode.list,
+                                onPressed: () => notesProvider.setViewMode(
+                                  NotesViewMode.list,
+                                ),
                               ),
                               _SegmentedIconButton(
                                 icon: CupertinoIcons.square_grid_2x2,
                                 tooltip: 'View notes as a gallery',
-                                isSelected: notesProvider.viewMode == NotesViewMode.gallery,
-                                onPressed: () => notesProvider.setViewMode(NotesViewMode.gallery),
+                                isSelected:
+                                    notesProvider.viewMode ==
+                                    NotesViewMode.gallery,
+                                onPressed: () => notesProvider.setViewMode(
+                                  NotesViewMode.gallery,
+                                ),
                               ),
                               const SizedBox(width: 4),
                             ],
@@ -230,7 +245,8 @@ class _MacToolbarState extends State<MacToolbar> {
                             ),
                             const SizedBox(width: 3),
                             _ToolbarIconButton(
-                              icon: CupertinoIcons.chevron_left_slash_chevron_right,
+                              icon: CupertinoIcons
+                                  .chevron_left_slash_chevron_right,
                               tooltip: 'Insert code block (Cmd+Shift+C)',
                               enabled: notesProvider.selectedNoteId != null,
                               onPressed: widget.onInsertCodeBlock,
@@ -247,7 +263,8 @@ class _MacToolbarState extends State<MacToolbar> {
                               icon: notesProvider.selectedNote?.isLocked == true
                                   ? CupertinoIcons.lock_fill
                                   : CupertinoIcons.lock,
-                              tooltip: notesProvider.selectedNote?.isLocked == true
+                              tooltip:
+                                  notesProvider.selectedNote?.isLocked == true
                                   ? 'Unlock note'
                                   : 'Lock note',
                               enabled: notesProvider.selectedNoteId != null,
@@ -287,10 +304,14 @@ class _MacToolbarState extends State<MacToolbar> {
                       ),
                       suffix: AnimatedSwitcher(
                         duration: NotesConstants.microAnimationDuration,
-                        transitionBuilder: (child, animation) => ScaleTransition(
-                          scale: animation,
-                          child: FadeTransition(opacity: animation, child: child),
-                        ),
+                        transitionBuilder: (child, animation) =>
+                            ScaleTransition(
+                              scale: animation,
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            ),
                         child: _searchController.text.isNotEmpty
                             ? CupertinoButton(
                                 key: const ValueKey('clear_search_btn'),
@@ -307,7 +328,9 @@ class _MacToolbarState extends State<MacToolbar> {
                                   color: NotesTheme.textTertiary(context),
                                 ),
                               )
-                            : const SizedBox.shrink(key: ValueKey('empty_search_btn')),
+                            : const SizedBox.shrink(
+                                key: ValueKey('empty_search_btn'),
+                              ),
                       ),
                       decoration: BoxDecoration(
                         color: NotesTheme.searchBackground(context),
@@ -326,13 +349,14 @@ class _MacToolbarState extends State<MacToolbar> {
                   Consumer<SyncProvider>(
                     builder: (context, syncProvider, _) {
                       final isSynced = syncProvider.status == SyncStatus.synced;
-                      final isSyncing = syncProvider.status == SyncStatus.syncing;
+                      final isSyncing =
+                          syncProvider.status == SyncStatus.syncing;
                       return _ToolbarIconButton(
                         icon: isSynced
                             ? CupertinoIcons.cloud_fill
                             : (isSyncing
-                                ? CupertinoIcons.arrow_2_circlepath
-                                : CupertinoIcons.cloud),
+                                  ? CupertinoIcons.arrow_2_circlepath
+                                  : CupertinoIcons.cloud),
                         tooltip: 'Cross-Device Sync Settings (Mac & iPad)',
                         isActive: isSynced || isSyncing,
                         onPressed: () {
@@ -391,11 +415,15 @@ class _ToolbarIconButtonState extends State<_ToolbarIconButton> {
     final hitSize = PlatformLayout.toolbarButtonSize(context);
     final effectiveColor = widget.enabled
         ? (widget.color ??
-            (widget.isActive ? NotesTheme.accentGold : NotesTheme.textPrimary(context)))
+              (widget.isActive
+                  ? NotesTheme.accentGold
+                  : NotesTheme.textPrimary(context)))
         : NotesTheme.textTertiary(context);
 
     final Color hoverBg = (widget.enabled && _isHovered)
-        ? (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
+        ? (isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05))
         : Colors.transparent;
 
     return Tooltip(
@@ -408,9 +436,15 @@ class _ToolbarIconButtonState extends State<_ToolbarIconButton> {
         }),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTapDown: widget.enabled ? (_) => setState(() => _isPressed = true) : null,
-          onTapUp: widget.enabled ? (_) => setState(() => _isPressed = false) : null,
-          onTapCancel: widget.enabled ? () => setState(() => _isPressed = false) : null,
+          onTapDown: widget.enabled
+              ? (_) => setState(() => _isPressed = true)
+              : null,
+          onTapUp: widget.enabled
+              ? (_) => setState(() => _isPressed = false)
+              : null,
+          onTapCancel: widget.enabled
+              ? () => setState(() => _isPressed = false)
+              : null,
           onTap: widget.enabled ? widget.onPressed : null,
           child: AnimatedScale(
             duration: NotesConstants.microAnimationDuration,
@@ -499,7 +533,7 @@ class _SegmentedIconButtonState extends State<_SegmentedIconButton> {
                         color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 2,
                         offset: const Offset(0, 1),
-                      )
+                      ),
                     ]
                   : null,
             ),

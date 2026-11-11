@@ -1,5 +1,13 @@
-"""Serializers with explicit validation for Notes and Folders."""
-from typing import Any, Dict, List, Optional
+"""
+Author: Domonick Mack
+Date: 2026-11-10
+Description: REST Framework serializers with explicit validation for Notes and Folders.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
 from rest_framework import serializers
 
 
@@ -21,7 +29,7 @@ class NoteTableSerializer(serializers.Serializer):
         child=serializers.ListField(child=serializers.CharField(allow_blank=True))
     )
 
-    def validate_cells(self, value: List[List[str]]) -> List[List[str]]:
+    def validate_cells(self, value: list[list[str]]) -> list[list[str]]:
         if not isinstance(value, list):
             raise serializers.ValidationError("Table cells must be a two-dimensional matrix.")
         return value
@@ -52,11 +60,17 @@ class NoteSerializer(serializers.Serializer):
     folderId = serializers.CharField(max_length=128)
     title = serializers.CharField(max_length=512, allow_blank=True, default='')
     body = serializers.CharField(allow_blank=True, default='')
-    richTextJson = serializers.CharField(allow_blank=True, allow_null=True, required=False, default=None)
-    tags = serializers.ListField(child=serializers.CharField(max_length=64), required=False, default=list)
+    richTextJson = serializers.CharField(
+        allow_blank=True, allow_null=True, required=False, default=None
+    )
+    tags = serializers.ListField(
+        child=serializers.CharField(max_length=64), required=False, default=list
+    )
     isPinned = serializers.BooleanField(default=False)
     isLocked = serializers.BooleanField(default=False)
-    passwordHash = serializers.CharField(max_length=256, required=False, allow_null=True, default=None)
+    passwordHash = serializers.CharField(
+        max_length=256, required=False, allow_null=True, default=None
+    )
     checklists = ChecklistItemSerializer(many=True, required=False, default=list)
     tables = NoteTableSerializer(many=True, required=False, default=list)
     attachments = NoteAttachmentSerializer(many=True, required=False, default=list)
@@ -74,7 +88,7 @@ class NoteSerializer(serializers.Serializer):
             raise serializers.ValidationError("folderId cannot be empty.")
         return value.strip()
 
-    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """Cross-field validation for note payload."""
         if attrs.get('isLocked') and not attrs.get('passwordHash'):
             # Allow lock flag with system authentication password

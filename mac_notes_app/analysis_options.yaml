@@ -1,3 +1,7 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: Dart and Flutter static analyzer configuration and lint rules for mac_notes_app.
+
 # This file configures the analyzer, which statically analyzes Dart code to
 # check for errors, warnings, and lints.
 #

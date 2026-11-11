@@ -21,7 +21,7 @@ class FolderProvider extends ChangeNotifier {
   bool _isLoading = true;
 
   FolderProvider({FolderStorageService? storageService})
-      : _storageService = storageService ?? FolderStorageService() {
+    : _storageService = storageService ?? FolderStorageService() {
     loadFolders();
   }
 
@@ -39,23 +39,23 @@ class FolderProvider extends ChangeNotifier {
     }
   }
 
-  Folder? get quickNotesFolder =>
-      _folders.cast<Folder?>().firstWhere(
-            (f) => f?.id == NotesConstants.quickNotesFolderId,
-            orElse: () => null,
-          );
+  Folder? get quickNotesFolder => _folders.cast<Folder?>().firstWhere(
+    (f) => f?.id == NotesConstants.quickNotesFolderId,
+    orElse: () => null,
+  );
 
-  Folder? get trashFolder =>
-      _folders.cast<Folder?>().firstWhere(
-            (f) => f?.id == NotesConstants.trashFolderId,
-            orElse: () => null,
-          );
+  Folder? get trashFolder => _folders.cast<Folder?>().firstWhere(
+    (f) => f?.id == NotesConstants.trashFolderId,
+    orElse: () => null,
+  );
 
   List<Folder> get iCloudFolders => _folders
-      .where((f) =>
-          f.account == NotesConstants.accountICloud &&
-          f.id != NotesConstants.quickNotesFolderId &&
-          f.id != NotesConstants.trashFolderId)
+      .where(
+        (f) =>
+            f.account == NotesConstants.accountICloud &&
+            f.id != NotesConstants.quickNotesFolderId &&
+            f.id != NotesConstants.trashFolderId,
+      )
       .toList();
 
   List<Folder> get onMyMacFolders => _folders
@@ -151,9 +151,7 @@ class FolderProvider extends ChangeNotifier {
   Future<void> mergeSyncedFolders(List<Folder> remoteFolders) async {
     if (remoteFolders.isEmpty) return;
 
-    final Map<String, Folder> byId = {
-      for (final f in _folders) f.id: f,
-    };
+    final Map<String, Folder> byId = {for (final f in _folders) f.id: f};
 
     for (final remote in remoteFolders) {
       final existing = byId[remote.id];

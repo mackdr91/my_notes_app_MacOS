@@ -43,7 +43,8 @@ class _ChecklistItemWidgetState extends State<ChecklistItemWidget> {
   @override
   void didUpdateWidget(covariant ChecklistItemWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.item.text != widget.item.text && _controller.text != widget.item.text) {
+    if (oldWidget.item.text != widget.item.text &&
+        _controller.text != widget.item.text) {
       _controller.text = widget.item.text;
     }
   }
@@ -90,8 +91,8 @@ class _ChecklistItemWidgetState extends State<ChecklistItemWidget> {
                       color: widget.item.isCompleted
                           ? NotesTheme.accentGold
                           : (_isHovered
-                              ? NotesTheme.textSecondary(context)
-                              : NotesTheme.textTertiary(context)),
+                                ? NotesTheme.textSecondary(context)
+                                : NotesTheme.textTertiary(context)),
                       width: 1.5,
                     ),
                   ),

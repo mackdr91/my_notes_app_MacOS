@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: ChangeNotifier provider managing active application theme mode.
+
 import 'package:flutter/material.dart';
 import 'package:lusid/features/theme/services/theme_storage_service.dart';
 
@@ -8,7 +12,7 @@ class ThemeProvider extends ChangeNotifier {
   bool _isLoaded = false;
 
   ThemeProvider({ThemeStorageService? storageService})
-      : _storageService = storageService ?? ThemeStorageService() {
+    : _storageService = storageService ?? ThemeStorageService() {
     _initTheme();
   }
 

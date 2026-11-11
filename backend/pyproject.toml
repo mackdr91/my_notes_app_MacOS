@@ -1,0 +1,36 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: Ruff linter, formatter, and coverage configuration for the Django REST Framework backend.
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+exclude = [
+    ".git",
+    "__pycache__",
+    "venv",
+    ".venv",
+    "migrations",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "preserve"
+indent-style = "space"
+
+[tool.coverage.run]
+source = ["api", "notes_backend"]
+omit = [
+    "*/tests.py",
+    "*/asgi.py",
+    "*/wsgi.py",
+    "manage.py",
+    "venv/*",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true

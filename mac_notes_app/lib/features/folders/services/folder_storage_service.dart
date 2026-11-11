@@ -1,4 +1,9 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Local persistence service for custom folders using SharedPreferences.
+
 import 'dart:convert';
+
 import 'package:lusid/core/constants/notes_constants.dart';
 import 'package:lusid/features/folders/models/folder_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +13,9 @@ class FolderStorageService {
   Future<List<Folder>> loadFolders() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final foldersJsonString = prefs.getString(NotesConstants.foldersStorageKey);
+      final foldersJsonString = prefs.getString(
+        NotesConstants.foldersStorageKey,
+      );
 
       if (foldersJsonString == null || foldersJsonString.isEmpty) {
         final defaultFolders = Folder.defaultFolders;
@@ -16,8 +23,11 @@ class FolderStorageService {
         return defaultFolders;
       }
 
-      final List<dynamic> decoded = jsonDecode(foldersJsonString) as List<dynamic>;
-      return decoded.map((item) => Folder.fromJson(item as Map<String, dynamic>)).toList();
+      final List<dynamic> decoded =
+          jsonDecode(foldersJsonString) as List<dynamic>;
+      return decoded
+          .map((item) => Folder.fromJson(item as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       return Folder.defaultFolders;
     }
@@ -31,7 +41,8 @@ class FolderStorageService {
 
   Future<String> loadActiveFolderId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(NotesConstants.activeFolderKey) ?? NotesConstants.allNotesFolderId;
+    return prefs.getString(NotesConstants.activeFolderKey) ??
+        NotesConstants.allNotesFolderId;
   }
 
   Future<void> saveActiveFolderId(String folderId) async {

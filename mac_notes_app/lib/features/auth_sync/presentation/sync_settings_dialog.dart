@@ -60,17 +60,15 @@ class _SyncSettingsDialogState extends State<SyncSettingsDialog> {
     final isDark = NotesTheme.isDark(context);
 
     final lastSyncFormatted = syncProvider.lastSyncedAt != null
-        ? DateFormat('MMM d, yyyy • h:mm:ss a').format(syncProvider.lastSyncedAt!)
+        ? DateFormat('MMM d, yyyy • h:mm:ss a')
+              .format(syncProvider.lastSyncedAt!)
         : 'Never synced';
 
     return Dialog(
       backgroundColor: isDark ? const Color(0xFF242428) : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14.0),
-        side: BorderSide(
-          color: NotesTheme.divider(context),
-          width: 0.8,
-        ),
+        side: BorderSide(color: NotesTheme.divider(context), width: 0.8),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 440),
@@ -139,7 +137,10 @@ class _SyncSettingsDialogState extends State<SyncSettingsDialog> {
                   color: NotesTheme.textPrimary(context),
                   fontSize: 13.0,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 9.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 9.0,
+                ),
                 decoration: BoxDecoration(
                   color: NotesTheme.searchBackground(context),
                   borderRadius: BorderRadius.circular(8.0),
@@ -161,7 +162,9 @@ class _SyncSettingsDialogState extends State<SyncSettingsDialog> {
               Container(
                 padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1B1B1E) : const Color(0xFFF5F5F7),
+                  color: isDark
+                      ? const Color(0xFF1B1B1E)
+                      : const Color(0xFFF5F5F7),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Column(
@@ -206,7 +209,10 @@ class _SyncSettingsDialogState extends State<SyncSettingsDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   CupertinoButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     minimumSize: Size.zero,
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
@@ -219,9 +225,14 @@ class _SyncSettingsDialogState extends State<SyncSettingsDialog> {
                   ),
                   const SizedBox(width: 8),
                   CupertinoButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     minimumSize: Size.zero,
-                    color: isDark ? const Color(0xFF38383D) : const Color(0xFFE5E5EA),
+                    color: isDark
+                        ? const Color(0xFF38383D)
+                        : const Color(0xFFE5E5EA),
                     borderRadius: BorderRadius.circular(7.0),
                     onPressed: syncProvider.isSyncing
                         ? null
@@ -241,14 +252,19 @@ class _SyncSettingsDialogState extends State<SyncSettingsDialog> {
                   ),
                   const SizedBox(width: 8),
                   CupertinoButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     minimumSize: Size.zero,
                     color: NotesTheme.accentGold,
                     borderRadius: BorderRadius.circular(7.0),
                     onPressed: syncProvider.isSyncing
                         ? null
                         : () async {
-                            await syncProvider.setServerUrl(_urlController.text);
+                            await syncProvider.setServerUrl(
+                              _urlController.text,
+                            );
                             await syncProvider.syncNow(
                               notesProvider: notesProvider,
                               folderProvider: folderProvider,

@@ -63,38 +63,58 @@ class FormatMenuBar extends StatelessWidget {
                 _InlineButton(
                   label: 'B',
                   tooltip: 'Bold (Cmd+B)',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13.5,
+                  ),
                   onTap: () => onSelectFormat(NoteTextFormat.bold),
                 ),
                 _InlineButton(
                   label: 'I',
                   tooltip: 'Italic (Cmd+I)',
-                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13.5),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 13.5,
+                  ),
                   onTap: () => onSelectFormat(NoteTextFormat.italic),
                 ),
                 _InlineButton(
                   label: 'U',
                   tooltip: 'Underline (Cmd+U)',
-                  style: const TextStyle(decoration: TextDecoration.underline, fontSize: 13.5),
+                  style: const TextStyle(
+                    decoration: TextDecoration.underline,
+                    fontSize: 13.5,
+                  ),
                   onTap: () => onSelectFormat(NoteTextFormat.underline),
                 ),
                 _InlineButton(
                   label: 'S',
                   tooltip: 'Strikethrough',
-                  style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 13.5),
+                  style: const TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                    fontSize: 13.5,
+                  ),
                   onTap: () => onSelectFormat(NoteTextFormat.strikethrough),
                 ),
                 _InlineButton(
                   label: '</>',
                   tooltip: 'Inline Code',
-                  style: const TextStyle(fontFamily: 'SF Mono', fontSize: 11.5, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontFamily: 'SF Mono',
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.bold,
+                  ),
                   onTap: () => onSelectFormat(NoteTextFormat.code),
                 ),
               ],
             ),
           ),
 
-          Divider(height: 8, color: NotesTheme.divider(context), thickness: 0.8),
+          Divider(
+            height: 8,
+            color: NotesTheme.divider(context),
+            thickness: 0.8,
+          ),
 
           // Paragraph Styles
           _FormatOption(
@@ -114,7 +134,10 @@ class FormatMenuBar extends StatelessWidget {
           ),
           _FormatOption(
             label: 'Body',
-            style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.normal),
+            style: const TextStyle(
+              fontSize: 13.0,
+              fontWeight: FontWeight.normal,
+            ),
             onTap: () => onSelectFormat(NoteTextFormat.body),
           ),
           _FormatOption(
@@ -123,7 +146,11 @@ class FormatMenuBar extends StatelessWidget {
             onTap: () => onSelectFormat(NoteTextFormat.monospaced),
           ),
 
-          Divider(height: 8, color: NotesTheme.divider(context), thickness: 0.8),
+          Divider(
+            height: 8,
+            color: NotesTheme.divider(context),
+            thickness: 0.8,
+          ),
 
           // Lists
           _FormatOption(
@@ -191,7 +218,9 @@ class _InlineButtonState extends State<_InlineButton> {
               height: 28,
               decoration: BoxDecoration(
                 color: _isHovered
-                    ? (isDark ? const Color(0xFF3A3A3C) : const Color(0xFFE5E5EA))
+                    ? (isDark
+                          ? const Color(0xFF3A3A3C)
+                          : const Color(0xFFE5E5EA))
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(4.0),
               ),

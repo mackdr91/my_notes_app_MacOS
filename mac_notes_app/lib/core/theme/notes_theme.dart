@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Authentic Apple Notes macOS & iPadOS color palette and typography theme definitions.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,9 +28,15 @@ class NotesTheme {
   static const Color lightCodeBackground = Color(0xFFF2F2F7);
 
   // High Contrast Pure Black Dark Mode Palette
-  static const Color darkSidebarBackground = Color(0xFF0D0D0E); // Deep black-grey
-  static const Color darkListBackground = Color(0xFF141416); // High contrast slate
-  static const Color darkEditorBackground = Color(0xFF000000); // Pure AMOLED Black
+  static const Color darkSidebarBackground = Color(
+    0xFF0D0D0E,
+  ); // Deep black-grey
+  static const Color darkListBackground = Color(
+    0xFF141416,
+  ); // High contrast slate
+  static const Color darkEditorBackground = Color(
+    0xFF000000,
+  ); // Pure AMOLED Black
   static const Color darkDivider = Color(0xFF2C2C30);
   static const Color darkCardHover = Color(0xFF202024);
   static const Color darkCardSelected = Color(0xFF382A0E); // Subtle amber hue
@@ -81,52 +91,52 @@ class NotesTheme {
 
   /// Typography styles matching macOS Apple Notes SF Pro hierarchy
   static TextStyle titleStyle(BuildContext context) => TextStyle(
-        fontFamily: '.AppleSystemUIFont',
-        fontSize: 24.0,
-        fontWeight: FontWeight.bold,
-        color: textPrimary(context),
-        height: 1.25,
-      );
+    fontFamily: '.AppleSystemUIFont',
+    fontSize: 24.0,
+    fontWeight: FontWeight.bold,
+    color: textPrimary(context),
+    height: 1.25,
+  );
 
   static TextStyle headingStyle(BuildContext context) => TextStyle(
-        fontFamily: '.AppleSystemUIFont',
-        fontSize: 19.0,
-        fontWeight: FontWeight.w600,
-        color: textPrimary(context),
-        height: 1.3,
-      );
+    fontFamily: '.AppleSystemUIFont',
+    fontSize: 19.0,
+    fontWeight: FontWeight.w600,
+    color: textPrimary(context),
+    height: 1.3,
+  );
 
   static TextStyle subheadingStyle(BuildContext context) => TextStyle(
-        fontFamily: '.AppleSystemUIFont',
-        fontSize: 16.0,
-        fontWeight: FontWeight.w600,
-        color: textPrimary(context),
-        height: 1.35,
-      );
+    fontFamily: '.AppleSystemUIFont',
+    fontSize: 16.0,
+    fontWeight: FontWeight.w600,
+    color: textPrimary(context),
+    height: 1.35,
+  );
 
   static TextStyle bodyStyle(BuildContext context) => TextStyle(
-        fontFamily: '.AppleSystemUIFont',
-        fontSize: 14.5,
-        fontWeight: FontWeight.normal,
-        color: textPrimary(context),
-        height: 1.45,
-      );
+    fontFamily: '.AppleSystemUIFont',
+    fontSize: 14.5,
+    fontWeight: FontWeight.normal,
+    color: textPrimary(context),
+    height: 1.45,
+  );
 
   static TextStyle monoStyle(BuildContext context) => TextStyle(
-        fontFamily: 'SF Mono',
-        fontSize: 13.5,
-        fontWeight: FontWeight.normal,
-        color: textPrimary(context),
-        backgroundColor: codeBackground(context),
-        height: 1.4,
-      );
+    fontFamily: 'SF Mono',
+    fontSize: 13.5,
+    fontWeight: FontWeight.normal,
+    color: textPrimary(context),
+    backgroundColor: codeBackground(context),
+    height: 1.4,
+  );
 
   static TextStyle dateHeaderStyle(BuildContext context) => TextStyle(
-        fontFamily: '.AppleSystemUIFont',
-        fontSize: 12.0,
-        fontWeight: FontWeight.w500,
-        color: textSecondary(context),
-      );
+    fontFamily: '.AppleSystemUIFont',
+    fontSize: 12.0,
+    fontWeight: FontWeight.w500,
+    color: textSecondary(context),
+  );
 
   /// Application ThemeData (Light)
   static ThemeData get lightTheme {
@@ -147,10 +157,7 @@ class NotesTheme {
           color: Color(0xE61D1D1F),
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
         ),
-        textStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 11.5,
-        ),
+        textStyle: TextStyle(color: Colors.white, fontSize: 11.5),
         waitDuration: Duration(milliseconds: 500),
       ),
     );
@@ -175,10 +182,7 @@ class NotesTheme {
           color: Color(0xE61C1C20),
           borderRadius: BorderRadius.all(Radius.circular(6.0)),
         ),
-        textStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 11.5,
-        ),
+        textStyle: TextStyle(color: Colors.white, fontSize: 11.5),
         waitDuration: Duration(milliseconds: 500),
       ),
     );

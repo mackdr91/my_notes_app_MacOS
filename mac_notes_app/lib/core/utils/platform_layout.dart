@@ -51,7 +51,9 @@ class PlatformLayout {
   /// Left inset for the unified toolbar: reserves 80pt for macOS traffic lights on native macOS,
   /// and uses a clean 16pt inset on iPadOS and Web.
   static double toolbarLeftInset(BuildContext context) {
-    return isMacOSDesktop(context) ? NotesConstants.trafficLightInsetLeft : 16.0;
+    return isMacOSDesktop(context)
+        ? NotesConstants.trafficLightInsetLeft
+        : 16.0;
   }
 
   /// Toolbar height: 56pt on touch devices (iPadOS) and 52pt on macOS desktop.

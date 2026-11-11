@@ -1,7 +1,14 @@
-"""Firebase Authentication middleware and helper for Django REST Framework."""
+"""
+Author: Domonick Mack
+Date: 2026-11-10
+Description: Firebase Authentication middleware and helper for Django REST Framework.
+"""
+
+from __future__ import annotations
+
 import logging
-from typing import Optional, Tuple
-from django.contrib.auth.models import AnonymousUser, User
+
+from django.contrib.auth.models import User
 from rest_framework import authentication, exceptions
 
 logger = logging.getLogger(__name__)
@@ -9,6 +16,7 @@ logger = logging.getLogger(__name__)
 try:
     import firebase_admin
     from firebase_admin import auth as firebase_auth
+
     FIREBASE_AVAILABLE = True
 except ImportError:
     FIREBASE_AVAILABLE = False
@@ -17,7 +25,7 @@ except ImportError:
 class FirebaseAuthentication(authentication.BaseAuthentication):
     """Authenticates requests using Firebase ID tokens passed in the Authorization header."""
 
-    def authenticate(self, request) -> Optional[Tuple[User, None]]:
+    def authenticate(self, request) -> tuple[User, None] | None:
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             return None
@@ -36,7 +44,9 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
                 return (user, None)
             except Exception as exc:
                 logger.error(f"Firebase token verification failed: {exc}")
-                raise exceptions.AuthenticationFailed('Invalid Firebase authentication token.')
+                raise exceptions.AuthenticationFailed(
+                    'Invalid Firebase authentication token.'
+                ) from exc
 
         # Local development / test fallback
         user, _ = User.objects.get_or_create(username=f"dev_user_{token[:8]}")

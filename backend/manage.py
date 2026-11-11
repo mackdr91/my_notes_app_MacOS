@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Django's command-line utility for administrative tasks."""
+"""
+Author: Domonick Mack
+Date: 2026-11-10
+Description: Django command-line utility for administrative tasks.
+"""
+
 import os
 import sys
 

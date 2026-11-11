@@ -29,9 +29,7 @@ class SidebarView extends StatelessWidget {
         duration: NotesConstants.themeAnimationDuration,
         curve: NotesConstants.defaultAnimationCurve,
         color: NotesTheme.sidebarBackground(context),
-        child: const Center(
-          child: CupertinoActivityIndicator(),
-        ),
+        child: const Center(child: CupertinoActivityIndicator()),
       );
     }
 
@@ -44,18 +42,27 @@ class SidebarView extends StatelessWidget {
           // Scrollable folder & tags tree
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 8.0,
+              ),
               children: [
                 // 1. Quick Notes
                 if (folderProvider.quickNotesFolder != null) ...[
                   _SidebarItemTile(
                     key: const ValueKey(NotesConstants.quickNotesFolderId),
                     folder: folderProvider.quickNotesFolder!,
-                    isSelected: folderProvider.selectedFolderId == NotesConstants.quickNotesFolderId,
-                    count: notesProvider.countNotesInFolder(NotesConstants.quickNotesFolderId),
+                    isSelected:
+                        folderProvider.selectedFolderId ==
+                        NotesConstants.quickNotesFolderId,
+                    count: notesProvider.countNotesInFolder(
+                      NotesConstants.quickNotesFolderId,
+                    ),
                     onTap: () {
                       notesProvider.setActiveTag(null);
-                      folderProvider.selectFolder(NotesConstants.quickNotesFolderId);
+                      folderProvider.selectFolder(
+                        NotesConstants.quickNotesFolderId,
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
@@ -75,11 +82,17 @@ class SidebarView extends StatelessWidget {
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now(),
                   ),
-                  isSelected: folderProvider.selectedFolderId == NotesConstants.allNotesFolderId,
-                  count: notesProvider.countNotesInFolder(NotesConstants.allNotesFolderId),
+                  isSelected:
+                      folderProvider.selectedFolderId ==
+                      NotesConstants.allNotesFolderId,
+                  count: notesProvider.countNotesInFolder(
+                    NotesConstants.allNotesFolderId,
+                  ),
                   onTap: () {
                     notesProvider.setActiveTag(null);
-                    folderProvider.selectFolder(NotesConstants.allNotesFolderId);
+                    folderProvider.selectFolder(
+                      NotesConstants.allNotesFolderId,
+                    );
                   },
                 ),
 
@@ -93,29 +106,37 @@ class SidebarView extends StatelessWidget {
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now(),
                   ),
-                  isSelected: folderProvider.selectedFolderId == NotesConstants.defaultNotesFolderId,
-                  count: notesProvider.countNotesInFolder(NotesConstants.defaultNotesFolderId),
+                  isSelected:
+                      folderProvider.selectedFolderId ==
+                      NotesConstants.defaultNotesFolderId,
+                  count: notesProvider.countNotesInFolder(
+                    NotesConstants.defaultNotesFolderId,
+                  ),
                   onTap: () {
                     notesProvider.setActiveTag(null);
-                    folderProvider.selectFolder(NotesConstants.defaultNotesFolderId);
+                    folderProvider.selectFolder(
+                      NotesConstants.defaultNotesFolderId,
+                    );
                   },
                 ),
 
                 // Custom user folders
                 ...folderProvider.iCloudFolders
                     .where((f) => !f.isSystem)
-                    .map((f) => _SidebarItemTile(
-                          key: ValueKey(f.id),
-                          folder: f,
-                          isSelected: folderProvider.selectedFolderId == f.id,
-                          count: notesProvider.countNotesInFolder(f.id),
-                          onTap: () {
-                            notesProvider.setActiveTag(null);
-                            folderProvider.selectFolder(f.id);
-                          },
-                          onRename: () => _showRenameDialog(context, f),
-                          onDelete: () => folderProvider.deleteFolder(f.id),
-                        )),
+                    .map(
+                      (f) => _SidebarItemTile(
+                        key: ValueKey(f.id),
+                        folder: f,
+                        isSelected: folderProvider.selectedFolderId == f.id,
+                        count: notesProvider.countNotesInFolder(f.id),
+                        onTap: () {
+                          notesProvider.setActiveTag(null);
+                          folderProvider.selectFolder(f.id);
+                        },
+                        onRename: () => _showRenameDialog(context, f),
+                        onDelete: () => folderProvider.deleteFolder(f.id),
+                      ),
+                    ),
 
                 // Recently Deleted
                 if (folderProvider.trashFolder != null) ...[
@@ -123,8 +144,12 @@ class SidebarView extends StatelessWidget {
                   _SidebarItemTile(
                     key: const ValueKey(NotesConstants.trashFolderId),
                     folder: folderProvider.trashFolder!,
-                    isSelected: folderProvider.selectedFolderId == NotesConstants.trashFolderId,
-                    count: notesProvider.countNotesInFolder(NotesConstants.trashFolderId),
+                    isSelected:
+                        folderProvider.selectedFolderId ==
+                        NotesConstants.trashFolderId,
+                    count: notesProvider.countNotesInFolder(
+                      NotesConstants.trashFolderId,
+                    ),
                     onTap: () {
                       notesProvider.setActiveTag(null);
                       folderProvider.selectFolder(NotesConstants.trashFolderId);
@@ -146,14 +171,17 @@ class SidebarView extends StatelessWidget {
                             const _SectionHeader(title: 'TAGS'),
                             const SizedBox(height: 4),
                             ...notesProvider.tagsWithCount.entries.map((entry) {
-                              final isTagSelected = notesProvider.activeTag == entry.key;
+                              final isTagSelected =
+                                  notesProvider.activeTag == entry.key;
                               return _TagTile(
                                 key: ValueKey('tag_${entry.key}'),
                                 tagName: entry.key,
                                 count: entry.value,
                                 isSelected: isTagSelected,
                                 onTap: () {
-                                  notesProvider.setActiveTag(isTagSelected ? null : entry.key);
+                                  notesProvider.setActiveTag(
+                                    isTagSelected ? null : entry.key,
+                                  );
                                 },
                               );
                             }),
@@ -169,13 +197,13 @@ class SidebarView extends StatelessWidget {
           AnimatedContainer(
             duration: NotesConstants.themeAnimationDuration,
             curve: NotesConstants.defaultAnimationCurve,
-            padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14.0,
+              vertical: 10.0,
+            ),
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(
-                  color: NotesTheme.divider(context),
-                  width: 0.6,
-                ),
+                top: BorderSide(color: NotesTheme.divider(context), width: 0.6),
               ),
             ),
             child: Row(
@@ -311,7 +339,9 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
           ? const Color(0xFF4A3E1E)
           : NotesTheme.accentGold.withValues(alpha: 0.18);
     } else if (_isHovered) {
-      backgroundColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA);
+      backgroundColor = isDark
+          ? const Color(0xFF2C2C2E)
+          : const Color(0xFFE5E5EA);
     }
 
     return MouseRegion(
@@ -326,7 +356,8 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
         onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         onSecondaryTapUp: (details) {
-          if (!widget.folder.isSystem && (widget.onRename != null || widget.onDelete != null)) {
+          if (!widget.folder.isSystem &&
+              (widget.onRename != null || widget.onDelete != null)) {
             _showContextMenu(context, details.globalPosition);
           }
         },
@@ -359,7 +390,9 @@ class _SidebarItemTileState extends State<_SidebarItemTile> {
                     style: TextStyle(
                       fontFamily: '.AppleSystemUIFont',
                       fontSize: 12.5,
-                      fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight: widget.isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                       color: NotesTheme.textPrimary(context),
                     ),
                     child: Text(
@@ -455,7 +488,9 @@ class _TagTileState extends State<_TagTile> {
           ? const Color(0xFF4A3E1E)
           : NotesTheme.accentGold.withValues(alpha: 0.18);
     } else if (_isHovered) {
-      backgroundColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA);
+      backgroundColor = isDark
+          ? const Color(0xFF2C2C2E)
+          : const Color(0xFFE5E5EA);
     }
 
     return MouseRegion(
@@ -500,7 +535,9 @@ class _TagTileState extends State<_TagTile> {
                     style: TextStyle(
                       fontFamily: '.AppleSystemUIFont',
                       fontSize: 12.0,
-                      fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight: widget.isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                       color: NotesTheme.textPrimary(context),
                     ),
                     child: Text(widget.tagName),

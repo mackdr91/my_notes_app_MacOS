@@ -12,13 +12,7 @@ import 'package:lusid/features/notes/models/note_model.dart';
 import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum SyncStatus {
-  idle,
-  syncing,
-  synced,
-  offline,
-  error,
-}
+enum SyncStatus { idle, syncing, synced, offline, error }
 
 /// Provider orchestrating cross-device synchronization between Mac, iPad, and the Django/MongoDB backend.
 class SyncProvider extends ChangeNotifier {
@@ -32,7 +26,7 @@ class SyncProvider extends ChangeNotifier {
   String? _statusMessage;
 
   SyncProvider({NotesApiSyncService? syncService})
-      : _syncService = syncService ?? NotesApiSyncService() {
+    : _syncService = syncService ?? NotesApiSyncService() {
     _loadSettings();
   }
 
@@ -63,7 +57,9 @@ class SyncProvider extends ChangeNotifier {
 
   /// Updates and persists the backend server URL (e.g. LAN IP for iPad sync or cloud URL).
   Future<void> setServerUrl(String newUrl) async {
-    final cleaned = newUrl.trim().isEmpty ? 'http://127.0.0.1:8000/api' : newUrl.trim();
+    final cleaned = newUrl.trim().isEmpty
+        ? 'http://127.0.0.1:8000/api'
+        : newUrl.trim();
     _serverUrl = cleaned;
     _syncService.updateBaseUrl(_serverUrl);
     notifyListeners();
@@ -139,7 +135,10 @@ class SyncProvider extends ChangeNotifier {
 
       try {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(_lastSyncPrefKey, _lastSyncedAt!.toIso8601String());
+        await prefs.setString(
+          _lastSyncPrefKey,
+          _lastSyncedAt!.toIso8601String(),
+        );
       } catch (_) {}
 
       notifyListeners();

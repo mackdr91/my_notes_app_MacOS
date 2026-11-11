@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Real-time Markdown to FlutterQuill Delta rich text converter.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
@@ -21,54 +25,84 @@ class MarkdownConverter {
     // 1. Line Block Starters (triggered when user types prefix + space)
     if (lineUpToCursor == '# ') {
       controller.replaceText(lineStart, 2, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.h1);
       return true;
     } else if (lineUpToCursor == '## ') {
       controller.replaceText(lineStart, 3, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.h2);
       return true;
     } else if (lineUpToCursor == '### ') {
       controller.replaceText(lineStart, 4, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.h3);
       return true;
-    } else if (lineUpToCursor == '- [ ] ' || lineUpToCursor == '[] ' || lineUpToCursor == '[ ] ') {
+    } else if (lineUpToCursor == '- [ ] ' ||
+        lineUpToCursor == '[] ' ||
+        lineUpToCursor == '[ ] ') {
       controller.replaceText(lineStart, lineUpToCursor.length, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.unchecked);
       return true;
     } else if (lineUpToCursor == '- [x] ' || lineUpToCursor == '[x] ') {
       controller.replaceText(lineStart, lineUpToCursor.length, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.checked);
       return true;
     } else if (lineUpToCursor == '- ' || lineUpToCursor == '* ') {
       controller.replaceText(lineStart, 2, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.ul);
       return true;
     } else if (RegExp(r'^\d+\.\s$').hasMatch(lineUpToCursor)) {
       controller.replaceText(lineStart, lineUpToCursor.length, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.ol);
       return true;
     } else if (lineUpToCursor == '> ') {
       controller.replaceText(lineStart, 2, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.blockQuote);
       return true;
     } else if (lineUpToCursor.trim() == '```') {
       controller.replaceText(lineStart, lineUpToCursor.length, '', null);
-      controller.updateSelection(TextSelection.collapsed(offset: lineStart), ChangeSource.local);
+      controller.updateSelection(
+        TextSelection.collapsed(offset: lineStart),
+        ChangeSource.local,
+      );
       controller.formatSelection(Attribute.codeBlock);
       return true;
     }
 
     // 2. Inline Markdown (triggered when closing delimiter is typed or followed by space)
     // Bold: **text** or __text__
-    final boldAsteriskMatch = RegExp(r'\*\*([^*]+)\*\*(\s?)$').firstMatch(lineUpToCursor);
+    final boldAsteriskMatch = RegExp(r'\*\*([^*]+)\*\*(\s?)$')
+        .firstMatch(lineUpToCursor);
     if (boldAsteriskMatch != null) {
       final inner = boldAsteriskMatch.group(1)!;
       final trailing = boldAsteriskMatch.group(2) ?? '';
@@ -84,7 +118,8 @@ class MarkdownConverter {
       return true;
     }
 
-    final boldUnderscoreMatch = RegExp(r'__([^_]+)__(\s?)$').firstMatch(lineUpToCursor);
+    final boldUnderscoreMatch = RegExp(r'__([^_]+)__(\s?)$')
+        .firstMatch(lineUpToCursor);
     if (boldUnderscoreMatch != null) {
       final inner = boldUnderscoreMatch.group(1)!;
       final trailing = boldUnderscoreMatch.group(2) ?? '';
@@ -101,7 +136,8 @@ class MarkdownConverter {
     }
 
     // Italic: *text* or _text_ (avoiding double asterisks or double underscores)
-    final italicAsteriskMatch = RegExp(r'(?<!\*)\*([^*]+)\*(\s?)$').firstMatch(lineUpToCursor);
+    final italicAsteriskMatch = RegExp(r'(?<!\*)\*([^*]+)\*(\s?)$')
+        .firstMatch(lineUpToCursor);
     if (italicAsteriskMatch != null) {
       final inner = italicAsteriskMatch.group(1)!;
       final trailing = italicAsteriskMatch.group(2) ?? '';
@@ -117,7 +153,8 @@ class MarkdownConverter {
       return true;
     }
 
-    final italicUnderscoreMatch = RegExp(r'(?<!_)_([^_]+)_(\s?)$').firstMatch(lineUpToCursor);
+    final italicUnderscoreMatch = RegExp(r'(?<!_)_([^_]+)_(\s?)$')
+        .firstMatch(lineUpToCursor);
     if (italicUnderscoreMatch != null) {
       final inner = italicUnderscoreMatch.group(1)!;
       final trailing = italicUnderscoreMatch.group(2) ?? '';
@@ -193,13 +230,19 @@ class MarkdownConverter {
       } else if (line.startsWith('# ')) {
         line = line.substring(2);
         lineAttribute = Attribute.h1;
-      } else if (line.startsWith('- [ ] ') || line.startsWith('[] ') || line.startsWith('[ ] ')) {
+      } else if (line.startsWith('- [ ] ') ||
+          line.startsWith('[] ') ||
+          line.startsWith('[ ] ')) {
         line = line.replaceFirst(RegExp(r'^(-\s)?\[\s?\]\s*'), '');
         lineAttribute = Attribute.unchecked;
-      } else if (line.startsWith('- [x] ') || line.startsWith('- [X] ') || line.startsWith('[x] ')) {
+      } else if (line.startsWith('- [x] ') ||
+          line.startsWith('- [X] ') ||
+          line.startsWith('[x] ')) {
         line = line.replaceFirst(RegExp(r'^(-\s)?\[(x|X)\]\s*'), '');
         lineAttribute = Attribute.checked;
-      } else if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
+      } else if (line.startsWith('- ') ||
+          line.startsWith('* ') ||
+          line.startsWith('• ')) {
         line = line.substring(2);
         lineAttribute = Attribute.ul;
       } else if (RegExp(r'^\d+\.\s').hasMatch(line)) {
@@ -223,17 +266,26 @@ class MarkdownConverter {
       for (final span in spans) {
         if (span.text.isEmpty) continue;
         final Map<String, dynamic> attrs = {};
-        if (span.isBold) attrs[Attribute.bold.key] = Attribute.bold.value;
-        if (span.isItalic) attrs[Attribute.italic.key] = Attribute.italic.value;
-        if (span.isCode) attrs[Attribute.inlineCode.key] = Attribute.inlineCode.value;
-        if (span.isStrike) attrs[Attribute.strikeThrough.key] = Attribute.strikeThrough.value;
+        if (span.isBold) {
+          attrs[Attribute.bold.key] = Attribute.bold.value;
+        }
+        if (span.isItalic) {
+          attrs[Attribute.italic.key] = Attribute.italic.value;
+        }
+        if (span.isCode) {
+          attrs[Attribute.inlineCode.key] = Attribute.inlineCode.value;
+        }
+        if (span.isStrike) {
+          attrs[Attribute.strikeThrough.key] = Attribute.strikeThrough.value;
+        }
 
         delta.insert(span.text, attrs.isNotEmpty ? attrs : null);
       }
 
       // Add newline and line format
-      final Map<String, dynamic>? lineAttrs =
-          lineAttribute != null ? {lineAttribute.key: lineAttribute.value} : null;
+      final Map<String, dynamic>? lineAttrs = lineAttribute != null
+          ? {lineAttribute.key: lineAttribute.value}
+          : null;
       delta.insert('\n', lineAttrs);
     }
 

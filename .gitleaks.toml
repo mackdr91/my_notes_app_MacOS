@@ -1,0 +1,19 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: Gitleaks configuration for preventing accidental commits of credentials, API keys, and signing certificates.
+
+title = "Lusid Gitleaks Security Policy"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow non-secret local dev/CI test placeholder keys and build artifacts"
+paths = [
+  '''^releases/.*''',
+  '''^mac_notes_app/build/.*''',
+  '''^backend/venv/.*''',
+  '''^\.github/workflows/.*\.yml$''',
+  '''^docker-compose\.yml$''',
+  '''^backend/notes_backend/settings\.py$''',
+]

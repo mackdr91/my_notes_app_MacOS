@@ -5,6 +5,7 @@
  */
 
 import 'dart:convert';
+
 import 'package:lusid/core/constants/notes_constants.dart';
 import 'package:lusid/features/notes/models/note_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,9 @@ class NotesStorageService {
       }
 
       final List<dynamic> decoded = jsonDecode(notesJson) as List<dynamic>;
-      return decoded.map((item) => Note.fromJson(item as Map<String, dynamic>)).toList();
+      return decoded
+          .map((item) => Note.fromJson(item as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       return _generateInitialNotes();
     }
@@ -43,7 +46,8 @@ class NotesStorageService {
         id: 'seed_note_1',
         folderId: NotesConstants.defaultNotesFolderId,
         title: 'Welcome to Lusid',
-        body: 'Lusid is your sleek, distraction-free workspace for notes, structured data, and code on macOS and iPadOS.\n\n'
+        body:
+            'Lusid is your sleek, distraction-free workspace for notes, structured data, and code on macOS and iPadOS.\n\n'
             'Key Features Built-In:\n'
             '• Adaptive 3-Column Navigation (Sidebar, Note List, and Rich WYSIWYG Editor)\n'
             '• Live Markdown conversion & first-line auto Title formatting\n'
@@ -55,10 +59,26 @@ class NotesStorageService {
         isPinned: true,
         isLocked: false,
         checklists: const [
-          ChecklistItem(id: 'c1', text: 'Explore the 3-column macOS split view', isCompleted: true),
-          ChecklistItem(id: 'c2', text: 'Create a new note with Cmd+N or toolbar compose', isCompleted: false),
-          ChecklistItem(id: 'c3', text: 'Try toggling dark mode in macOS system settings', isCompleted: false),
-          ChecklistItem(id: 'c4', text: 'Add your own custom folders and tags', isCompleted: false),
+          ChecklistItem(
+            id: 'c1',
+            text: 'Explore the 3-column macOS split view',
+            isCompleted: true,
+          ),
+          ChecklistItem(
+            id: 'c2',
+            text: 'Create a new note with Cmd+N or toolbar compose',
+            isCompleted: false,
+          ),
+          ChecklistItem(
+            id: 'c3',
+            text: 'Try toggling dark mode in macOS system settings',
+            isCompleted: false,
+          ),
+          ChecklistItem(
+            id: 'c4',
+            text: 'Add your own custom folders and tags',
+            isCompleted: false,
+          ),
         ],
         tables: const [
           NoteTable(
@@ -79,7 +99,8 @@ class NotesStorageService {
         id: 'seed_note_2',
         folderId: 'work_folder',
         title: 'Sprint 24 Engineering Deliverables',
-        body: 'Reviewing current milestones and core architecture:\n\n'
+        body:
+            'Reviewing current milestones and core architecture:\n\n'
             '1. Django REST Framework backend models for MongoDB synchronization.\n'
             '2. Firebase Authentication token verification pipeline.\n'
             '3. Offline-first local persistence ensuring zero-latency note taking.\n'
@@ -88,9 +109,21 @@ class NotesStorageService {
         isPinned: false,
         isLocked: false,
         checklists: const [
-          ChecklistItem(id: 'c5', text: 'Define MongoDB collections schema', isCompleted: true),
-          ChecklistItem(id: 'c6', text: 'Setup DRF viewsets with explicit validation', isCompleted: true),
-          ChecklistItem(id: 'c7', text: 'Verify offline queue synchronization', isCompleted: false),
+          ChecklistItem(
+            id: 'c5',
+            text: 'Define MongoDB collections schema',
+            isCompleted: true,
+          ),
+          ChecklistItem(
+            id: 'c6',
+            text: 'Setup DRF viewsets with explicit validation',
+            isCompleted: true,
+          ),
+          ChecklistItem(
+            id: 'c7',
+            text: 'Verify offline queue synchronization',
+            isCompleted: false,
+          ),
         ],
         createdAt: now.subtract(const Duration(hours: 3)),
         updatedAt: now.subtract(const Duration(hours: 2)),
@@ -99,7 +132,8 @@ class NotesStorageService {
         id: 'seed_note_3',
         folderId: NotesConstants.quickNotesFolderId,
         title: 'Quick Brainstorm: App Customizations',
-        body: 'Ideas to customize this foundation once complete:\n\n'
+        body:
+            'Ideas to customize this foundation once complete:\n\n'
             '- Custom markdown export and PDF compilation\n'
             '- Global menu bar quick note popover\n'
             '- Custom tag hierarchy with color coding\n'
@@ -114,16 +148,33 @@ class NotesStorageService {
         id: 'seed_note_4',
         folderId: 'personal_folder',
         title: 'Weekend Yosemite Hiking Packing List',
-        body: 'Essential gear for the weekend trip:\n\n'
+        body:
+            'Essential gear for the weekend trip:\n\n'
             'Ensure all permits and passes are downloaded offline before leaving reception.',
         tags: const ['personal', 'travel'],
         isPinned: false,
         isLocked: false,
         checklists: const [
-          ChecklistItem(id: 'c8', text: 'Hiking boots & wool socks', isCompleted: true),
-          ChecklistItem(id: 'c9', text: 'Water filter & 3L hydration bladder', isCompleted: true),
-          ChecklistItem(id: 'c10', text: 'First aid kit & headlamp', isCompleted: true),
-          ChecklistItem(id: 'c11', text: 'National park wilderness permit', isCompleted: false),
+          ChecklistItem(
+            id: 'c8',
+            text: 'Hiking boots & wool socks',
+            isCompleted: true,
+          ),
+          ChecklistItem(
+            id: 'c9',
+            text: 'Water filter & 3L hydration bladder',
+            isCompleted: true,
+          ),
+          ChecklistItem(
+            id: 'c10',
+            text: 'First aid kit & headlamp',
+            isCompleted: true,
+          ),
+          ChecklistItem(
+            id: 'c11',
+            text: 'National park wilderness permit',
+            isCompleted: false,
+          ),
         ],
         createdAt: now.subtract(const Duration(days: 3)),
         updatedAt: now.subtract(const Duration(days: 2)),

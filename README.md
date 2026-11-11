@@ -62,3 +62,27 @@ docker compose up --build -d
 - **Download Portal**: Open `http://localhost:8000/download/` (or `http://<your-mac-lan-ip>:8000/download/` on your iPad).
 - **API Health Check**: `http://localhost:8000/api/health/`
 - **Configure in App**: Click the **Cloud Sync** icon in the Lusid toolbar, enter `http://<your-mac-lan-ip>:8000/api`, and click **Sync Now**.
+
+---
+
+## CI/CD Pipeline Architecture (GitHub Actions)
+
+This repository includes a 5-stage automated CI/CD pipeline under `.github/workflows/`:
+
+1. **Stage 1 — Code Quality & Static Analysis (`.github/workflows/ci-quality.yml`)**:
+   - Enforces file headers (`Author / Date / Description`) and zero placeholder `TODO` comments via `scripts/verify_headers.py`.
+   - Runs `dart format --set-exit-if-changed` and `flutter analyze --fatal-infos --fatal-warnings` on `mac_notes_app`.
+   - Runs **Ruff** (`ruff check .` & `ruff format --check .`) and `python manage.py check` on `backend`.
+   - Lints shell scripts with **ShellCheck**, `backend/Dockerfile` with **Hadolint** (`.hadolint.yaml`), and `docker-compose.yml` schema.
+2. **Stage 2 — Automated Testing & Coverage (`.github/workflows/ci-tests.yml`)**:
+   - Runs `flutter test --coverage` and enforces an **80% minimum coverage gate** via `scripts/verify_flutter_coverage.py`.
+   - Spins up a live `mongo:7.0` service container and runs Django API & two-way sync tests with an **80% minimum coverage gate** (`coverage report --fail-under=80`).
+   - Executes an end-to-end **Docker Compose Smoke Test** (`scripts/smoke_test_compose.sh`) against `/api/health/`, `/api/sync/`, `/api/notes/`, `/api/folders/`, and `/download/`.
+3. **Stage 3 — Security & Dependency Auditing (`.github/workflows/ci-security.yml` & `.github/dependabot.yml`)**:
+   - Runs **Gitleaks** secret scanning (`.gitleaks.toml`), **`pip-audit`** on Python dependencies, **Google OSV-Scanner** & `dart pub outdated` on Flutter dependencies, and **Aqua Security Trivy** on the built backend container image (on every push/PR and weekly Mondays at `08:00 UTC`).
+4. **Stage 4 — Multi-Platform Artifact Packaging (`.github/workflows/cd-package.yml`)**:
+   - Builds macOS `.dmg` & `.zip` (with ad-hoc signing by default or Apple Developer ID notarization via Secrets), iPadOS `.ipa`, Web PWA `.zip`, and `SHA256SUMS.txt` on `macos-latest`.
+5. **Stage 5 — Release & Deployment Automation (`.github/workflows/cd-release.yml`)**:
+   - Publishes multi-arch (`linux/amd64`, `linux/arm64`) backend images to **GitHub Container Registry** (`ghcr.io/mackdr91/my_notes_app_macos-backend`).
+   - Deploys the live Web PWA to **GitHub Pages**.
+   - Creates automated **GitHub Releases** on `v*.*.*` tags with all installer packages and `SHA256SUMS.txt` attached.

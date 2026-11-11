@@ -1,0 +1,126 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: GitHub Actions CI pipeline for Flutter & Django automated tests, 80% coverage gate, and Docker Compose E2E smoke test.
+
+name: "Stage 2 - Automated Testing & Coverage"
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-tests:
+    name: "Flutter Unit & Widget Tests (80% Coverage Gate)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Install Flutter dependencies
+        working-directory: mac_notes_app
+        run: flutter pub get
+
+      - name: Run Flutter test suite with LCOV coverage
+        working-directory: mac_notes_app
+        run: flutter test --coverage
+
+      - name: Enforce 80% minimum Flutter line coverage
+        run: |
+          python3 scripts/verify_flutter_coverage.py \
+            --lcov mac_notes_app/coverage/lcov.info \
+            --min-coverage 80.0
+
+      - name: Upload Flutter coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-lcov-coverage
+          path: mac_notes_app/coverage/lcov.info
+          retention-days: 14
+
+  backend-tests:
+    name: "Django + MongoDB 7 API Tests (80% Coverage Gate)"
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DJANGO_DEBUG: "False"
+      DJANGO_SECRET_KEY: "ci-test-secret-key-for-django-mongodb-service-container"
+      MONGODB_URI: "mongodb://127.0.0.1:27017/"
+      MONGODB_DB_NAME: "mac_notes_db_test"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies and coverage[toml]
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt "coverage[toml]==7.6.4"
+
+      - name: Run Django API & Sync tests with coverage
+        run: |
+          coverage run manage.py test
+          coverage report --fail-under=80
+          coverage xml -o coverage.xml
+
+      - name: Upload Django coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-xml
+          path: backend/coverage.xml
+          retention-days: 14
+
+  docker-compose-smoke-test:
+    name: "End-to-End Docker Compose Smoke Test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Docker Compose E2E Smoke Test
+        run: |
+          chmod +x scripts/smoke_test_compose.sh
+          ./scripts/smoke_test_compose.sh
+
+      - name: Tear down Docker Compose stack
+        if: always()
+        run: docker compose down -v

@@ -59,7 +59,11 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
           notesProvider.createNote(folderId: folderProvider.selectedFolderId);
         },
         // Cmd+Shift+N: New Folder
-        const SingleActivator(LogicalKeyboardKey.keyN, meta: true, shift: true): () {
+        const SingleActivator(
+          LogicalKeyboardKey.keyN,
+          meta: true,
+          shift: true,
+        ): () {
           folderProvider.createFolder('New Folder');
         },
         // Cmd+Delete: Delete Selected Note
@@ -77,11 +81,19 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
           notesProvider.setViewMode(NotesViewMode.gallery);
         },
         // Cmd+Shift+T: Cycle Theme Mode
-        const SingleActivator(LogicalKeyboardKey.keyT, meta: true, shift: true): () {
+        const SingleActivator(
+          LogicalKeyboardKey.keyT,
+          meta: true,
+          shift: true,
+        ): () {
           context.read<ThemeProvider>().cycleThemeMode();
         },
         // Cmd+Shift+C: Insert Code Block
-        const SingleActivator(LogicalKeyboardKey.keyC, meta: true, shift: true): () {
+        const SingleActivator(
+          LogicalKeyboardKey.keyC,
+          meta: true,
+          shift: true,
+        ): () {
           if (notesProvider.selectedNoteId != null) {
             notesProvider.addCodeBlock(notesProvider.selectedNoteId!);
           }
@@ -91,10 +103,13 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
         autofocus: true,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final sizeClass = PlatformLayout.sizeClassForWidth(constraints.maxWidth);
+            final sizeClass = PlatformLayout.sizeClassForWidth(
+              constraints.maxWidth,
+            );
             final isWide = sizeClass == ScreenSizeClass.wide;
             final isCompact = sizeClass == ScreenSizeClass.compact;
-            final showOverlayDrawer = !isWide && !folderProvider.isSidebarCollapsed;
+            final showOverlayDrawer =
+                !isWide && !folderProvider.isSidebarCollapsed;
 
             return Scaffold(
               backgroundColor: NotesTheme.editorBackground(context),
@@ -111,7 +126,9 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                     },
                     onToggleChecklist: () {
                       if (notesProvider.selectedNoteId != null) {
-                        notesProvider.addChecklist(notesProvider.selectedNoteId!);
+                        notesProvider.addChecklist(
+                          notesProvider.selectedNoteId!,
+                        );
                       }
                     },
                     onInsertTable: () {
@@ -126,11 +143,15 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                     },
                     onInsertCodeBlock: () {
                       if (notesProvider.selectedNoteId != null) {
-                        notesProvider.addCodeBlock(notesProvider.selectedNoteId!);
+                        notesProvider.addCodeBlock(
+                          notesProvider.selectedNoteId!,
+                        );
                       }
                     },
-                    onAttachMedia: () => _handlePickAttachment(context, notesProvider),
-                    onToggleLock: () => _handleToggleLock(context, notesProvider),
+                    onAttachMedia: () =>
+                        _handlePickAttachment(context, notesProvider),
+                    onToggleLock: () =>
+                        _handleToggleLock(context, notesProvider),
                   ),
 
                   // 2. Responsive Multi-Column Content Body + Optional iPad Slide-Over Sidebar Drawer
@@ -141,7 +162,8 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                           children: [
                             // Column 1: Inline Sidebar (Shown inline on Wide viewports)
                             _AnimatedCollapsibleColumn(
-                              isVisible: isWide && !folderProvider.isSidebarCollapsed,
+                              isVisible:
+                                  isWide && !folderProvider.isSidebarCollapsed,
                               width: NotesConstants.defaultSidebarWidth,
                               dividerColor: dividerColor,
                               child: const SidebarView(),
@@ -161,9 +183,12 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                             // Column 3: Main Content Area (Editor, Gallery, or Compact List)
                             Expanded(
                               child: AnimatedSwitcher(
-                                duration: NotesConstants.contentAnimationDuration,
-                                switchInCurve: NotesConstants.defaultAnimationCurve,
-                                switchOutCurve: NotesConstants.exitAnimationCurve,
+                                duration:
+                                    NotesConstants.contentAnimationDuration,
+                                switchInCurve:
+                                    NotesConstants.defaultAnimationCurve,
+                                switchOutCurve:
+                                    NotesConstants.exitAnimationCurve,
                                 transitionBuilder: (child, animation) {
                                   final scaleAnimation = Tween<double>(
                                     begin: 0.985,
@@ -177,19 +202,29 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                                     ),
                                   );
                                 },
-                                child: notesProvider.viewMode == NotesViewMode.gallery
-                                    ? const NotesGalleryView(key: ValueKey('gallery_view'))
+                                child:
+                                    notesProvider.viewMode ==
+                                        NotesViewMode.gallery
+                                    ? const NotesGalleryView(
+                                        key: ValueKey('gallery_view'),
+                                      )
                                     : (isCompact && _compactShowingList
-                                        ? const NotesListView(
-                                            key: ValueKey('compact_list_view'),
-                                          )
-                                        : EditorView(
-                                            key: const ValueKey('editor_view'),
-                                            showFormatMenu: _showFormatMenu,
-                                            onCloseFormatMenu: () {
-                                              setState(() => _showFormatMenu = false);
-                                            },
-                                          )),
+                                          ? const NotesListView(
+                                              key: ValueKey(
+                                                'compact_list_view',
+                                              ),
+                                            )
+                                          : EditorView(
+                                              key: const ValueKey(
+                                                'editor_view',
+                                              ),
+                                              showFormatMenu: _showFormatMenu,
+                                              onCloseFormatMenu: () {
+                                                setState(
+                                                  () => _showFormatMenu = false,
+                                                );
+                                              },
+                                            )),
                               ),
                             ),
                           ],
@@ -207,23 +242,31 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                                 children: [
                                   GestureDetector(
                                     key: const ValueKey('sidebar_drawer_scrim'),
-                                    onTap: () => folderProvider.setSidebarCollapsed(true),
+                                    onTap: () => folderProvider
+                                        .setSidebarCollapsed(true),
                                     child: Container(
-                                      color: Colors.black.withValues(alpha: 0.32),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.32,
+                                      ),
                                     ),
                                   ),
                                   AnimatedSlide(
-                                    duration: NotesConstants.layoutAnimationDuration,
+                                    duration:
+                                        NotesConstants.layoutAnimationDuration,
                                     curve: NotesConstants.layoutAnimationCurve,
                                     offset: showOverlayDrawer
                                         ? Offset.zero
                                         : const Offset(-1.0, 0.0),
                                     child: SizedBox(
-                                      width: NotesConstants.defaultSidebarWidth + 20,
+                                      width:
+                                          NotesConstants.defaultSidebarWidth +
+                                          20,
                                       height: double.infinity,
                                       child: DecoratedBox(
                                         decoration: BoxDecoration(
-                                          color: NotesTheme.sidebarBackground(context),
+                                          color: NotesTheme.sidebarBackground(
+                                            context,
+                                          ),
                                           border: Border(
                                             right: BorderSide(
                                               color: dividerColor,
@@ -232,7 +275,9 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.25),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.25,
+                                              ),
                                               blurRadius: 16,
                                               offset: const Offset(4, 0),
                                             ),
@@ -258,7 +303,10 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
     );
   }
 
-  Future<void> _handlePickAttachment(BuildContext context, NotesProvider provider) async {
+  Future<void> _handlePickAttachment(
+    BuildContext context,
+    NotesProvider provider,
+  ) async {
     final noteId = provider.selectedNoteId;
     if (noteId == null) return;
 
@@ -301,7 +349,10 @@ class _MacThreeColumnScaffoldState extends State<MacThreeColumnScaffold> {
     }
   }
 
-  Future<void> _handleToggleLock(BuildContext context, NotesProvider provider) async {
+  Future<void> _handleToggleLock(
+    BuildContext context,
+    NotesProvider provider,
+  ) async {
     final note = provider.selectedNote;
     if (note == null) return;
 
@@ -366,15 +417,8 @@ class _AnimatedCollapsibleColumn extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                width: width,
-                child: child,
-              ),
-              VerticalDivider(
-                width: 1,
-                thickness: 1,
-                color: dividerColor,
-              ),
+              SizedBox(width: width, child: child),
+              VerticalDivider(width: 1, thickness: 1, color: dividerColor),
             ],
           ),
         ),

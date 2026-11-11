@@ -1,0 +1,7 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: Hadolint configuration for linting the Django backend Dockerfile.
+
+ignored:
+  - DL3008  # Pin versions in apt-get install (Debian slim security updates should pull latest patched curl)
+  - DL3013  # Pin versions in pip install (versions are pinned in requirements.txt)

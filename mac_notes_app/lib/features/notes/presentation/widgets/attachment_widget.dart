@@ -5,6 +5,7 @@
  */
 
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lusid/core/constants/notes_constants.dart';
@@ -82,7 +83,9 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
           children: [
             if (_isImage && exists)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(8.0),
+                ),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxHeight: 220),
                   child: Image.file(
@@ -93,7 +96,10 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 8.0,
+              ),
               child: Row(
                 children: [
                   Icon(
@@ -134,7 +140,9 @@ class _AttachmentWidgetState extends State<AttachmentWidget> {
                       CupertinoIcons.trash,
                       size: 15,
                       color: _isHovered
-                          ? CupertinoColors.destructiveRed.withValues(alpha: 0.85)
+                          ? CupertinoColors.destructiveRed.withValues(
+                              alpha: 0.85,
+                            )
                           : NotesTheme.textTertiary(context),
                     ),
                   ),

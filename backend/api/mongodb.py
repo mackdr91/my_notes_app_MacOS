@@ -1,12 +1,19 @@
-"""MongoDB Connection and Persistence Manager.
+"""
+Author: Domonick Mack
+Date: 2026-11-10
+Description: MongoDB connection and persistence manager with thread-safe in-memory fallback.
 
 Provides a unified interface for interacting with MongoDB collections
 ('notes' and 'folders'). When a live MongoDB service is reachable, it
 delegates to pymongo. Otherwise, it seamlessly falls back to a thread-safe
 in-memory collection manager to enable robust local development and testing.
 """
-from typing import Any, Dict, List, Optional
+
+from __future__ import annotations
+
 import logging
+from typing import Any
+
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -14,6 +21,7 @@ logger = logging.getLogger(__name__)
 try:
     from pymongo import MongoClient
     from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
+
     PYMONGO_AVAILABLE = True
 except ImportError:
     PYMONGO_AVAILABLE = False
@@ -24,51 +32,59 @@ class InMemoryCollection:
 
     def __init__(self, name: str) -> None:
         self.name = name
-        self._data: Dict[str, Dict[str, Any]] = {}
+        self._data: dict[str, dict[str, Any]] = {}
 
-    def insert_one(self, document: Dict[str, Any]) -> Any:
+    def insert_one(self, document: dict[str, Any]) -> Any:
         doc_copy = dict(document)
         doc_id = str(doc_copy.get('id') or doc_copy.get('_id', ''))
         self._data[doc_id] = doc_copy
         return type('InsertResult', (), {'inserted_id': doc_id})()
 
-    def find_one(self, query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def find_one(self, query: dict[str, Any]) -> dict[str, Any] | None:
         for doc in self._data.values():
             if self._matches(doc, query):
                 return dict(doc)
         return None
 
-    def find(self, query: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def find(self, query: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         query = query or {}
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
         for doc in self._data.values():
             if self._matches(doc, query):
                 results.append(dict(doc))
         return results
 
-    def update_one(self, query: Dict[str, Any], update: Dict[str, Any]) -> Any:
-        for key, doc in self._data.items():
+    def update_one(self, query: dict[str, Any], update: dict[str, Any]) -> Any:
+        for _key, doc in self._data.items():
             if self._matches(doc, query):
                 set_data = update.get('$set', {})
                 doc.update(set_data)
                 return type('UpdateResult', (), {'matched_count': 1, 'modified_count': 1})()
         return type('UpdateResult', (), {'matched_count': 0, 'modified_count': 0})()
 
-    def delete_one(self, query: Dict[str, Any]) -> Any:
+    def delete_one(self, query: dict[str, Any]) -> Any:
         for key, doc in list(self._data.items()):
             if self._matches(doc, query):
                 del self._data[key]
                 return type('DeleteResult', (), {'deleted_count': 1})()
         return type('DeleteResult', (), {'deleted_count': 0})()
 
+    def delete_many(self, query: dict[str, Any]) -> Any:
+        deleted = 0
+        for key, doc in list(self._data.items()):
+            if self._matches(doc, query):
+                del self._data[key]
+                deleted += 1
+        return type('DeleteResult', (), {'deleted_count': deleted})()
+
     def clear(self) -> None:
         self._data.clear()
 
-    def count_documents(self, query: Optional[Dict[str, Any]] = None) -> int:
+    def count_documents(self, query: dict[str, Any] | None = None) -> int:
         return len(self.find(query))
 
     @staticmethod
-    def _matches(doc: Dict[str, Any], query: Dict[str, Any]) -> bool:
+    def _matches(doc: dict[str, Any], query: dict[str, Any]) -> bool:
         for k, v in query.items():
             if doc.get(k) != v:
                 return False
@@ -78,9 +94,9 @@ class InMemoryCollection:
 class MongoDBManager:
     """Manages connection to MongoDB collections."""
 
-    _client: Optional[Any] = None
-    _db: Optional[Any] = None
-    _in_memory_stores: Dict[str, InMemoryCollection] = {}
+    _client: Any | None = None
+    _db: Any | None = None
+    _in_memory_stores: dict[str, InMemoryCollection] = {}
 
     @classmethod
     def reset(cls) -> None:
@@ -91,9 +107,7 @@ class MongoDBManager:
         """
         if cls._db is not None:
             if not cls._db.name.endswith('_test'):
-                raise RuntimeError(
-                    f"Refusing to reset non-test MongoDB database '{cls._db.name}'."
-                )
+                raise RuntimeError(f"Refusing to reset non-test MongoDB database '{cls._db.name}'.")
             cls._db['notes'].delete_many({})
             cls._db['folders'].delete_many({})
         for store in cls._in_memory_stores.values():

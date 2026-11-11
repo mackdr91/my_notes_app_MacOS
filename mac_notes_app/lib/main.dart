@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'core/constants/notes_constants.dart';
 import 'core/theme/notes_theme.dart';
 import 'core/widgets/mac_three_column_scaffold.dart';

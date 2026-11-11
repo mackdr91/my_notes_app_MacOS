@@ -1,8 +1,12 @@
-"""Django settings for Lusid backend."""
+"""
+Author: Domonick Mack
+Date: 2026-11-10
+Description: Django settings for Lusid backend.
+"""
+
 import os
 import sys
 from pathlib import Path
-from typing import List
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
@@ -17,10 +21,10 @@ SECRET_KEY: str = os.getenv(
 
 DEBUG: bool = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS: List[str] = ['*']
+ALLOWED_HOSTS: list[str] = ['*']
 
 # Application definition
-INSTALLED_APPS: List[str] = [
+INSTALLED_APPS: list[str] = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,7 +38,7 @@ INSTALLED_APPS: List[str] = [
     'api.apps.ApiConfig',
 ]
 
-MIDDLEWARE: List[str] = [
+MIDDLEWARE: list[str] = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

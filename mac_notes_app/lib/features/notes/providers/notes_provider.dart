@@ -5,6 +5,7 @@
  */
 
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:lusid/core/constants/notes_constants.dart';
 import 'package:lusid/core/utils/notes_utils.dart';
@@ -29,7 +30,7 @@ class NotesProvider extends ChangeNotifier {
   Timer? _saveDebounceTimer;
 
   NotesProvider({NotesStorageService? storageService})
-      : _storageService = storageService ?? NotesStorageService() {
+    : _storageService = storageService ?? NotesStorageService() {
     loadNotes();
   }
 
@@ -87,15 +88,21 @@ class NotesProvider extends ChangeNotifier {
   }
 
   void toggleViewMode() {
-    _viewMode = _viewMode == NotesViewMode.list ? NotesViewMode.gallery : NotesViewMode.list;
+    _viewMode = _viewMode == NotesViewMode.list
+        ? NotesViewMode.gallery
+        : NotesViewMode.list;
     notifyListeners();
   }
 
   int countNotesInFolder(String folderId) {
     if (folderId == NotesConstants.allNotesFolderId) {
-      return _notes.where((n) => n.folderId != NotesConstants.trashFolderId).length;
+      return _notes
+          .where((n) => n.folderId != NotesConstants.trashFolderId)
+          .length;
     } else if (folderId == NotesConstants.trashFolderId) {
-      return _notes.where((n) => n.folderId == NotesConstants.trashFolderId).length;
+      return _notes
+          .where((n) => n.folderId == NotesConstants.trashFolderId)
+          .length;
     } else {
       return _notes.where((n) => n.folderId == folderId).length;
     }
@@ -103,7 +110,9 @@ class NotesProvider extends ChangeNotifier {
 
   Map<String, int> get tagsWithCount {
     final Map<String, int> counts = {};
-    for (final note in _notes.where((n) => n.folderId != NotesConstants.trashFolderId)) {
+    for (final note in _notes.where(
+      (n) => n.folderId != NotesConstants.trashFolderId,
+    )) {
       for (final tag in note.tags) {
         counts[tag] = (counts[tag] ?? 0) + 1;
       }
@@ -129,20 +138,21 @@ class NotesProvider extends ChangeNotifier {
         final query = _searchQuery.trim().toLowerCase();
         final matchesTitle = note.title.toLowerCase().contains(query);
         final matchesBody = note.body.toLowerCase().contains(query);
-        final matchesTags = note.tags.any((t) => t.toLowerCase().contains(query));
+        final matchesTags = note.tags.any(
+          (t) => t.toLowerCase().contains(query),
+        );
         if (!matchesTitle && !matchesBody && !matchesTags) {
           return false;
         }
       }
 
       return true;
-    }).toList()
-      ..sort((a, b) {
-        if (a.isPinned != b.isPinned) {
-          return a.isPinned ? -1 : 1;
-        }
-        return b.updatedAt.compareTo(a.updatedAt);
-      });
+    }).toList()..sort((a, b) {
+      if (a.isPinned != b.isPinned) {
+        return a.isPinned ? -1 : 1;
+      }
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
   }
 
   Future<Note> createNote({
@@ -151,7 +161,8 @@ class NotesProvider extends ChangeNotifier {
     String body = '',
   }) async {
     final now = DateTime.now();
-    final actualFolderId = folderId == NotesConstants.allNotesFolderId ||
+    final actualFolderId =
+        folderId == NotesConstants.allNotesFolderId ||
             folderId == NotesConstants.trashFolderId
         ? NotesConstants.defaultNotesFolderId
         : folderId;
@@ -199,7 +210,11 @@ class NotesProvider extends ChangeNotifier {
     });
   }
 
-  void updateNoteRichText(String noteId, {required String richTextJson, required String plainText}) {
+  void updateNoteRichText(
+    String noteId, {
+    required String richTextJson,
+    required String plainText,
+  }) {
     final index = _notes.indexWhere((n) => n.id == noteId);
     if (index == -1) return;
 
@@ -298,12 +313,20 @@ class NotesProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addChecklist(String noteId, {String text = 'Checklist Item'}) async {
+  Future<void> addChecklist(
+    String noteId, {
+    String text = 'Checklist Item',
+  }) async {
     final index = _notes.indexWhere((n) => n.id == noteId);
     if (index == -1) return;
 
-    final newItem = ChecklistItem(id: _uuid.v4(), text: text, isCompleted: false);
-    final updatedChecklists = List<ChecklistItem>.from(_notes[index].checklists)..add(newItem);
+    final newItem = ChecklistItem(
+      id: _uuid.v4(),
+      text: text,
+      isCompleted: false,
+    );
+    final updatedChecklists = List<ChecklistItem>.from(_notes[index].checklists)
+      ..add(newItem);
 
     _notes[index] = _notes[index].copyWith(
       checklists: updatedChecklists,
@@ -332,7 +355,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateChecklistText(String noteId, String checklistId, String newText) async {
+  Future<void> updateChecklistText(
+    String noteId,
+    String checklistId,
+    String newText,
+  ) async {
     final index = _notes.indexWhere((n) => n.id == noteId);
     if (index == -1) return;
 
@@ -358,8 +385,9 @@ class NotesProvider extends ChangeNotifier {
     final index = _notes.indexWhere((n) => n.id == noteId);
     if (index == -1) return;
 
-    final updatedChecklists =
-        _notes[index].checklists.where((c) => c.id != checklistId).toList();
+    final updatedChecklists = _notes[index].checklists
+        .where((c) => c.id != checklistId)
+        .toList();
 
     _notes[index] = _notes[index].copyWith(
       checklists: updatedChecklists,
@@ -374,7 +402,8 @@ class NotesProvider extends ChangeNotifier {
     if (index == -1) return;
 
     final newTable = NoteTable.createDefault(_uuid.v4());
-    final updatedTables = List<NoteTable>.from(_notes[index].tables)..add(newTable);
+    final updatedTables = List<NoteTable>.from(_notes[index].tables)
+      ..add(newTable);
 
     _notes[index] = _notes[index].copyWith(
       tables: updatedTables,
@@ -397,7 +426,8 @@ class NotesProvider extends ChangeNotifier {
     final updatedTables = _notes[noteIndex].tables.map((table) {
       if (table.id == tableId) {
         final newCells = table.cells.map((r) => List<String>.from(r)).toList();
-        if (rowIndex < newCells.length && colIndex < newCells[rowIndex].length) {
+        if (rowIndex < newCells.length &&
+            colIndex < newCells[rowIndex].length) {
           newCells[rowIndex][colIndex] = value;
         }
         return table.copyWith(cells: newCells);
@@ -466,7 +496,9 @@ class NotesProvider extends ChangeNotifier {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
-    final updatedTables = _notes[noteIndex].tables.where((t) => t.id != tableId).toList();
+    final updatedTables = _notes[noteIndex].tables
+        .where((t) => t.id != tableId)
+        .toList();
 
     _notes[noteIndex] = _notes[noteIndex].copyWith(
       tables: updatedTables,
@@ -476,7 +508,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteTableRow(String noteId, String tableId, int rowIndex) async {
+  Future<void> deleteTableRow(
+    String noteId,
+    String tableId,
+    int rowIndex,
+  ) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -500,7 +536,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteTableColumn(String noteId, String tableId, int colIndex) async {
+  Future<void> deleteTableColumn(
+    String noteId,
+    String tableId,
+    int colIndex,
+  ) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -516,7 +556,9 @@ class NotesProvider extends ChangeNotifier {
           return rowCopy;
         }).toList();
 
-        final newColCount = newCells.isNotEmpty ? newCells.first.length : (table.colCount - 1);
+        final newColCount = newCells.isNotEmpty
+            ? newCells.first.length
+            : (table.colCount - 1);
         return table.copyWith(colCount: newColCount, cells: newCells);
       }
       return table;
@@ -530,7 +572,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> insertTableRow(String noteId, String tableId, int atIndex) async {
+  Future<void> insertTableRow(
+    String noteId,
+    String tableId,
+    int atIndex,
+  ) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -552,7 +598,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> insertTableColumn(String noteId, String tableId, int atIndex) async {
+  Future<void> insertTableColumn(
+    String noteId,
+    String tableId,
+    int atIndex,
+  ) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -579,7 +629,11 @@ class NotesProvider extends ChangeNotifier {
 
   // --- Code Block operations ---
 
-  Future<void> addCodeBlock(String noteId, {String language = 'dart', String code = ''}) async {
+  Future<void> addCodeBlock(
+    String noteId, {
+    String language = 'dart',
+    String code = '',
+  }) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -589,7 +643,8 @@ class NotesProvider extends ChangeNotifier {
       code: code.isNotEmpty ? code : '// Write your $language code here\n',
     );
 
-    final updated = List<NoteCodeBlock>.from(_notes[noteIndex].codeBlocks)..add(newBlock);
+    final updated = List<NoteCodeBlock>.from(_notes[noteIndex].codeBlocks)
+      ..add(newBlock);
 
     _notes[noteIndex] = _notes[noteIndex].copyWith(
       codeBlocks: updated,
@@ -599,7 +654,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateCodeBlockText(String noteId, String codeBlockId, String code) async {
+  Future<void> updateCodeBlockText(
+    String noteId,
+    String codeBlockId,
+    String code,
+  ) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -618,7 +677,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateCodeBlockLanguage(String noteId, String codeBlockId, String language) async {
+  Future<void> updateCodeBlockLanguage(
+    String noteId,
+    String codeBlockId,
+    String language,
+  ) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -641,7 +704,9 @@ class NotesProvider extends ChangeNotifier {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
-    final updated = _notes[noteIndex].codeBlocks.where((cb) => cb.id != codeBlockId).toList();
+    final updated = _notes[noteIndex].codeBlocks
+        .where((cb) => cb.id != codeBlockId)
+        .toList();
 
     _notes[noteIndex] = _notes[noteIndex].copyWith(
       codeBlocks: updated,
@@ -653,7 +718,11 @@ class NotesProvider extends ChangeNotifier {
 
   // --- Lock operations ---
 
-  Future<void> setNoteLock(String noteId, {required bool isLocked, String? password}) async {
+  Future<void> setNoteLock(
+    String noteId, {
+    required bool isLocked,
+    String? password,
+  }) async {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
@@ -680,7 +749,9 @@ class NotesProvider extends ChangeNotifier {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
-    final updatedAttachments = List<NoteAttachment>.from(_notes[noteIndex].attachments)..add(attachment);
+    final updatedAttachments = List<NoteAttachment>.from(
+      _notes[noteIndex].attachments,
+    )..add(attachment);
     _notes[noteIndex] = _notes[noteIndex].copyWith(
       attachments: updatedAttachments,
       updatedAt: DateTime.now(),
@@ -693,7 +764,9 @@ class NotesProvider extends ChangeNotifier {
     final noteIndex = _notes.indexWhere((n) => n.id == noteId);
     if (noteIndex == -1) return;
 
-    final updatedAttachments = _notes[noteIndex].attachments.where((a) => a.id != attachmentId).toList();
+    final updatedAttachments = _notes[noteIndex].attachments
+        .where((a) => a.id != attachmentId)
+        .toList();
     _notes[noteIndex] = _notes[noteIndex].copyWith(
       attachments: updatedAttachments,
       updatedAt: DateTime.now(),
@@ -706,9 +779,7 @@ class NotesProvider extends ChangeNotifier {
   Future<void> mergeSyncedNotes(List<Note> remoteNotes) async {
     if (remoteNotes.isEmpty) return;
 
-    final Map<String, Note> byId = {
-      for (final n in _notes) n.id: n,
-    };
+    final Map<String, Note> byId = {for (final n in _notes) n.id: n};
 
     for (final remote in remoteNotes) {
       final existing = byId[remote.id];

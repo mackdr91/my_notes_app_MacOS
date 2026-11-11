@@ -81,10 +81,7 @@ class NotesGalleryView extends StatelessWidget {
           ).animate(animation);
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-              position: slideAnimation,
-              child: child,
-            ),
+            child: SlideTransition(position: slideAnimation, child: child),
           );
         },
         child: content,
@@ -117,9 +114,7 @@ class _GalleryCardState extends State<_GalleryCard> {
   Widget build(BuildContext context) {
     final isDark = NotesTheme.isDark(context);
 
-    final double cardScale = _isPressed
-        ? 0.975
-        : (_isHovered ? 1.015 : 1.0);
+    final double cardScale = _isPressed ? 0.975 : (_isHovered ? 1.015 : 1.0);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -151,8 +146,10 @@ class _GalleryCardState extends State<_GalleryCard> {
                       color: widget.isSelected
                           ? NotesTheme.accentGold
                           : (_isHovered
-                              ? (isDark ? const Color(0xFF4A4A4E) : const Color(0xFFC7C7CC))
-                              : NotesTheme.divider(context)),
+                                ? (isDark
+                                      ? const Color(0xFF4A4A4E)
+                                      : const Color(0xFFC7C7CC))
+                                : NotesTheme.divider(context)),
                       width: widget.isSelected ? 2.0 : 1.0,
                     ),
                     boxShadow: [
@@ -171,7 +168,9 @@ class _GalleryCardState extends State<_GalleryCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.note.title.isEmpty ? 'New Note' : widget.note.title,
+                        widget.note.title.isEmpty
+                            ? 'New Note'
+                            : widget.note.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -204,7 +203,9 @@ class _GalleryCardState extends State<_GalleryCard> {
                 style: TextStyle(
                   fontFamily: '.AppleSystemUIFont',
                   fontSize: 11.5,
-                  fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.w500,
+                  fontWeight: widget.isSelected
+                      ? FontWeight.bold
+                      : FontWeight.w500,
                   color: NotesTheme.textPrimary(context),
                 ),
                 child: Text(

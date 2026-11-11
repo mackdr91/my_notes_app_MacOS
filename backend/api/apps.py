@@ -1,3 +1,9 @@
+"""
+Author: Domonick Mack
+Date: 2026-11-10
+Description: Django AppConfig registration for the Notes API application.
+"""
+
 from django.apps import AppConfig
 
 

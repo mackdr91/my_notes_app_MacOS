@@ -27,7 +27,8 @@ class NotesConstants {
   // App Branding & Asset Paths
   static const String appName = 'Lusid';
   static const String appVersion = 'Version 1.0.0 (Build 1)';
-  static const String appCopyright = '© 2026 Domonick Mack. All rights reserved.';
+  static const String appCopyright =
+      '© 2026 Domonick Mack. All rights reserved.';
   static const String appIconAssetPath = 'assets/icons/app_icon.png';
 
   // Layout Constraints

@@ -3,6 +3,7 @@ Author: Domonick Mack
 Date: 2026-11-09
 Description: Root URL Configuration for notes_backend including API and installer download portal routes.
 """
+
 from django.contrib import admin
 from django.urls import include, path
 

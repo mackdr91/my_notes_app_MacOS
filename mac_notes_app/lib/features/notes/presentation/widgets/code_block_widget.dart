@@ -5,6 +5,7 @@
  */
 
 import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -128,7 +129,9 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(
-                alpha: _isHovered ? (isDark ? 0.4 : 0.08) : (isDark ? 0.3 : 0.05),
+                alpha: _isHovered
+                    ? (isDark ? 0.4 : 0.08)
+                    : (isDark ? 0.3 : 0.05),
               ),
               blurRadius: _isHovered ? 8 : 6,
               offset: const Offset(0, 2),
@@ -146,8 +149,12 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               decoration: BoxDecoration(
                 color: headerBg,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(7.2)),
-                border: Border(bottom: BorderSide(color: borderColor, width: 0.8)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(7.2),
+                ),
+                border: Border(
+                  bottom: BorderSide(color: borderColor, width: 0.8),
+                ),
               ),
               child: Row(
                 children: [
@@ -161,7 +168,10 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
 
                   // Copy Button with animated feedback
                   CupertinoButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     minimumSize: const Size(24, 24),
                     onPressed: _copyCode,
                     child: AnimatedSwitcher(
@@ -171,7 +181,9 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _isCopied ? CupertinoIcons.checkmark_alt : CupertinoIcons.doc_on_doc,
+                            _isCopied
+                                ? CupertinoIcons.checkmark_alt
+                                : CupertinoIcons.doc_on_doc,
                             size: 12.0,
                             color: _isCopied
                                 ? const Color(0xFF34C759)
@@ -197,13 +209,18 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
 
                   // Delete Code Block Button
                   CupertinoButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
                     minimumSize: const Size(24, 24),
                     onPressed: widget.onDelete,
                     child: Icon(
                       CupertinoIcons.trash,
                       size: 12.0,
-                      color: CupertinoColors.destructiveRed.withValues(alpha: 0.8),
+                      color: CupertinoColors.destructiveRed.withValues(
+                        alpha: 0.8,
+                      ),
                     ),
                   ),
                 ],
@@ -220,11 +237,18 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
                     duration: NotesConstants.microAnimationDuration,
                     curve: NotesConstants.defaultAnimationCurve,
                     width: 38,
-                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4.0),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 4.0,
+                    ),
                     decoration: BoxDecoration(
                       color: gutterBg,
-                      border: Border(right: BorderSide(color: borderColor, width: 0.6)),
-                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(7.2)),
+                      border: Border(
+                        right: BorderSide(color: borderColor, width: 0.6),
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(7.2),
+                      ),
                     ),
                     child: Column(
                       children: List.generate(_lineCount, (i) {
@@ -247,7 +271,10 @@ class _CodeBlockWidgetState extends State<CodeBlockWidget> {
                   // Editable Code Editor Area
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 10.0,
+                      ),
                       child: CupertinoTextField(
                         controller: _textController,
                         decoration: null,
@@ -306,7 +333,12 @@ class _LanguageSelectorMenuState extends State<_LanguageSelectorMenu> {
           final pos = details.globalPosition;
           showMenu<String>(
             context: context,
-            position: RelativeRect.fromLTRB(pos.dx, pos.dy, pos.dx + 1, pos.dy + 1),
+            position: RelativeRect.fromLTRB(
+              pos.dx,
+              pos.dy,
+              pos.dx + 1,
+              pos.dy + 1,
+            ),
             constraints: const BoxConstraints(minWidth: 150, maxWidth: 220),
             color: isDark ? const Color(0xFF1E1E22) : Colors.white,
             elevation: 8,
@@ -316,15 +348,19 @@ class _LanguageSelectorMenuState extends State<_LanguageSelectorMenu> {
             ),
             items: CodeLanguage.supported.map((lang) {
               final isSelected =
-                  lang.id.toLowerCase() == widget.currentLanguageId.toLowerCase();
+                  lang.id.toLowerCase() ==
+                  widget.currentLanguageId.toLowerCase();
               return PopupMenuItem<String>(
                 value: lang.id,
                 height: 32,
                 child: Row(
                   children: [
                     if (isSelected)
-                      const Icon(CupertinoIcons.checkmark,
-                          size: 12, color: NotesTheme.accentGold)
+                      const Icon(
+                        CupertinoIcons.checkmark,
+                        size: 12,
+                        color: NotesTheme.accentGold,
+                      )
                     else
                       const SizedBox(width: 12),
                     const SizedBox(width: 8),
@@ -332,7 +368,9 @@ class _LanguageSelectorMenuState extends State<_LanguageSelectorMenu> {
                       lang.name,
                       style: TextStyle(
                         fontSize: 12.0,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                         color: isSelected
                             ? NotesTheme.accentGold
                             : NotesTheme.textPrimary(context),

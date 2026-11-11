@@ -35,7 +35,9 @@ class NotesListView extends StatelessWidget {
       );
     } else if (notes.isEmpty) {
       content = Center(
-        key: ValueKey('list_empty_${notesProvider.searchQuery.isNotEmpty}_${selectedFolderId}_$activeTag'),
+        key: ValueKey(
+          'list_empty_${notesProvider.searchQuery.isNotEmpty}_${selectedFolderId}_$activeTag',
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -84,12 +86,14 @@ class NotesListView extends StatelessWidget {
         children: [
           if (pinnedNotes.isNotEmpty) ...[
             const _GroupHeader(title: 'PINNED'),
-            ...pinnedNotes.map((note) => NoteCard(
-                  key: ValueKey('pinned_${note.id}'),
-                  note: note,
-                  isSelected: notesProvider.selectedNoteId == note.id,
-                  onTap: () => notesProvider.selectNote(note.id),
-                )),
+            ...pinnedNotes.map(
+              (note) => NoteCard(
+                key: ValueKey('pinned_${note.id}'),
+                note: note,
+                isSelected: notesProvider.selectedNoteId == note.id,
+                onTap: () => notesProvider.selectNote(note.id),
+              ),
+            ),
             const SizedBox(height: 8),
           ],
           ...groupedNotes.entries.map((entry) {
@@ -98,12 +102,14 @@ class NotesListView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _GroupHeader(title: entry.key.toUpperCase()),
-                ...entry.value.map((note) => NoteCard(
-                      key: ValueKey('note_${note.id}'),
-                      note: note,
-                      isSelected: notesProvider.selectedNoteId == note.id,
-                      onTap: () => notesProvider.selectNote(note.id),
-                    )),
+                ...entry.value.map(
+                  (note) => NoteCard(
+                    key: ValueKey('note_${note.id}'),
+                    note: note,
+                    isSelected: notesProvider.selectedNoteId == note.id,
+                    onTap: () => notesProvider.selectNote(note.id),
+                  ),
+                ),
                 const SizedBox(height: 8),
               ],
             );
@@ -127,10 +133,7 @@ class NotesListView extends StatelessWidget {
           ).animate(animation);
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-              position: slideAnimation,
-              child: child,
-            ),
+            child: SlideTransition(position: slideAnimation, child: child),
           );
         },
         child: content,

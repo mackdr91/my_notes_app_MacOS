@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Modal dialog matching macOS and iPadOS sheet style for creating or renaming folders.
+
 import 'package:flutter/cupertino.dart';
 import 'package:lusid/core/constants/notes_constants.dart';
 import 'package:lusid/core/theme/notes_theme.dart';
@@ -53,7 +57,8 @@ class _AddFolderDialogState extends State<AddFolderDialog> {
               ),
               onSubmitted: (val) {
                 if (val.trim().isNotEmpty) {
-                  Navigator.of(context).pop({'name': val.trim(), 'account': _selectedAccount});
+                  Navigator.of(context)
+                      .pop({'name': val.trim(), 'account': _selectedAccount});
                 }
               },
             ),
@@ -71,7 +76,8 @@ class _AddFolderDialogState extends State<AddFolderDialog> {
           onPressed: () {
             final name = _controller.text.trim();
             if (name.isNotEmpty) {
-              Navigator.of(context).pop({'name': name, 'account': _selectedAccount});
+              Navigator.of(context)
+                  .pop({'name': name, 'account': _selectedAccount});
             }
           },
           child: Text(widget.actionLabel),

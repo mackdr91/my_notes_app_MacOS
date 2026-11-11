@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Widget tests for NoteTableWidget row and column insertion, deletion, and editing.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lusid/core/constants/notes_constants.dart';
@@ -12,38 +16,69 @@ void main() {
   });
 
   group('Table Operations Provider Tests', () {
-    test('deleteTableRow deletes a specific row and updates rowCount', () async {
-      final provider = NotesProvider();
-      await Future.delayed(const Duration(milliseconds: 50));
+    test(
+      'deleteTableRow deletes a specific row and updates rowCount',
+      () async {
+        final provider = NotesProvider();
+        await Future.delayed(const Duration(milliseconds: 50));
 
-      final note = await provider.createNote(folderId: NotesConstants.defaultNotesFolderId);
-      await provider.addTable(note.id); // Default 2x2 table
+        final note = await provider.createNote(
+          folderId: NotesConstants.defaultNotesFolderId,
+        );
+        await provider.addTable(note.id); // Default 2x2 table
 
-      // Add a 3rd row
-      await provider.addTableRow(note.id, provider.selectedNote!.tables.first.id);
-      var currentTable = provider.selectedNote!.tables.first;
-      expect(currentTable.rowCount, 3);
-      expect(currentTable.cells.length, 3);
+        // Add a 3rd row
+        await provider.addTableRow(
+          note.id,
+          provider.selectedNote!.tables.first.id,
+        );
+        var currentTable = provider.selectedNote!.tables.first;
+        expect(currentTable.rowCount, 3);
+        expect(currentTable.cells.length, 3);
 
-      // Populate cell data
-      await provider.updateTableCell(note.id, currentTable.id, 0, 0, 'Row 0 Data');
-      await provider.updateTableCell(note.id, currentTable.id, 1, 0, 'Row 1 Data');
-      await provider.updateTableCell(note.id, currentTable.id, 2, 0, 'Row 2 Data');
+        // Populate cell data
+        await provider.updateTableCell(
+          note.id,
+          currentTable.id,
+          0,
+          0,
+          'Row 0 Data',
+        );
+        await provider.updateTableCell(
+          note.id,
+          currentTable.id,
+          1,
+          0,
+          'Row 1 Data',
+        );
+        await provider.updateTableCell(
+          note.id,
+          currentTable.id,
+          2,
+          0,
+          'Row 2 Data',
+        );
 
-      // Delete Row 1
-      await provider.deleteTableRow(note.id, currentTable.id, 1);
-      currentTable = provider.selectedNote!.tables.first;
-      expect(currentTable.rowCount, 2);
-      expect(currentTable.cells.length, 2);
-      expect(currentTable.cells[0][0], 'Row 0 Data');
-      expect(currentTable.cells[1][0], 'Row 2 Data'); // Former row 2 shifted up
-    });
+        // Delete Row 1
+        await provider.deleteTableRow(note.id, currentTable.id, 1);
+        currentTable = provider.selectedNote!.tables.first;
+        expect(currentTable.rowCount, 2);
+        expect(currentTable.cells.length, 2);
+        expect(currentTable.cells[0][0], 'Row 0 Data');
+        expect(
+          currentTable.cells[1][0],
+          'Row 2 Data',
+        ); // Former row 2 shifted up
+      },
+    );
 
     test('deleteTableRow prevents deletion below minimum 1 row', () async {
       final provider = NotesProvider();
       await Future.delayed(const Duration(milliseconds: 50));
 
-      final note = await provider.createNote(folderId: NotesConstants.defaultNotesFolderId);
+      final note = await provider.createNote(
+        folderId: NotesConstants.defaultNotesFolderId,
+      );
       await provider.addTable(note.id); // 2 rows
 
       final tableId = provider.selectedNote!.tables.first.id;
@@ -64,7 +99,9 @@ void main() {
       final provider = NotesProvider();
       await Future.delayed(const Duration(milliseconds: 50));
 
-      final note = await provider.createNote(folderId: NotesConstants.defaultNotesFolderId);
+      final note = await provider.createNote(
+        folderId: NotesConstants.defaultNotesFolderId,
+      );
       await provider.addTable(note.id); // Default 2x2 table
       final tableId = provider.selectedNote!.tables.first.id;
 
@@ -86,48 +123,60 @@ void main() {
       expect(currentTable.cells[0][1], 'Col C'); // Former col 2 shifted left
     });
 
-    test('deleteTableColumn prevents deletion below minimum 1 column', () async {
-      final provider = NotesProvider();
-      await Future.delayed(const Duration(milliseconds: 50));
+    test(
+      'deleteTableColumn prevents deletion below minimum 1 column',
+      () async {
+        final provider = NotesProvider();
+        await Future.delayed(const Duration(milliseconds: 50));
 
-      final note = await provider.createNote(folderId: NotesConstants.defaultNotesFolderId);
-      await provider.addTable(note.id); // 2 columns
-      final tableId = provider.selectedNote!.tables.first.id;
+        final note = await provider.createNote(
+          folderId: NotesConstants.defaultNotesFolderId,
+        );
+        await provider.addTable(note.id); // 2 columns
+        final tableId = provider.selectedNote!.tables.first.id;
 
-      // Delete 1 column -> 1 column remaining
-      await provider.deleteTableColumn(note.id, tableId, 1);
-      var table = provider.selectedNote!.tables.first;
-      expect(table.colCount, 1);
+        // Delete 1 column -> 1 column remaining
+        await provider.deleteTableColumn(note.id, tableId, 1);
+        var table = provider.selectedNote!.tables.first;
+        expect(table.colCount, 1);
 
-      // Attempt to delete last column -> must be prevented
-      await provider.deleteTableColumn(note.id, tableId, 0);
-      table = provider.selectedNote!.tables.first;
-      expect(table.colCount, 1);
-      expect(table.cells.first.length, 1);
-    });
+        // Attempt to delete last column -> must be prevented
+        await provider.deleteTableColumn(note.id, tableId, 0);
+        table = provider.selectedNote!.tables.first;
+        expect(table.colCount, 1);
+        expect(table.cells.first.length, 1);
+      },
+    );
 
-    test('insertTableRow and insertTableColumn insert at specific index', () async {
-      final provider = NotesProvider();
-      await Future.delayed(const Duration(milliseconds: 50));
+    test(
+      'insertTableRow and insertTableColumn insert at specific index',
+      () async {
+        final provider = NotesProvider();
+        await Future.delayed(const Duration(milliseconds: 50));
 
-      final note = await provider.createNote(folderId: NotesConstants.defaultNotesFolderId);
-      await provider.addTable(note.id);
-      final tableId = provider.selectedNote!.tables.first.id;
+        final note = await provider.createNote(
+          folderId: NotesConstants.defaultNotesFolderId,
+        );
+        await provider.addTable(note.id);
+        final tableId = provider.selectedNote!.tables.first.id;
 
-      // Insert Row at index 0 (Above)
-      await provider.insertTableRow(note.id, tableId, 0);
-      var table = provider.selectedNote!.tables.first;
-      expect(table.rowCount, 3);
+        // Insert Row at index 0 (Above)
+        await provider.insertTableRow(note.id, tableId, 0);
+        var table = provider.selectedNote!.tables.first;
+        expect(table.rowCount, 3);
 
-      // Insert Column at index 0 (Left)
-      await provider.insertTableColumn(note.id, tableId, 0);
-      table = provider.selectedNote!.tables.first;
-      expect(table.colCount, 3);
-    });
+        // Insert Column at index 0 (Left)
+        await provider.insertTableColumn(note.id, tableId, 0);
+        table = provider.selectedNote!.tables.first;
+        expect(table.colCount, 3);
+      },
+    );
   });
 
   group('NoteTableWidget UI Tests', () {
-    testWidgets('renders table handles and triggers delete actions', (tester) async {
+    testWidgets('renders table handles and triggers delete actions', (
+      tester,
+    ) async {
       int? deletedRowIndex;
       int? deletedColIndex;
 

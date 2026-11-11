@@ -62,7 +62,12 @@ class _NoteCardState extends State<NoteCard> {
         onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         onSecondaryTapUp: (details) {
-          _showContextMenu(context, details.globalPosition, notesProvider, folderProvider);
+          _showContextMenu(
+            context,
+            details.globalPosition,
+            notesProvider,
+            folderProvider,
+          );
         },
         child: AnimatedScale(
           duration: NotesConstants.microAnimationDuration,
@@ -72,7 +77,10 @@ class _NoteCardState extends State<NoteCard> {
             duration: NotesConstants.microAnimationDuration,
             curve: NotesConstants.defaultAnimationCurve,
             margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.5),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 8.5,
+            ),
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(6.0),
@@ -94,7 +102,9 @@ class _NoteCardState extends State<NoteCard> {
                           color: NotesTheme.textPrimary(context),
                         ),
                         child: Text(
-                          widget.note.title.isEmpty ? 'New Note' : widget.note.title,
+                          widget.note.title.isEmpty
+                              ? 'New Note'
+                              : widget.note.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -116,7 +126,9 @@ class _NoteCardState extends State<NoteCard> {
                                 color: NotesTheme.accentGold,
                               ),
                             )
-                          : const SizedBox.shrink(key: ValueKey('unpinned_icon')),
+                          : const SizedBox.shrink(
+                              key: ValueKey('unpinned_icon'),
+                            ),
                     ),
                     AnimatedSwitcher(
                       duration: NotesConstants.microAnimationDuration,
@@ -134,7 +146,9 @@ class _NoteCardState extends State<NoteCard> {
                                 color: NotesTheme.textSecondary(context),
                               ),
                             )
-                          : const SizedBox.shrink(key: ValueKey('unlocked_icon')),
+                          : const SizedBox.shrink(
+                              key: ValueKey('unlocked_icon'),
+                            ),
                     ),
                   ],
                 ),
@@ -185,9 +199,14 @@ class _NoteCardState extends State<NoteCard> {
                             children: widget.note.tags.take(3).map((tag) {
                               return AnimatedContainer(
                                 duration: NotesConstants.microAnimationDuration,
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5.0,
+                                  vertical: 1.0,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA),
+                                  color: isDark
+                                      ? const Color(0xFF38383A)
+                                      : const Color(0xFFE5E5EA),
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                                 child: Text(
@@ -220,7 +239,9 @@ class _NoteCardState extends State<NoteCard> {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoActionSheet(
-        title: Text(widget.note.title.isEmpty ? 'Note Options' : widget.note.title),
+        title: Text(
+          widget.note.title.isEmpty ? 'Note Options' : widget.note.title,
+        ),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {

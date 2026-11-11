@@ -1,3 +1,7 @@
+// Author: Domonick Mack
+// Date: 2026-11-10
+// Description: Unit and widget tests for NotesTheme light and dark palettes and ThemePreferences.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,49 +65,66 @@ void main() {
       expect(provider.themeMode, ThemeMode.light);
     });
 
-    test('cycleThemeMode cycles through System -> Light -> Dark -> System', () async {
-      final provider = ThemeProvider();
-      await Future.delayed(const Duration(milliseconds: 50));
+    test(
+      'cycleThemeMode cycles through System -> Light -> Dark -> System',
+      () async {
+        final provider = ThemeProvider();
+        await Future.delayed(const Duration(milliseconds: 50));
 
-      expect(provider.themeMode, ThemeMode.system);
+        expect(provider.themeMode, ThemeMode.system);
 
-      await provider.cycleThemeMode();
-      expect(provider.themeMode, ThemeMode.light);
+        await provider.cycleThemeMode();
+        expect(provider.themeMode, ThemeMode.light);
 
-      await provider.cycleThemeMode();
-      expect(provider.themeMode, ThemeMode.dark);
+        await provider.cycleThemeMode();
+        expect(provider.themeMode, ThemeMode.dark);
 
-      await provider.cycleThemeMode();
-      expect(provider.themeMode, ThemeMode.system);
-    });
+        await provider.cycleThemeMode();
+        expect(provider.themeMode, ThemeMode.system);
+      },
+    );
   });
 
   group('NotesTheme Color Palette Tests', () {
-    testWidgets('dynamic colors reflect high contrast pure black in dark mode', (tester) async {
-      late BuildContext testContext;
+    testWidgets(
+      'dynamic colors reflect high contrast pure black in dark mode',
+      (tester) async {
+        late BuildContext testContext;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: NotesTheme.lightTheme,
-          darkTheme: NotesTheme.darkTheme,
-          themeMode: ThemeMode.dark,
-          home: Builder(
-            builder: (context) {
-              testContext = context;
-              return Container();
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: NotesTheme.lightTheme,
+            darkTheme: NotesTheme.darkTheme,
+            themeMode: ThemeMode.dark,
+            home: Builder(
+              builder: (context) {
+                testContext = context;
+                return Container();
+              },
+            ),
           ),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 50));
+        );
+        await tester.pump(const Duration(milliseconds: 50));
 
-      expect(NotesTheme.isDark(testContext), true);
-      expect(NotesTheme.editorBackground(testContext), const Color(0xFF000000)); // Pure AMOLED black
-      expect(NotesTheme.textPrimary(testContext), const Color(0xFFFFFFFF)); // Crisp white
-      expect(NotesTheme.sidebarBackground(testContext), const Color(0xFF0D0D0E));
-    });
+        expect(NotesTheme.isDark(testContext), true);
+        expect(
+          NotesTheme.editorBackground(testContext),
+          const Color(0xFF000000),
+        ); // Pure AMOLED black
+        expect(
+          NotesTheme.textPrimary(testContext),
+          const Color(0xFFFFFFFF),
+        ); // Crisp white
+        expect(
+          NotesTheme.sidebarBackground(testContext),
+          const Color(0xFF0D0D0E),
+        );
+      },
+    );
 
-    testWidgets('dynamic colors reflect crisp light palette in light mode', (tester) async {
+    testWidgets('dynamic colors reflect crisp light palette in light mode', (
+      tester,
+    ) async {
       late BuildContext testContext;
 
       await tester.pumpWidget(
@@ -122,14 +143,25 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
 
       expect(NotesTheme.isDark(testContext), false);
-      expect(NotesTheme.editorBackground(testContext), const Color(0xFFFFFFFF)); // Crisp white
-      expect(NotesTheme.textPrimary(testContext), const Color(0xFF000000)); // Crisp black
-      expect(NotesTheme.sidebarBackground(testContext), const Color(0xFFF2F2F7));
+      expect(
+        NotesTheme.editorBackground(testContext),
+        const Color(0xFFFFFFFF),
+      ); // Crisp white
+      expect(
+        NotesTheme.textPrimary(testContext),
+        const Color(0xFF000000),
+      ); // Crisp black
+      expect(
+        NotesTheme.sidebarBackground(testContext),
+        const Color(0xFFF2F2F7),
+      );
     });
   });
 
   group('ThemeModeSwitcher Widget Tests', () {
-    testWidgets('renders segments and switches theme modes on tap', (tester) async {
+    testWidgets('renders segments and switches theme modes on tap', (
+      tester,
+    ) async {
       final themeProvider = ThemeProvider();
       await tester.runAsync(() async {
         await Future.delayed(const Duration(milliseconds: 50));
@@ -141,9 +173,7 @@ void main() {
           child: MaterialApp(
             theme: NotesTheme.lightTheme,
             darkTheme: NotesTheme.darkTheme,
-            home: const Scaffold(
-              body: ThemeModeSwitcher(),
-            ),
+            home: const Scaffold(body: ThemeModeSwitcher()),
           ),
         ),
       );

@@ -5,6 +5,7 @@
  */
 
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:lusid/core/constants/notes_constants.dart';
@@ -91,7 +92,9 @@ class _EditorViewState extends State<EditorView> {
   }
 
   void _onDocumentChanged() {
-    if (_quillController == null || _currentNoteId == null || _isFormatting) return;
+    if (_quillController == null || _currentNoteId == null || _isFormatting) {
+      return;
+    }
 
     _isFormatting = true;
     try {
@@ -108,10 +111,10 @@ class _EditorViewState extends State<EditorView> {
     _updateWordCharCounts();
 
     context.read<NotesProvider>().updateNoteRichText(
-          _currentNoteId!,
-          richTextJson: deltaJson,
-          plainText: plain,
-        );
+      _currentNoteId!,
+      richTextJson: deltaJson,
+      plainText: plain,
+    );
   }
 
   void _updateWordCharCounts() {
@@ -296,7 +299,10 @@ class _EditorViewState extends State<EditorView> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0,
+                    vertical: 20.0,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -332,17 +338,22 @@ class _EditorViewState extends State<EditorView> {
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: note.checklists.map((item) {
                                     return ChecklistItemWidget(
                                       key: ValueKey('checklist_${item.id}'),
                                       item: item,
-                                      onToggle: (_) =>
-                                          notesProvider.toggleChecklist(note.id, item.id),
-                                      onTextChanged: (newText) => notesProvider
-                                          .updateChecklistText(note.id, item.id, newText),
-                                      onDelete: () =>
-                                          notesProvider.removeChecklist(note.id, item.id),
+                                      onToggle: (_) => notesProvider
+                                          .toggleChecklist(note.id, item.id),
+                                      onTextChanged: (newText) =>
+                                          notesProvider.updateChecklistText(
+                                            note.id,
+                                            item.id,
+                                            newText,
+                                          ),
+                                      onDelete: () => notesProvider
+                                          .removeChecklist(note.id, item.id),
                                     );
                                   }).toList(),
                                 ),
@@ -359,27 +370,52 @@ class _EditorViewState extends State<EditorView> {
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: note.tables.map((table) {
                                     return NoteTableWidget(
                                       key: ValueKey('table_${table.id}'),
                                       table: table,
-                                      onCellChanged: (row, col, val) => notesProvider
-                                          .updateTableCell(note.id, table.id, row, col, val),
-                                      onAddRow: () =>
-                                          notesProvider.addTableRow(note.id, table.id),
-                                      onAddColumn: () =>
-                                          notesProvider.addTableColumn(note.id, table.id),
-                                      onDeleteTable: () =>
-                                          notesProvider.removeTable(note.id, table.id),
-                                      onDeleteRow: (rowIndex) => notesProvider.deleteTableRow(
-                                          note.id, table.id, rowIndex),
-                                      onDeleteColumn: (colIndex) => notesProvider
-                                          .deleteTableColumn(note.id, table.id, colIndex),
-                                      onInsertRow: (atIndex) => notesProvider.insertTableRow(
-                                          note.id, table.id, atIndex),
-                                      onInsertColumn: (atIndex) => notesProvider
-                                          .insertTableColumn(note.id, table.id, atIndex),
+                                      onCellChanged: (row, col, val) =>
+                                          notesProvider.updateTableCell(
+                                            note.id,
+                                            table.id,
+                                            row,
+                                            col,
+                                            val,
+                                          ),
+                                      onAddRow: () => notesProvider.addTableRow(
+                                        note.id,
+                                        table.id,
+                                      ),
+                                      onAddColumn: () => notesProvider
+                                          .addTableColumn(note.id, table.id),
+                                      onDeleteTable: () => notesProvider
+                                          .removeTable(note.id, table.id),
+                                      onDeleteRow: (rowIndex) =>
+                                          notesProvider.deleteTableRow(
+                                            note.id,
+                                            table.id,
+                                            rowIndex,
+                                          ),
+                                      onDeleteColumn: (colIndex) =>
+                                          notesProvider.deleteTableColumn(
+                                            note.id,
+                                            table.id,
+                                            colIndex,
+                                          ),
+                                      onInsertRow: (atIndex) =>
+                                          notesProvider.insertTableRow(
+                                            note.id,
+                                            table.id,
+                                            atIndex,
+                                          ),
+                                      onInsertColumn: (atIndex) =>
+                                          notesProvider.insertTableColumn(
+                                            note.id,
+                                            table.id,
+                                            atIndex,
+                                          ),
                                     );
                                   }).toList(),
                                 ),
@@ -396,20 +432,31 @@ class _EditorViewState extends State<EditorView> {
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: note.codeBlocks.map((block) {
                                     return Padding(
                                       key: ValueKey('codeblock_${block.id}'),
-                                      padding: const EdgeInsets.only(bottom: 12.0),
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12.0,
+                                      ),
                                       child: CodeBlockWidget(
                                         codeBlock: block,
-                                        onCodeChanged: (newCode) => notesProvider
-                                            .updateCodeBlockText(note.id, block.id, newCode),
-                                        onLanguageChanged: (newLang) => notesProvider
-                                            .updateCodeBlockLanguage(
-                                                note.id, block.id, newLang),
-                                        onDelete: () => notesProvider.removeCodeBlock(
-                                            note.id, block.id),
+                                        onCodeChanged: (newCode) =>
+                                            notesProvider.updateCodeBlockText(
+                                              note.id,
+                                              block.id,
+                                              newCode,
+                                            ),
+                                        onLanguageChanged: (newLang) =>
+                                            notesProvider
+                                                .updateCodeBlockLanguage(
+                                                  note.id,
+                                                  block.id,
+                                                  newLang,
+                                                ),
+                                        onDelete: () => notesProvider
+                                            .removeCodeBlock(note.id, block.id),
                                       ),
                                     );
                                   }).toList(),
@@ -430,10 +477,15 @@ class _EditorViewState extends State<EditorView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: note.attachments.map((attachment) {
                                     return AttachmentWidget(
-                                      key: ValueKey('attachment_${attachment.id}'),
+                                      key: ValueKey(
+                                        'attachment_${attachment.id}',
+                                      ),
                                       attachment: attachment,
-                                      onDelete: () => notesProvider.removeAttachment(
-                                          note.id, attachment.id),
+                                      onDelete: () =>
+                                          notesProvider.removeAttachment(
+                                            note.id,
+                                            attachment.id,
+                                          ),
                                     );
                                   }).toList(),
                                 ),
@@ -536,10 +588,7 @@ class _EditorViewState extends State<EditorView> {
           ).animate(animation);
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-              position: slideAnimation,
-              child: child,
-            ),
+            child: SlideTransition(position: slideAnimation, child: child),
           );
         },
         child: bodyContent,

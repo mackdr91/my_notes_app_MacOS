@@ -1,0 +1,164 @@
+# Author: Domonick Mack
+# Date: 2026-11-10
+# Description: GitHub Actions CD pipeline for GitHub Releases, multi-arch GHCR Docker publishing, and GitHub Pages Web PWA deployment.
+
+name: "Stage 5 - Release & Deployment Automation"
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Optional version override for manual release (e.g., 1.0.0)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package-artifacts:
+    name: "Stage 4 Reusable Packaging (.dmg, .zip, .ipa, Web PWA)"
+    uses: ./.github/workflows/cd-package.yml
+    with:
+      release_version: ${{ inputs.release_version }}
+
+  publish-ghcr-docker-image:
+    name: "Publish Multi-Arch Backend Image (GHCR)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU for multi-arch builds
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry (ghcr.io)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata and tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/my_notes_app_macos-backend
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Build and push multi-arch Docker image (linux/amd64, linux/arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-github-pages:
+    name: "Deploy Live Web PWA to GitHub Pages"
+    needs: package-artifacts
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download compiled Web PWA static bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: lusid-web-pwa-static
+          path: web_pwa_dist
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web_pwa_dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  publish-github-release:
+    name: "Publish GitHub Release & Attach Installers"
+    needs:
+      - package-artifacts
+      - publish-ghcr-docker-image
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download packaged installers & SHA256SUMS
+        uses: actions/download-artifact@v4
+        with:
+          name: lusid-release-installers
+          path: release_assets
+
+      - name: Verify SHA256SUMS integrity before publishing
+        working-directory: release_assets
+        run: |
+          ls -lh
+          shasum -a 256 -c SHA256SUMS.txt
+
+      - name: Generate release notes body with SHA-256 checksums
+        id: release_body
+        working-directory: release_assets
+        run: |
+          {
+            echo "## Lusid ${{ needs.package-artifacts.outputs.version_tag }} — macOS, iPadOS & Web PWA"
+            echo ""
+            echo "### Included Installers"
+            echo "- **macOS Disk Image (`.dmg`)**: Drag **Lusid.app** into `/Applications`."
+            echo "- **macOS Application Archive (`.zip`)**: Standalone zipped `Lusid.app` bundle."
+            echo "- **iPadOS / iOS Package (`.ipa`)**: Install via **AltStore**, **Sideloadly**, or **Xcode Devices**."
+            echo "- **Web PWA Bundle (`.zip`)**: Offline-capable Web PWA bundle."
+            echo "- **Container Image**: \`ghcr.io/${{ github.repository_owner }}/my_notes_app_macos-backend:${{ needs.package-artifacts.outputs.version_tag }}\`"
+            echo ""
+            echo "### SHA-256 Checksums"
+            echo "\`\`\`text"
+            cat SHA256SUMS.txt
+            echo "\`\`\`"
+          } > RELEASE_NOTES.md
+
+      - name: Create or update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.package-artifacts.outputs.version_tag }}
+          name: "Lusid ${{ needs.package-artifacts.outputs.version_tag }}"
+          body_path: release_assets/RELEASE_NOTES.md
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: |
+            release_assets/*.dmg
+            release_assets/*.zip
+            release_assets/*.ipa
+            release_assets/SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
