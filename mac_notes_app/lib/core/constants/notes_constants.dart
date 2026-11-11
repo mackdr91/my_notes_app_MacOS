@@ -1,12 +1,12 @@
 /*
  * Author: Domonick Mack
- * Date: 2026-11-09
- * Description: System constants, layout constraints, and fluid animation timing definitions for the Apple Notes macOS replica.
+ * Date: 2026-11-10
+ * Description: System constants, layout constraints, and fluid animation timing definitions for Lusid.
  */
 
 import 'package:flutter/animation.dart';
 
-/// System constants for the Apple Notes macOS replica.
+/// System constants for Lusid on macOS, iPadOS, and Web.
 class NotesConstants {
   // Folder IDs
   static const String allNotesFolderId = 'all_notes';
@@ -25,7 +25,7 @@ class NotesConstants {
   static const String activeFolderKey = 'apple_active_folder_id';
 
   // App Branding & Asset Paths
-  static const String appName = 'Notes';
+  static const String appName = 'Lusid';
   static const String appVersion = 'Version 1.0.0 (Build 1)';
   static const String appCopyright = '© 2026 Domonick Mack. All rights reserved.';
   static const String appIconAssetPath = 'assets/icons/app_icon.png';

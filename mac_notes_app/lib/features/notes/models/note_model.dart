@@ -1,4 +1,4 @@
-import 'package:mac_notes_app/core/utils/notes_utils.dart';
+import 'package:lusid/core/utils/notes_utils.dart';
 
 /// Represents a single checklist item inside an Apple Note.
 class ChecklistItem {

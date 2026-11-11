@@ -1,4 +1,4 @@
-"""Django settings for Apple Notes replica backend."""
+"""Django settings for Lusid backend."""
 import os
 import sys
 from pathlib import Path
@@ -12,7 +12,7 @@ BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
 SECRET_KEY: str = os.getenv(
     'DJANGO_SECRET_KEY',
-    'django-insecure-apple-notes-mac-replica-secret-key-development-2026',
+    'django-insecure-lusid-mac-ipad-secret-key-development-2026',
 )
 
 DEBUG: bool = os.getenv('DJANGO_DEBUG', 'True') == 'True'

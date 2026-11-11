@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/utils/markdown_converter.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
-import 'package:mac_notes_app/features/notes/presentation/widgets/code_block_widget.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/utils/markdown_converter.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
+import 'package:lusid/features/notes/presentation/widgets/code_block_widget.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

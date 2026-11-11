@@ -5,13 +5,13 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/core/utils/notes_utils.dart';
-import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
-import 'package:mac_notes_app/features/notes/presentation/note_card.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/core/utils/notes_utils.dart';
+import 'package:lusid/features/folders/providers/folder_provider.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
+import 'package:lusid/features/notes/presentation/note_card.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:provider/provider.dart';
 
 /// Middle Column of Apple Notes: Grouped chronological note list.

@@ -7,9 +7,9 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
 
 /// Card preview widget for note attachments (images, PDFs, documents).
 class AttachmentWidget extends StatefulWidget {

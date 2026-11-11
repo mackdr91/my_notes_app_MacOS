@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
-import 'package:mac_notes_app/features/notes/presentation/widgets/note_table_widget.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
+import 'package:lusid/features/notes/presentation/widgets/note_table_widget.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

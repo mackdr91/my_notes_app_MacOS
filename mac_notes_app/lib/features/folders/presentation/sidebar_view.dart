@@ -1,18 +1,18 @@
 /*
  * Author: Domonick Mack
- * Date: 2026-11-09
- * Description: Native macOS 3-column left sidebar for Apple Notes with fluid hover, selection, and tag list animations.
+ * Date: 2026-11-10
+ * Description: Native macOS 3-column left sidebar for Lusid with fluid hover, selection, and tag list animations.
  */
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/core/widgets/about_notes_dialog.dart';
-import 'package:mac_notes_app/features/folders/models/folder_model.dart';
-import 'package:mac_notes_app/features/folders/presentation/add_folder_dialog.dart';
-import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/core/widgets/about_notes_dialog.dart';
+import 'package:lusid/features/folders/models/folder_model.dart';
+import 'package:lusid/features/folders/presentation/add_folder_dialog.dart';
+import 'package:lusid/features/folders/providers/folder_provider.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:provider/provider.dart';
 
 /// Native macOS 3-column Left Sidebar for Apple Notes.
@@ -205,12 +205,12 @@ class SidebarView extends StatelessWidget {
                 ),
                 const Spacer(),
                 Tooltip(
-                  message: 'About Notes',
+                  message: 'About Lusid',
                   child: CupertinoButton(
                     key: const ValueKey('about_notes_btn'),
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
-                    onPressed: () => AboutNotesDialog.show(context),
+                    onPressed: () => AboutLusidDialog.show(context),
                     child: const AppIconBadge(size: 22.0),
                   ),
                 ),

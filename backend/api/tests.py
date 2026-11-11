@@ -149,4 +149,4 @@ class NotesAPITests(APITestCase):
         url = reverse('download-portal')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn(b'Notes for macOS &amp; iPadOS', response.content)
+        self.assertIn(b'Lusid for macOS &amp; iPadOS', response.content)

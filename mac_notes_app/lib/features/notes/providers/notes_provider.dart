@@ -6,10 +6,10 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/utils/notes_utils.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
-import 'package:mac_notes_app/features/notes/services/notes_storage_service.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/utils/notes_utils.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
+import 'package:lusid/features/notes/services/notes_storage_service.dart';
 import 'package:uuid/uuid.dart';
 
 enum NotesViewMode { list, gallery }

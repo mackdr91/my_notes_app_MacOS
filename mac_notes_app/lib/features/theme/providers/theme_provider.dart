@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/features/theme/services/theme_storage_service.dart';
+import 'package:lusid/features/theme/services/theme_storage_service.dart';
 
 /// Provider managing active application theme appearance (System, Light, Dark).
 class ThemeProvider extends ChangeNotifier {

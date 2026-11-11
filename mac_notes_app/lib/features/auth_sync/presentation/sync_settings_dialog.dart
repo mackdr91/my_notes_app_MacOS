@@ -7,10 +7,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/features/auth_sync/providers/sync_provider.dart';
-import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/features/auth_sync/providers/sync_provider.dart';
+import 'package:lusid/features/folders/providers/folder_provider.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:provider/provider.dart';
 
 /// Modal dialog allowing the user to configure the backend sync server URL and trigger two-way sync.

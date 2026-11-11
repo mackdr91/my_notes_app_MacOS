@@ -7,18 +7,18 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/core/utils/markdown_converter.dart';
-import 'package:mac_notes_app/core/utils/notes_utils.dart';
-import 'package:mac_notes_app/core/widgets/about_notes_dialog.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
-import 'package:mac_notes_app/features/notes/presentation/format_menu_bar.dart';
-import 'package:mac_notes_app/features/notes/presentation/widgets/attachment_widget.dart';
-import 'package:mac_notes_app/features/notes/presentation/widgets/checklist_item_widget.dart';
-import 'package:mac_notes_app/features/notes/presentation/widgets/code_block_widget.dart';
-import 'package:mac_notes_app/features/notes/presentation/widgets/note_table_widget.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/core/utils/markdown_converter.dart';
+import 'package:lusid/core/utils/notes_utils.dart';
+import 'package:lusid/core/widgets/about_notes_dialog.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
+import 'package:lusid/features/notes/presentation/format_menu_bar.dart';
+import 'package:lusid/features/notes/presentation/widgets/attachment_widget.dart';
+import 'package:lusid/features/notes/presentation/widgets/checklist_item_widget.dart';
+import 'package:lusid/features/notes/presentation/widgets/code_block_widget.dart';
+import 'package:lusid/features/notes/presentation/widgets/note_table_widget.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:provider/provider.dart';
 
 /// Right-hand Column of Apple Notes: Pixel-accurate WYSIWYG rich note editor.

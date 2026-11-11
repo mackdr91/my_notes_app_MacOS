@@ -6,7 +6,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
 
 /// Responsive size classes for macOS desktop and iPadOS multitasking viewports.
 enum ScreenSizeClass {

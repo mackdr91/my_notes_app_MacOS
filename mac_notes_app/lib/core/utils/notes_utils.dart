@@ -1,9 +1,14 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-10
+ * Description: Formatting, chronological grouping, and text extraction utilities for Lusid.
+ */
+
 import 'package:intl/intl.dart';
 
-/// Utilities for Apple Notes formatting, dates, and text extraction.
+/// Utilities for Lusid note formatting, dates, and text extraction.
 class NotesUtils {
-  /// Extracts the title from note content:
-  /// Apple Notes uses the first non-empty line as the title.
+  /// Extracts the title from note content using the first non-empty line.
   static String extractTitle(String content, {String defaultTitle = 'New Note'}) {
     final lines = content.trim().split('\n');
     for (final line in lines) {

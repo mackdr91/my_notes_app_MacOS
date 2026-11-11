@@ -1,6 +1,12 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-10
+ * Description: Local SharedPreferences persistence and initial onboarding seed notes for Lusid.
+ */
+
 import 'dart:convert';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Storage service for persisting notes locally in SharedPreferences.
@@ -36,14 +42,14 @@ class NotesStorageService {
       Note(
         id: 'seed_note_1',
         folderId: NotesConstants.defaultNotesFolderId,
-        title: 'Welcome to Apple Notes for Mac',
-        body: 'This is an exact replica of the Apple Notes macOS desktop app.\n\n'
+        title: 'Welcome to Lusid',
+        body: 'Lusid is your sleek, distraction-free workspace for notes, structured data, and code on macOS and iPadOS.\n\n'
             'Key Features Built-In:\n'
-            '• 3-Column macOS Desktop Navigation (Sidebar, Note List, and Rich Editor)\n'
-            '• First-line auto Title formatting\n'
-            '• Pinned notes with amber pin badges\n'
-            '• Native search and folder organization\n'
+            '• Adaptive 3-Column Navigation (Sidebar, Note List, and Rich WYSIWYG Editor)\n'
+            '• Live Markdown conversion & first-line auto Title formatting\n'
+            '• Multi-line code blocks with language badges & copy button (Cmd+Shift+C)\n'
             '• Interactive checklists and expandable data tables\n'
+            '• High-contrast Light & Pure Black Dark themes (Cmd+Shift+T)\n'
             '• Keyboard shortcuts: Cmd+N (New Note), Cmd+Shift+N (New Folder), Cmd+F (Find)',
         tags: const ['welcome', 'macOS', 'guide'],
         isPinned: true,

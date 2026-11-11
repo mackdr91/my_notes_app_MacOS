@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = mac_notes_app
+PRODUCT_NAME = Lusid
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.mackdr91.macNotesApp
+PRODUCT_BUNDLE_IDENTIFIER = com.mackdr91.lusid
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.mackdr91. All rights reserved.

@@ -5,9 +5,9 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/features/folders/models/folder_model.dart';
-import 'package:mac_notes_app/features/folders/services/folder_storage_service.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/features/folders/models/folder_model.dart';
+import 'package:lusid/features/folders/services/folder_storage_service.dart';
 import 'package:uuid/uuid.dart';
 
 /// State management for Folders and Sidebar navigation.

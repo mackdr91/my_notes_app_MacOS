@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
 
 /// Represents a folder or smart container in Apple Notes.
 class Folder {

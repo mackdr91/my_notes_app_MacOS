@@ -6,14 +6,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/core/utils/platform_layout.dart';
-import 'package:mac_notes_app/features/auth_sync/presentation/sync_settings_dialog.dart';
-import 'package:mac_notes_app/features/auth_sync/providers/sync_provider.dart';
-import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
-import 'package:mac_notes_app/features/theme/presentation/theme_mode_switcher.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/core/utils/platform_layout.dart';
+import 'package:lusid/features/auth_sync/presentation/sync_settings_dialog.dart';
+import 'package:lusid/features/auth_sync/providers/sync_provider.dart';
+import 'package:lusid/features/folders/providers/folder_provider.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
+import 'package:lusid/features/theme/presentation/theme_mode_switcher.dart';
 import 'package:provider/provider.dart';
 
 /// Platform-adaptive unified toolbar matching Apple Notes on macOS and iPadOS.

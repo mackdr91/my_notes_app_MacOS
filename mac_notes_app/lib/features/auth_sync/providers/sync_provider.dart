@@ -5,11 +5,11 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:mac_notes_app/features/auth_sync/services/notes_api_sync_service.dart';
-import 'package:mac_notes_app/features/folders/models/folder_model.dart';
-import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
+import 'package:lusid/features/auth_sync/services/notes_api_sync_service.dart';
+import 'package:lusid/features/folders/models/folder_model.dart';
+import 'package:lusid/features/folders/providers/folder_provider.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum SyncStatus {

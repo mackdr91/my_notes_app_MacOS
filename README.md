@@ -1,6 +1,6 @@
-# Apple Notes Replica for macOS & iPadOS
+# Lusid for macOS & iPadOS
 
-A pixel-accurate, feature-complete replica of the native **Apple Notes** application built with **Flutter (macOS, iPadOS/iOS, and Web PWA)** and **Provider** state management following a strict feature-first architecture, backed by a containerized **Django REST Framework + MongoDB** two-way sync server and installer download portal.
+**Lusid** is a sleek, distraction-free notes application inspired by native **Apple Notes**, built with **Flutter (macOS, iPadOS/iOS, and Web PWA)** and **Provider** state management following a strict feature-first architecture, backed by a containerized **Django REST Framework + MongoDB** two-way sync server and installer download portal.
 
 ## Key Features
 
@@ -23,26 +23,26 @@ Run the automated packaging script to generate all release artifacts inside `rel
 ```
 
 This produces:
-- `releases/Notes-macOS-v1.0.0.dmg` — Drag-and-drop macOS Disk Image installer (`Notes.app` -> `/Applications`).
-- `releases/Notes-macOS-v1.0.0.zip` — Zipped macOS `.app` bundle.
-- `releases/Notes-iPadOS-v1.0.0.ipa` — iPadOS / iOS application archive for **AltStore**, **Sideloadly**, or **Xcode Direct Install**.
-- `releases/Notes-Web-PWA-v1.0.0.zip` — Standalone Web PWA bundle for Safari **Add to Home Screen** on iPad.
+- `releases/Lusid-macOS-v1.0.0.dmg` — Drag-and-drop macOS Disk Image installer (`Lusid.app` -> `/Applications`).
+- `releases/Lusid-macOS-v1.0.0.zip` — Zipped macOS `.app` bundle.
+- `releases/Lusid-iPadOS-v1.0.0.ipa` — iPadOS / iOS application archive for **AltStore**, **Sideloadly**, or **Xcode Direct Install**.
+- `releases/Lusid-Web-PWA-v1.0.0.zip` — Standalone Web PWA bundle for Safari **Add to Home Screen** on iPad.
 
 ---
 
 ## Installing on Your Mac & iPad
 
 ### 1. Install on macOS
-1. Open `releases/Notes-macOS-v1.0.0.dmg` (or download from GitHub Releases / the local `/download/` portal).
-2. Drag **Notes.app** into the **Applications** folder.
-3. If macOS Gatekeeper prompts on first launch (since it uses free ad-hoc signing), right-click **Notes.app** and choose **Open**, or run:
+1. Open `releases/Lusid-macOS-v1.0.0.dmg` (or download from GitHub Releases / the local `/download/` portal).
+2. Drag **Lusid.app** into the **Applications** folder.
+3. If macOS Gatekeeper prompts on first launch (since it uses free ad-hoc signing), right-click **Lusid.app** and choose **Open**, or run:
    ```bash
-   xattr -cr /Applications/Notes.app
+   xattr -cr /Applications/Lusid.app
    ```
 
 ### 2. Install on iPad
 - **Option A — AltStore or Sideloadly (`.ipa`)**:
-  Download `Notes-iPadOS-v1.0.0.ipa` from GitHub Releases or `http://<your-mac-ip>:8000/download/` and install via **AltStore** or **Sideloadly** using your free Apple ID.
+  Download `Lusid-iPadOS-v1.0.0.ipa` from GitHub Releases or `http://<your-mac-ip>:8000/download/` and install via **AltStore** or **Sideloadly** using your free Apple ID.
 - **Option B — Direct USB / Wi-Fi Install via Xcode**:
   Connect your iPad to your Mac, open `mac_notes_app/ios/Runner.xcworkspace` in Xcode, select your personal Team under **Signing & Capabilities**, and press **Run** (`Cmd+R`) or run:
   ```bash
@@ -61,4 +61,4 @@ docker compose up --build -d
 
 - **Download Portal**: Open `http://localhost:8000/download/` (or `http://<your-mac-lan-ip>:8000/download/` on your iPad).
 - **API Health Check**: `http://localhost:8000/api/health/`
-- **Configure in App**: Click the **Cloud Sync** icon in the Notes toolbar, enter `http://<your-mac-lan-ip>:8000/api`, and click **Sync Now**.
+- **Configure in App**: Click the **Cloud Sync** icon in the Lusid toolbar, enter `http://<your-mac-lan-ip>:8000/api`, and click **Sync Now**.

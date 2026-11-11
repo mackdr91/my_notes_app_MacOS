@@ -1,3 +1,9 @@
+/*
+ * Author: Domonick Mack
+ * Date: 2026-11-10
+ * Description: Custom borderless transparent macOS window configuration for Lusid.
+ */
+
 import Cocoa
 import FlutterMacOS
 
@@ -6,13 +12,13 @@ class MainFlutterWindow: NSWindow {
     let flutterViewController = FlutterViewController()
     self.contentViewController = flutterViewController
 
-    // Configure authentic macOS Notes styling
+    // Configure authentic Lusid macOS styling
     self.titleVisibility = .hidden
     self.titlebarAppearsTransparent = true
     self.styleMask.insert(.fullSizeContentView)
     self.isMovableByWindowBackground = false
 
-    // Set initial size and min size for desktop Notes app
+    // Set initial size and min size for Lusid desktop app
     var frame = self.frame
     frame.size = NSMakeSize(1100, 720)
     self.minSize = NSMakeSize(780, 480)

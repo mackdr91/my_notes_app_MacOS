@@ -1,11 +1,11 @@
 {
-    "name": "Notes",
-    "short_name": "Notes",
+    "name": "Lusid",
+    "short_name": "Lusid",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#141416",
     "theme_color": "#ECA825",
-    "description": "Apple Notes replica for macOS and iPadOS with rich text, checklists, tables, and code blocks.",
+    "description": "Lusid notes app for macOS and iPadOS with rich text, checklists, tables, and code blocks.",
     "orientation": "any",
     "prefer_related_applications": false,
     "icons": [

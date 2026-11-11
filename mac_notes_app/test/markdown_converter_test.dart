@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:mac_notes_app/core/utils/markdown_converter.dart';
+import 'package:lusid/core/utils/markdown_converter.dart';
 
 void main() {
   group('MarkdownConverter Tests', () {

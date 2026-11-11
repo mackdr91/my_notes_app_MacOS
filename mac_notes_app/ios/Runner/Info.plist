@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
   Author: Domonick Mack
-  Date: 2026-11-09
-  Description: iOS and iPadOS application bundle configuration, multitasking support, and local network sync permissions.
+  Date: 2026-11-10
+  Description: Lusid iOS and iPadOS application bundle configuration, multitasking support, and local network sync permissions.
 -->
 <plist version="1.0">
 <dict>
@@ -12,7 +12,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Notes</string>
+	<string>Lusid</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -20,7 +20,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>mac_notes_app</string>
+	<string>Lusid</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -39,7 +39,7 @@
 		<true/>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Notes to attach photos and media to your notes.</string>
+	<string>Allow Lusid to attach photos and media to your notes.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

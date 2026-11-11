@@ -1,7 +1,7 @@
 """
 Author: Domonick Mack
-Date: 2026-11-09
-Description: RESTful API Views for Apple Notes backend with two-way batch sync and installer download portal.
+Date: 2026-11-10
+Description: RESTful API Views for Lusid backend with two-way batch sync and installer download portal.
 """
 import os
 from datetime import datetime, timezone
@@ -363,7 +363,7 @@ class DownloadPortalView(APIView):
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apple Notes Replica — Mac &amp; iPad Downloads</title>
+    <title>Lusid — Mac &amp; iPad Downloads</title>
     <style>
         :root {{
             --gold: #ECA825;
@@ -395,7 +395,7 @@ class DownloadPortalView(APIView):
         <div class="header">
             <div class="icon">📝</div>
             <div>
-                <h1>Notes for macOS &amp; iPadOS</h1>
+                <h1>Lusid for macOS &amp; iPadOS</h1>
                 <p class="sub">Direct Download &amp; Local Sync Server Portal</p>
             </div>
         </div>
@@ -403,7 +403,7 @@ class DownloadPortalView(APIView):
         <div class="guide">
             <h4>Installation Guide</h4>
             <ul>
-                <li><strong>macOS (.dmg / .zip):</strong> Open the downloaded <code>.dmg</code> and drag <strong>mac_notes_app.app</strong> to your <code>/Applications</code> folder. If macOS Gatekeeper prompts on first launch, right-click the app and select <strong>Open</strong> (or run <code>xattr -cr /Applications/mac_notes_app.app</code>).</li>
+                <li><strong>macOS (.dmg / .zip):</strong> Open the downloaded <code>.dmg</code> and drag <strong>Lusid.app</strong> to your <code>/Applications</code> folder. If macOS Gatekeeper prompts on first launch, right-click the app and select <strong>Open</strong> (or run <code>xattr -cr /Applications/Lusid.app</code>).</li>
                 <li><strong>iPadOS (.ipa):</strong> Install onto your iPad using <strong>AltStore</strong>, <strong>Sideloadly</strong>, or <strong>Xcode &rarr; Window &rarr; Devices and Simulators</strong> using your free Apple ID.</li>
                 <li><strong>Cross-Device Sync:</strong> Open the Sync Settings icon in the top toolbar and set the Server URL to <code>http://{request.get_host()}/api</code>.</li>
             </ul>

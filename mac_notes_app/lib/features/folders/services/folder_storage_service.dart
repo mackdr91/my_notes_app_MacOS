@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/features/folders/models/folder_model.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/features/folders/models/folder_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Handles local storage persistence for Folders.

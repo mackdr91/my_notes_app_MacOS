@@ -1,6 +1,6 @@
-# mac_notes_app
+# Lusid
 
-A new Flutter project.
+Lusid — sleek, distraction-free notes application for macOS, iPadOS/iOS, and Web built with Flutter.
 
 ## Getting Started
 

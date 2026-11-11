@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
 
 /// Modal dialog matching macOS dialogs to create or rename folders.
 class AddFolderDialog extends StatefulWidget {

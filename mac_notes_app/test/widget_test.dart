@@ -1,20 +1,20 @@
 /*
  * Author: Domonick Mack
- * Date: 2026-11-09
- * Description: Unit and widget tests for NotesUtils, FolderProvider, NotesProvider, and fluid UI transitions.
+ * Date: 2026-11-10
+ * Description: Unit and widget tests for NotesUtils, FolderProvider, NotesProvider, and Lusid fluid UI transitions.
  */
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/utils/notes_utils.dart';
-import 'package:mac_notes_app/core/utils/platform_layout.dart';
-import 'package:mac_notes_app/core/widgets/about_notes_dialog.dart';
-import 'package:mac_notes_app/features/auth_sync/presentation/sync_settings_dialog.dart';
-import 'package:mac_notes_app/features/folders/providers/folder_provider.dart';
-import 'package:mac_notes_app/features/notes/presentation/notes_gallery_view.dart';
-import 'package:mac_notes_app/features/notes/providers/notes_provider.dart';
-import 'package:mac_notes_app/main.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/utils/notes_utils.dart';
+import 'package:lusid/core/utils/platform_layout.dart';
+import 'package:lusid/core/widgets/about_notes_dialog.dart';
+import 'package:lusid/features/auth_sync/presentation/sync_settings_dialog.dart';
+import 'package:lusid/features/folders/providers/folder_provider.dart';
+import 'package:lusid/features/notes/presentation/notes_gallery_view.dart';
+import 'package:lusid/features/notes/providers/notes_provider.dart';
+import 'package:lusid/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -102,27 +102,27 @@ void main() {
   });
 
   group('Widget Tests', () {
-    testWidgets('MacNotesApp renders without error', (WidgetTester tester) async {
+    testWidgets('LusidApp renders without error', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1200, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(const MacNotesApp());
+      await tester.pumpWidget(const LusidApp());
       // Pump frames to allow async providers to load
       await tester.pump(const Duration(milliseconds: 200));
       await tester.pump(const Duration(milliseconds: 200));
 
-      expect(find.byType(MacNotesApp), findsOneWidget);
+      expect(find.byType(LusidApp), findsOneWidget);
     });
 
-    testWidgets('MacNotesApp animates sidebar toggle and view mode transitions smoothly', (WidgetTester tester) async {
+    testWidgets('LusidApp animates sidebar toggle and view mode transitions smoothly', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1200, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(const MacNotesApp());
+      await tester.pumpWidget(const LusidApp());
       await tester.pump(const Duration(milliseconds: 250));
       await tester.pump(const Duration(milliseconds: 250));
 
@@ -143,13 +143,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
     });
 
-    testWidgets('Sidebar displays AppIconBadge and opens AboutNotesDialog', (WidgetTester tester) async {
+    testWidgets('Sidebar displays AppIconBadge and opens AboutLusidDialog', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1200, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(const MacNotesApp());
+      await tester.pumpWidget(const LusidApp());
       await tester.pump(const Duration(milliseconds: 250));
       await tester.pump(const Duration(milliseconds: 250));
 
@@ -158,12 +158,13 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('about_notes_btn')));
       await tester.pump(const Duration(milliseconds: 250));
 
-      expect(find.byType(AboutNotesDialog), findsOneWidget);
+      expect(find.byType(AboutLusidDialog), findsOneWidget);
+      expect(find.text(NotesConstants.appName), findsOneWidget);
       expect(find.text(NotesConstants.appVersion), findsOneWidget);
 
       await tester.tap(find.text('OK'));
       await tester.pump(const Duration(milliseconds: 250));
-      expect(find.byType(AboutNotesDialog), findsNothing);
+      expect(find.byType(AboutLusidDialog), findsNothing);
     });
 
     testWidgets('iPad Portrait (820x1180) and Compact Slide-Over (540x900) adapt without overflow', (WidgetTester tester) async {
@@ -177,7 +178,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(const MacNotesApp());
+      await tester.pumpWidget(const LusidApp());
       await tester.pump(const Duration(milliseconds: 250));
       await tester.pump(const Duration(milliseconds: 250));
 
@@ -201,7 +202,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(const MacNotesApp());
+      await tester.pumpWidget(const LusidApp());
       await tester.pump(const Duration(milliseconds: 250));
       await tester.pump(const Duration(milliseconds: 250));
 

@@ -1,1 +1,1 @@
-"""API Application package for Apple Notes backend."""
+"""API Application package for Lusid backend."""

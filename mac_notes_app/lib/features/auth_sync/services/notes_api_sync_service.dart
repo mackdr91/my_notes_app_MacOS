@@ -6,8 +6,8 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mac_notes_app/features/folders/models/folder_model.dart';
-import 'package:mac_notes_app/features/notes/models/note_model.dart';
+import 'package:lusid/features/folders/models/folder_model.dart';
+import 'package:lusid/features/notes/models/note_model.dart';
 
 /// Sync service connecting Flutter clients to the Django REST Framework + MongoDB backend.
 class NotesApiSyncService {

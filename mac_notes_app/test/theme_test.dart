@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/features/theme/models/theme_preferences.dart';
-import 'package:mac_notes_app/features/theme/presentation/theme_mode_switcher.dart';
-import 'package:mac_notes_app/features/theme/providers/theme_provider.dart';
-import 'package:mac_notes_app/features/theme/services/theme_storage_service.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/features/theme/models/theme_preferences.dart';
+import 'package:lusid/features/theme/presentation/theme_mode_switcher.dart';
+import 'package:lusid/features/theme/providers/theme_provider.dart';
+import 'package:lusid/features/theme/services/theme_storage_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

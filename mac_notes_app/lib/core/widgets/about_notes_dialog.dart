@@ -1,13 +1,13 @@
 /*
  * Author: Domonick Mack
- * Date: 2026-11-09
- * Description: Native macOS About dialog and reusable AppIconBadge widget showcasing the Minimalist Dark/Amber Notes emblem.
+ * Date: 2026-11-10
+ * Description: Native macOS About dialog and reusable AppIconBadge widget showcasing the Lusid Dark/Amber emblem.
  */
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
 
 /// Reusable widget that renders the bundled Minimalist Dark/Amber macOS app icon
 /// with a resilient vector fallback if asset loading is unavailable.
@@ -63,21 +63,21 @@ class AppIconBadge extends StatelessWidget {
   }
 }
 
-/// Native macOS About window modal displaying the custom app icon, version, and build details.
-class AboutNotesDialog extends StatelessWidget {
-  const AboutNotesDialog({super.key});
+/// Native macOS About window modal displaying the Lusid app icon, version, and build details.
+class AboutLusidDialog extends StatelessWidget {
+  const AboutLusidDialog({super.key});
 
-  /// Displays the About Notes modal with a smooth scale & fade entrance.
+  /// Displays the About Lusid modal with a smooth scale & fade entrance.
   static Future<void> show(BuildContext context) {
     return showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
-      barrierLabel: 'Dismiss About Notes',
+      barrierLabel: 'Dismiss About Lusid',
       barrierColor: Colors.black.withValues(alpha: 0.45),
       transitionDuration: NotesConstants.contentAnimationDuration,
       pageBuilder: (context, animation, secondaryAnimation) {
         return const Center(
-          child: AboutNotesDialog(),
+          child: AboutLusidDialog(),
         );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -150,7 +150,7 @@ class AboutNotesDialog extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Apple Notes macOS Desktop Replica with Rich Text, Checklists, Tables, Code Blocks & Cloud Sync.',
+              'Lusid for macOS, iPadOS & Web — Rich Text, Live Markdown, Checklists, Tables, Code Blocks & Cloud Sync.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: '.AppleSystemUIFont',

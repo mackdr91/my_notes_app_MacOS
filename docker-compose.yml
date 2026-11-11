@@ -1,11 +1,11 @@
 # Author: Domonick Mack
-# Date: 2026-11-09
-# Description: Docker Compose orchestration for MongoDB 7 and the Django REST Framework sync/download server.
+# Date: 2026-11-10
+# Description: Docker Compose orchestration for MongoDB 7 and the Lusid Django REST Framework sync/download server.
 
 services:
   mongodb:
     image: mongo:7.0
-    container_name: mac_notes_mongodb
+    container_name: lusid_mongodb
     restart: unless-stopped
     ports:
       - "27017:27017"
@@ -21,13 +21,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: mac_notes_backend
+    container_name: lusid_backend
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
       - DJANGO_DEBUG=False
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-apple-notes-mac-ipad-production-secret-key-2026}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-lusid-mac-ipad-production-secret-key-2026}
       - MONGODB_URI=mongodb://mongodb:27017/
       - MONGODB_DB_NAME=mac_notes_db
       - RELEASES_DIR=/app/releases

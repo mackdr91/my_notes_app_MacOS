@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
 
 /// Modal dialog to set, change, or remove password lock for a note.
 class NoteLockDialog extends StatefulWidget {

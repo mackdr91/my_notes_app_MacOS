@@ -1,7 +1,7 @@
 /*
  * Author: Domonick Mack
- * Date: 2026-11-09
- * Description: Root application entry point and provider configuration with smooth theme mode interpolation and cross-device sync.
+ * Date: 2026-11-10
+ * Description: Root application entry point and provider configuration for Lusid with smooth theme interpolation and cross-device sync.
  */
 
 import 'package:flutter/material.dart';
@@ -16,12 +16,12 @@ import 'features/theme/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MacNotesApp());
+  runApp(const LusidApp());
 }
 
-/// Root widget of the Apple Notes macOS and iPadOS replica.
-class MacNotesApp extends StatelessWidget {
-  const MacNotesApp({super.key});
+/// Root widget of the Lusid application for macOS, iPadOS, and Web.
+class LusidApp extends StatelessWidget {
+  const LusidApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class MacNotesApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp(
-            title: 'Notes',
+            title: NotesConstants.appName,
             debugShowCheckedModeBanner: false,
             theme: NotesTheme.lightTheme,
             darkTheme: NotesTheme.darkTheme,

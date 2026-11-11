@@ -6,9 +6,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mac_notes_app/core/constants/notes_constants.dart';
-import 'package:mac_notes_app/core/theme/notes_theme.dart';
-import 'package:mac_notes_app/features/theme/providers/theme_provider.dart';
+import 'package:lusid/core/constants/notes_constants.dart';
+import 'package:lusid/core/theme/notes_theme.dart';
+import 'package:lusid/features/theme/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 /// Segmented toolbar control for switching between System, Light, and Dark mode.
