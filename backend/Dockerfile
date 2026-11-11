@@ -2,7 +2,7 @@
 # Date: 2026-11-09
 # Description: Production Dockerfile for the Django REST Framework + PyMongo sync and download server.
 
-FROM python:3.12-slim
+FROM python:3.15-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
