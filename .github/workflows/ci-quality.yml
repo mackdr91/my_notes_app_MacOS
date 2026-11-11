@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -46,7 +46,7 @@ jobs:
         working-directory: mac_notes_app
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Flutter SDK
         uses: subosito/flutter-action@v2
@@ -71,7 +71,7 @@ jobs:
         working-directory: backend
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run ShellCheck on build & automation scripts
         run: |
