@@ -36,7 +36,7 @@ jobs:
       version_tag: ${{ steps.resolve_version.outputs.version_tag }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Resolve release version
         id: resolve_version
